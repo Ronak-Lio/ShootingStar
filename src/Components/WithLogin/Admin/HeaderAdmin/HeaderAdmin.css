@@ -1,0 +1,19 @@
+.HeaderAdmin{
+    display: flex;
+    border: 2px solid lightgray;
+    justify-content: space-around;
+    align-items: center;
+    width: 90vw;
+}
+.HeaderAdminFirst{
+    padding: 12px;
+    color: rgb(82, 71, 71);
+    font-weight: 600;
+    font-size: larger;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+.add_teacher{
+    width: 100%;
+    height: 100%;
+    border: 1px solid lightgreen;
+}

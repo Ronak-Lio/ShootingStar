@@ -1,0 +1,22 @@
+.head{
+    border: 1px solid lightgray;
+    margin: 12px 4px 6px 4px;
+    border-radius: 4px;
+}
+.head_first{
+    display: flex;
+    /* background-color: #2b7ae2; */
+    background-color: rgb(233, 231, 231);
+    padding: 4px 12px 4px 12px;
+    /* margin: 12px 4px 6px 4px; */
+    align-items: center;
+    justify-content: space-between;
+    /* color: white; */
+    font-size: larger;
+    font-weight: 700;
+    border-radius: 4px;
+}
+li{
+    font-weight: 500;
+    color: rgb(58, 53, 53);
+}

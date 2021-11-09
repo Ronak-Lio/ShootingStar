@@ -1,0 +1,112 @@
+.profile {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile__bodyIn {
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 120px 0;
+  width: 80%;
+  max-width: 450px;
+  min-width: fit-content;
+}
+
+.profile__Fotu {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid lightgray; 
+  padding-bottom: 12px;
+}
+
+.profile__Name {
+  display: flex;
+  flex-direction: column;
+  padding-top: 22px;
+  border: 1px solid lightgray;
+  background-color: rgba(246, 245, 245, 0.883);
+  border-top: none;
+  width: 100%;
+  padding: 32px;
+}
+
+.profile__Name__In {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  word-break: break-all;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.update__profile__Name>h6{
+  display: flex;
+  max-width: 200px;
+  padding-right: 15px;
+}
+.profile__Name__In>h6{
+  border-bottom: 1px solid rgb(175, 174, 174);
+  width:100%;
+  padding:0 0 4px 0;
+  color: rgb(22, 21, 21);
+  font-size:large;
+  word-break:break-all;
+}
+.Courses__div {
+  max-height: 20vh;
+  height: fit-content;
+}
+.update__profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile__Fotu_1{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.update__profile > button {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: black;
+  width: 90px;
+  margin: 6px 0 6px 0;
+  border: none;
+  margin: 1px 4px 0 4px;
+  height: 40px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: center;
+  color: rgb(54, 42, 42);
+}
+@media (max-width: 768px) {
+  .profile__bodyIn {
+    height: 100%; 
+    width: 90%;
+  }
+.profile__Fotu {
+  flex-direction: column;
+}
+.profile__Name{
+  padding: 12px;
+}
+
+}

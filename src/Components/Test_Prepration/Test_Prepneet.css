@@ -1,0 +1,86 @@
+.secondBarTEST{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+}
+.sub_Name{
+    font-size: large;
+    font-weight: 500;
+    padding-left: 12px;
+}
+.Form_neetImg{
+   width: 100%;
+}
+.Form_neetImg>img{
+     width: 100%;
+}
+.Form_N{
+    margin: 52px 6px 12px 12px ;
+    display: flex;
+    flex-direction: column; 
+    width: 70%;
+    box-shadow: 0 0 15px -2px lightgray;
+}
+.Form_BODY{
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+}
+.Neet_Info{
+    display: flex;
+    padding: 12px;
+    width: 40%;
+    align-items: center;
+    justify-content: space-between;
+}
+.Form_BODY>h3{
+    padding: 12px 6px 12px 0px;
+}
+.Neet_Info_1,.Neet_Info_2{
+    color: rgb(92, 89, 89);
+}
+.Neet_Des{
+    padding:22px 0;
+}
+.Neet_Des>p{
+    color: rgb(88, 86, 86);
+    font-weight: 500;
+}
+.neet_related{
+    display: flex;
+    font-size: x-large;
+    padding-left: 12px;
+}
+.neet_related_course{
+    display: flex;
+    padding: 12px;
+}
+.neet_related_course_In{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 12px;
+}
+
+@media(max-width:768px){
+    .neet_related_course_In{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        padding: 12px;
+    }
+    .Form_N{
+        margin: 52px 6px 12px 12px ;
+        display: flex;
+        flex-direction: column; 
+        width: 100%;
+        box-shadow: 0 0 15px -2px lightgray;
+    }
+    .secondBarTEST{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+}
