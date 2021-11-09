@@ -1,0 +1,67 @@
+.assignmentsPage{
+    height: 100vh;
+    width: 100vw;
+}
+
+.upcoming_class_div{
+    padding : 10px;
+    padding-bottom: 0px;
+    justify-content : space-around;
+    /* padding-left : 30px;
+    padding-right : 20px; */
+    display: none;
+}
+
+.upcoming_class_div > p{
+    margin-bottom: 0px;
+}
+
+.notices_for_ipad{
+    background-color: #fff;
+    border-radius: 20px;
+    width: 90px;
+}
+
+.notices_for_ipad:hover{
+    background-color: lightgray;
+}
+
+.notices_for_mobile{
+    display :none;
+ }
+
+@media(max-width:1184px){
+    .upcoming_class_div{
+        display: flex;
+    }
+}
+
+@media(max-width:420px){
+    .upcoming_class_div{
+        display: flex;
+        flex-direction:  column;
+    }
+    .upcoming_class_div > p{
+        text-align: center;
+        margin-bottom:  10px;
+    }
+    .upcoming_class_div_button{
+        display: flex;
+        justify-content: flex-end;
+        margin-right: 20px;
+        margin-left: 20px;
+    }
+    .notices_for_mobile{
+        width: 100%;
+        border-radius: 5px;
+        background-color: rgb(235, 232, 232);
+        display: flex;
+        justify-content: center;
+    }
+
+    .notices_for_ipad{
+       display :none;
+    }
+
+    
+}

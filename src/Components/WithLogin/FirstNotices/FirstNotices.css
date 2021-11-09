@@ -1,0 +1,15 @@
+.FirstNotices{
+    display: flex;
+    flex: 0.3!important;
+    height: 80vh;
+    width: 100%;
+    overflow: hidden;
+}
+@media(max-width:1085px){
+  .FirstNotices{
+    flex: 1;
+    border: none;
+    align-items: center;
+    justify-content: center;
+}
+  }

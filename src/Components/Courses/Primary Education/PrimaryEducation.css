@@ -1,0 +1,6 @@
+.Education{
+    display: flex;
+    flex-direction: column;
+    height : fit-content;
+    /* overflow: scroll; */
+}

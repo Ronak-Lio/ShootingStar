@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.chat_Show{
+    display: none;
+}
+@media(max-width:1085px){
+  .chat_Show_Not{
+    display: none;
+}
+.chat_Show{
+  display: flex;
+}
+}

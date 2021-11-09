@@ -1,0 +1,7 @@
+.showCourseSubject{
+    display: flex;
+    align-items: flex-start;
+    font-weight: 700;
+    font-size: larger;
+    color: #f62f4d;
+}

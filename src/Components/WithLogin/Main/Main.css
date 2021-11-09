@@ -1,0 +1,39 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh!important;
+}
+.mainBody {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mainBodyIN {
+  display: flex;
+  padding: 12px;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  max-width: 1400px;
+}
+#chat{
+  flex: 0.7;
+}
+#noti{
+  flex: 0.3;
+}
+@media(max-width:1085px){
+.Header_Show{
+  display: none;
+}
+.mainBodyIN {
+  padding: 0;
+}
+#chat{
+  display: none;
+}
+#noti{
+  flex: 1;
+}
+}

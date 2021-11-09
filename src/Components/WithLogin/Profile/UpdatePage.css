@@ -1,0 +1,126 @@
+.profileUpdate {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile__bodyUpdate {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile__bodyInUpdate {
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 120px 0;
+    width: 80%;
+    max-width: 400px;
+    min-width: fit-content;
+  }
+  
+  .profile__FotuUpdate {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+    border: 1px solid lightgray; 
+    padding-bottom: 12px;
+  }
+  
+  .profile__NameUpdate {
+    display: flex;
+    flex-direction: column;
+    padding-top: 22px;
+    border: 1px solid lightgray;
+    background-color: rgba(246, 245, 245, 0.883);
+    border-top: none;
+    width: 100%;
+    padding: 32px;
+  }
+  
+  .profile__Name__InUpdate {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    word-break: break-all;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .profile__Name__InUpdate>h6{
+    border-bottom: 1px solid rgb(175, 174, 174);
+    width: 100%;
+    padding: 0 0 4px 0;
+  }
+  .Courses__divUpdate {
+    display: flex;
+    /* align-items: flex-end; */
+    justify-content: flex-end;
+    max-height: 20vh;
+    height: fit-content;
+    width: 100%;
+  }
+  .update__profileUpdate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile__Fotu_1Update{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .update__profileUpdate > button {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: black;
+    width: 90px;
+    margin: 6px 0 6px 0;
+    border: none;
+    margin: 1px 4px 0 4px;
+    height: 40px;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    color: rgb(54, 42, 42);
+  }
+  .update__profile__NameUpdate>input{
+      outline: none;
+      border: 1px solid lightgray;
+      border-radius: 4px;
+      padding: 4px;
+      margin: 1px;
+      width: 100%;
+    }
+    .profile__Name__InUpdate>input{
+        outline: none;
+        border: 1px solid lightgray;
+        border-radius: 4px;
+        padding: 4px;
+        margin: 1px 1px 8px 1px;
+        width: 100%;
+  }
+  @media (max-width: 768px) {
+    .profile__bodyInUpdate {
+      height: 100%; 
+      width: 90%;
+    }
+  .profile__FotuUpdate {
+    flex-direction: column;
+  }
+  .profile__NameUpdate{
+    padding: 12px;
+  }
+  
+  }
+  

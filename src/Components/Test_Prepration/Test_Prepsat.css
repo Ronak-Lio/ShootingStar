@@ -1,0 +1,149 @@
+.test{
+    display: flex;
+    padding: 0 12px 12px 12px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.test_first{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    width: 100%;
+    max-width: 1400px;
+    padding-top: 80px;
+}
+
+.text_first_h4{
+    color: rgb(88, 86, 86);
+}
+.text_first_p{
+    font-size: large;
+    font-weight: 400;
+    color: rgb(71, 70, 70);
+}
+.test_second{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    width: 100%;
+    max-width: 1400px;
+}
+.table_test{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0;
+}
+.table_test>table{
+    margin: 0;
+    padding: 0;
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; */
+}
+.test_table_Name{
+    font-size: 21px;
+    font-weight: 600;
+    border: 1px solid lightgray;
+    width:20%;
+    padding: 12px;
+}
+
+.test_table_P{
+    font-size:large;
+    color: #333333;
+    font-weight: 500;
+    border: 1px solid lightgray;
+    margin: 0;
+    padding: 12px;
+    width: 60%;
+    line-height: 1.42857143;
+}
+.test_table_P>p{
+    padding-top: 12px;
+}
+.test_table_Button{
+    font-size: x-large;
+    font-weight: 450;
+    border: 1px solid lightgray;
+    /* margin: 0; */
+    padding-left: 5%;
+    width: 20%;
+}
+
+.FAQs{
+    display: flex;
+    flex-direction: column;
+    margin: 20px !important;
+    border: 1px solid lightgray;
+    border-radius:6px;
+    width: 100%;
+    max-width: 1400px;
+}
+
+.FAQs_header{
+    padding: 12px;
+    font-size: x-large;
+    font-weight: 500;
+    background-color: #ddd;
+    border: 1px solid lightgray;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}
+.FAQs_body{
+    margin: 6px 8px 6px 8px;
+    cursor: pointer;
+}
+.FAQs_Box{
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    padding: 2px;
+}
+.FAQs_Box1{
+    padding: 12px;
+}
+.FAQs_body_Q{
+    border-radius: 6px;
+    border: 1px solid lightgray;
+    /* margin: 12px; */
+}
+.FAQs_Box{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* margin: 8px; */
+}
+.FAQs_Box_C{
+    display:none;
+    transition: 0.5s;
+    transition-delay: 1s;
+}
+.FAQs_Box_CO{ 
+    display:flex;
+    flex-direction: column;
+    transition: 0.5s;
+    border-top: 1px solid lightgray;
+    padding: 12px;
+    transition-delay: 1s;
+}
+@media(max-width:1390px){
+    .test_table_Button{
+        padding-left: 4%;
+    }
+}
+@media(max-width:983px){
+    .test_table_Button{
+        padding-left: 3%;
+    }
+}
+
+@media(max-width:888px){
+    .test_table_Button{
+        padding-left: 0;
+    }
+}

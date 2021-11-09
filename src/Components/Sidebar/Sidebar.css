@@ -1,0 +1,48 @@
+.secondBar{
+    margin: 52px 12px 12px 6px ;
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    height: fit-content;
+    box-shadow: 0 0 15px -2px lightgray;
+}
+.secondBar_List{
+    display: flex;
+    flex-direction: column;
+
+}
+.list_img{
+    width: 50%;
+}
+.list_img>img{
+    width: 100%;
+    border-radius: 8px;
+}
+.list_text{
+    display: flex;
+    width: 100%; 
+    background-color: rgb(235, 233, 233);
+    font-size: large;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin: 0 12px;
+}
+.List_COntact{
+       display: flex;
+       padding: 12px;
+}
+.secondBar_Head{
+    padding: 12px 0 12px 12px;
+    font-size: x-large;
+    font-weight: 500;
+}
+@media(max-width:768px){
+    .secondBar{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        box-shadow: 0 0 15px -2px lightgray;
+    }
+}

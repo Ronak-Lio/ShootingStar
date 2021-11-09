@@ -1,0 +1,17 @@
+.mainAdmin{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding:30px;
+    height: 100vh;
+    width: 100vw;
+}
+.mainAdminBody{
+    display: flex;
+    flex-direction: column;
+    width: 90vw;
+    height: 90vh;
+    align-items: center;
+    justify-content:center;
+}
