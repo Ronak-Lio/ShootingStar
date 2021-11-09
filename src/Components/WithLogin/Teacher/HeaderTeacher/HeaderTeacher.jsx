@@ -14,7 +14,6 @@ import { actionTypes } from "../../../../reducer";
 import HeaderCourse from "../../Header/HeaderCourse";
 import HeaderCourseTeacher from "./HeaderCourseTeacher";
 
-
 function HeaderTeacher() {
   const [{ user,signInAs, showDiv,teacherSubject,teacherCourse,coursesArray}, dispatch] = useStateValue();
   const history = useHistory();

@@ -43,7 +43,7 @@
 .chat__body{
     height: 70vh;
     background-color: #5094ee;
-    overflow-y:  scroll;
+    overflow-y: scroll;
 }
 .chat__input{
     display: flex;

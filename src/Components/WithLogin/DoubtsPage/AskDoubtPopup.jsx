@@ -23,7 +23,7 @@ function AskDoubtPopup() {
       .doc(course_SubjectID)
       .collection("doubtRooms")
       .onSnapshot((snapshot) =>
-        (
+        setRooms(
           snapshot.docs.map((doc) => ({
             data: doc.data(),
           }))

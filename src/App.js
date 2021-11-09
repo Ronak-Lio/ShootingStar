@@ -122,7 +122,7 @@ function App() {
         <AddTeacherInfo/>
         </Route> */}
         <Route path="/addadmin">
-          <Admin />
+        <Admin/>
         </Route>
         <Route path="/leaderboard">
           <LeaderBoard />

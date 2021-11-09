@@ -1,4 +1,4 @@
-import Button from '@restart/ui/esm/Button';
+// import Button from '@restart/ui/esm/Button';
 import React, { useState } from 'react'
 import db, { auth } from '../../../../firebase';
 import { actionTypes } from '../../../../reducer';
@@ -42,9 +42,9 @@ function AdminSign() {
               />
             </div>
             <div className="addTeacherBody">
-              <Button variant="contained" onClick={signIn}>
+              {/* <Button variant="contained" onClick={signIn}>
                 Sign In
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

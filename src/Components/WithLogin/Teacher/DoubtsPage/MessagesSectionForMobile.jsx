@@ -202,7 +202,6 @@ function MessagesSectionForMobile() {
             .catch((error) => {
               console.log("Error getting documents: ", error);
             });
-
         setInput("");
       }
     }

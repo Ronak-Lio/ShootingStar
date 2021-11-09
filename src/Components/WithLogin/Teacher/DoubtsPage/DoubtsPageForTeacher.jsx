@@ -145,7 +145,6 @@ function DoubtsPageForTeacher() {
                   querySnapshot.forEach((doc1) => {
                     // doc.data() is never undefined for query doc snapshots
                     console.log(doc1.id, " => ", doc1.data());
-
                     db.collection("students")
                       .doc(doc.id)
                       .collection("courses")

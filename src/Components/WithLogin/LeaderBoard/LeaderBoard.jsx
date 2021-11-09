@@ -11,7 +11,7 @@ import { useHistory } from "react-router";
 import { useStateValue } from "../../../StateProvider";
 import db from "../../../firebase";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import Button from "@restart/ui/esm/Button";
+import Button from '@mui/material/Button';
 import { Stack } from "react-bootstrap";
 import HeaderTeacher from '../Teacher/HeaderTeacher/HeaderTeacher' 
 
@@ -131,7 +131,7 @@ const addInLeaderBoard=()=>{
             <div className="Add_In_Leaderboard" >
               <AddRoundedIcon onClick={()=>setAddName(!addName)}/>
             </div>
-          <LeaderBoardNumber name={"Vidhi Sharma"} />
+          <LeaderBoardNumber name={"Nishant Mainwal"} />
           </div>
          <div className="scroll">
          Scroll down to see more
