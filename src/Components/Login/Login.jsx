@@ -61,7 +61,7 @@ function Login() {
             email : auth.user?.email,
             name : "Ronak"
           })
-          history.push("/AssignmentsPage");
+          history.push("/main");
         }
       })
       .catch((error) => alert(error.message));

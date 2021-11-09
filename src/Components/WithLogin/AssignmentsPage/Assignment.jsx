@@ -1,25 +1,82 @@
-import React from 'react'
+import React  from 'react'
 import styled from "styled-components"
 import {useStateValue} from  "../../../StateProvider"
 import {actionTypes} from "../../../reducer"
 
-function Assignment() {
+function Assignment({name , description , date , status , assignmentUrl , assignmentUploadedName}) {
     const[{openAsignmentPopup} , dispatch] = useStateValue();
     const open_assignment_details = (e) => {
       e.preventDefault();
       dispatch({
           type : actionTypes.OPEN_ASSIGNMENT_POPUP,
           openAsignmentPopup : true,
-      })
+      });
+      if(assignmentUrl){
+        dispatch({
+            type : actionTypes.SET_ASSIGNMENT_STUDENT_DETAILS,
+            assignmentStudentDetails : {
+                name : name,
+                description : description,
+                date : date,
+                assignmentUrl : assignmentUrl,
+                assignmentUploadedName : assignmentUploadedName,
+            }
+        })
+    }else{
+        dispatch({
+            type : actionTypes.SET_ASSIGNMENT_STUDENT_DETAILS,
+            assignmentStudentDetails : {
+                name : name,
+                description : description,
+                date : date,
+            }
+        })
+    }
+
+    };
+
+    const open_submitted_assignment_details = (e) => {
+        e.preventDefault();
+        dispatch({
+            type : actionTypes.OPEN_VIEW_ASSIGNMENT_POPUP,
+            openViewAssignmentPopup : true,
+        });
+        if(assignmentUrl){
+            dispatch({
+                type : actionTypes.SET_ASSIGNMENT_STUDENT_DETAILS,
+                assignmentStudentDetails : {
+                    name : name,
+                    description : description,
+                    date : date,
+                    assignmentUrl : assignmentUrl,
+                    assignmentUploadedName : assignmentUploadedName,
+                }
+            })
+        }else{
+            dispatch({
+                type : actionTypes.SET_ASSIGNMENT_STUDENT_DETAILS,
+                assignmentStudentDetails : {
+                    name : name,
+                    description : description,
+                    date : date,
+                }
+            })
+        }
     }
      return (
         <div className = 'assignment'>
          <Container>
-           <p className="assignment_title">Assignment 1</p>
-            <p className="assignment_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud...</p>
-            <p className="asssignment_due_date">Due date: 13/12/2020</p>
+           <p className="assignment_title">{name}</p>
+            <p className="assignment_description">
+            {description?.length <= 70 ? <>{description}</> : <>{description?.slice(0, 70)}...</>}
+            </p>
+            <p className="asssignment_due_date">Due date: {date}</p>
             <div className="submit_button">
-                <button onClick = {open_assignment_details}>Submit</button>
+                {status === "submitted"?(
+                    <button onClick = {open_submitted_assignment_details}>View</button>
+                ):(
+                    <button onClick = {open_assignment_details}>Submit</button>
+                )}
             </div>
          </Container>  
         </div>
@@ -42,6 +99,7 @@ const Container = styled.div`
   .assignment_description {
       font-size : 12px;
       margin-bottom : 15px;
+      flex : 1;
   }
 
   .assignment_title{

@@ -1,19 +1,44 @@
-import React from "react";
+import React , {useState ,  useEffect} from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import { actionTypes } from "../../../reducer";
+import {useHistory} from "react-router-dom"
 
 function AssignmentPopup() {
-  const [{ openAsignmentPopup }, dispatch] = useStateValue();
+  const [{ openAsignmentPopup , assignmentStudentDetails}, dispatch] = useStateValue();
+  const history = useHistory();
+
+  useEffect(() => {
+     console.log(assignmentStudentDetails)
+  } , [assignmentStudentDetails])
 
   const close_assignment_details = () => {
     dispatch({
       type: actionTypes.OPEN_ASSIGNMENT_POPUP,
       openAsignmentPopup: false,
     });
+    dispatch({
+      type : actionTypes.SET_ASSIGNMENT_STUDENT_DETAILS,
+      assignmentStudentDetails : []
+  })
   };
+
+  const view_pdf = (e) => {
+    e.preventDefault();
+    history.push("/viewPdf");
+    dispatch({
+      type : actionTypes.SET_VIEW_PDF,
+      viewPdf : true
+    });
+    dispatch({
+      type : actionTypes.SET_PDF_URL,
+      pdfUrl : assignmentStudentDetails?.assignmentUrl
+    })
+  }
+
+
   return (
     <>
       {openAsignmentPopup === true && (
@@ -25,23 +50,18 @@ function AssignmentPopup() {
                 onClick={close_assignment_details}
               />
             </div>
-            <p className="assignment_details_title">Assignment 1</p>
+            <p className="assignment_details_title">{assignmentStudentDetails?.name}</p>
             <p className="assignment_details_description">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
+              {assignmentStudentDetails?.description}
             </p>
+           {assignmentStudentDetails?.assignmentUrl && (
+              <div className="assignment_attatched"  onClick = {view_pdf}>
+                <p>{assignmentStudentDetails?.assignmentUploadedName}</p>
+            </div>
+           )}
             <div className="attach_assignment">
               <AttachFileIcon className="attach_file_icon" />
-              <p>Attatch file</p>
-            </div>
-            <div className="assignment_attatched">Ronak.pdf</div>
-            <div className="assignment_submit">
-              <button>Submit</button>
+              <p onClick = { e => history.push("/submitAssignment")}>Attatch file</p>
             </div>
           </div>
         </Container>
@@ -95,7 +115,8 @@ const Container = styled.div`
   .assignment_details_description {
     font-size: 13px;
     padding: 10px;
-    margin-bottom: 5px;
+    margin-left: 15px;
+    margin-bottom : 0px;
   }
 
   .attach_assignment {
@@ -125,6 +146,24 @@ const Container = styled.div`
     padding-left: 15px;
     width: 90%;
     border-radius: 10px;
+    margin-bottom: 10px;
+
+    a{
+      text-decoration: none;
+      color : black;
+       
+    }
+
+    p{
+      max-width : 100%;
+      overflow-x : hidden;
+      margin-bottom : 0px;
+    }
+
+    &:hover {
+      background-color : #e2e0e0;
+      cursor: pointer;
+    }
   }
 
   .assignment_submit {
