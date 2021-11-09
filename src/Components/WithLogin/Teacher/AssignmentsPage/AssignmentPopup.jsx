@@ -1,20 +1,63 @@
-import React from "react";
+import React , {useState, useEffect} from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../../StateProvider";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import { actionTypes } from "../../../../reducer";
 import StudentAssignmentStatus from "./StudentAssignmentStatus";
+import db , {storage} from "../../../../firebase"
 
 function AssignmentPopup() {
-  const [{ openAssignmentPopupForTeacher }, dispatch] = useStateValue();
+  const [{ openAssignmentPopupForTeacher , assignmentTeacherDetails , teacherSubjectId , teacherCourseId , user }, dispatch] = useStateValue();
+  const[answers , setAnswers] = useState([]);
 
+
+  useEffect(() => {
+    if(user && teacherCourseId && teacherSubjectId && assignmentTeacherDetails?.name){
+    console.log(assignmentTeacherDetails) 
+    db.collection("Courses")
+    .doc(teacherCourseId)
+    .collection("Subjects")
+    .doc(teacherSubjectId)
+    .collection("assignments")
+    .where("name", "==", assignmentTeacherDetails?.name)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        db.collection("Courses")
+          .doc(teacherCourseId)
+          .collection("Subjects")
+          .doc(teacherSubjectId)
+          .collection("assignments")
+          .doc(doc.id)
+          .collection("answers")
+          .onSnapshot((snapshot) => 
+           setAnswers(
+            snapshot.docs.map((doc) => ({
+              id : doc.id,
+              data: doc.data(),
+            }))
+           )
+          )
+      });
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+    });
+    }
+  } , [assignmentTeacherDetails , answers.length])
   const close_assignment_details = (e) => {
     e.preventDefault();
     dispatch({
       type: actionTypes.OPEN_ASSIGNMENT_POPUP_FOR_TEACHER,
       openAsignmentPopupForTeacher: false,
     });
+    dispatch({
+      type : actionTypes.SET_ASSIGNMENT_TEACHER_DETAILS,
+      assignmentTeacherDetails : []
+  })
   };
   return (
     <>
@@ -22,7 +65,7 @@ function AssignmentPopup() {
         <Container>
           <div className="assignment_details">
             <div className="assignment_details_close">
-              <p>Assignment 1</p>
+              <p>{assignmentTeacherDetails?.name}</p>
               <CloseIcon
                 className="assignment_details_close_icon"
                 onClick={close_assignment_details}
@@ -30,22 +73,21 @@ function AssignmentPopup() {
             </div>
             <div className="assignment_details_details">
               <div className="assignment_given_details">
-              <div className = "assignment_description"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-              <div className="assignment_attached">
-                  Ronak.pdf
+              <div className = "assignment_description">
+                {assignmentTeacherDetails?.description}
               </div>
+             {assignmentTeacherDetails?.assignmentUrl && (
+                <div className="assignment_attatched">
+                <a href = {assignmentTeacherDetails?.assignmentUrl}>
+                  {assignmentTeacherDetails?.assignmentUploadedName}
+                </a>
+              </div>
+             )}
               </div>
               <div className="students_assignment_report">
-                <StudentAssignmentStatus/>
-                <StudentAssignmentStatus/>
-                <StudentAssignmentStatus/>
-                <StudentAssignmentStatus/>
+               {answers.map((answer) => 
+                <StudentAssignmentStatus name  = {answer.data.name} answerUrl = {answer.data.answerUrl} fileName = {answer.data.fileName} assignmentName = {assignmentTeacherDetails?.name}/>
+               )}
               </div>
             </div>
           </div>
@@ -119,6 +161,25 @@ const Container = styled.div`
     border-radius: 10px;
     margin-bottom : 10px;
   }
+  }
+
+  .assignment_attatched {
+    background-color: lightgray;
+    padding: 7px;
+    padding-left: 15px;
+    width: 90%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+
+    a{
+      text-decoration: none;
+      color : black;
+       
+    }
+
+    &:hover {
+      background-color : #e2e0e0;
+    }
   }
 
   .students_assignment_report{

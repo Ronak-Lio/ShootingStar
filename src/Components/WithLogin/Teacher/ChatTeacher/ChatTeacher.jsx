@@ -77,7 +77,6 @@ function ChatTeacher() {
         });
     }
   };
-
   // all message
   useEffect(() => {
     if (teacherSubjectId && teacherCourseId) {

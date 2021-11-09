@@ -18,10 +18,7 @@ function Header() {
 
   const OpenSignInPopup = (e) => {
     e.preventDefault();
-    dispatch({
-      type: actionTypes.OPEN_SIGNINPOPUP,
-      openSignInPopup: true,
-    });
+    history.push("/signIn");
   };
   return (
     <div className="header">

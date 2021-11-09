@@ -16,6 +16,10 @@ import HeaderMain from "../Header/HeaderMain";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import db from "../../../firebase";
 import firebase from "firebase";
+import ImageIcon from "@mui/icons-material/Image";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
+import UploadPdf from "./UploadPdf"
 
 function DoubtsPage() {
   const [
@@ -26,48 +30,75 @@ function DoubtsPage() {
       user,
       userCourseId,
       userSubjectId,
-      signInAs, 
-      course_Subject
+      signInAs,
+      course_Subject,
+      sendPdf,
     },
     dispatch,
   ] = useStateValue();
   const history = useHistory();
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
-    if(user && userCourseId && userSubjectId && course_MainID && course_SubjectID){
+    if (
+      user &&
+      userCourseId &&
+      userSubjectId &&
+      course_MainID &&
+      course_SubjectID
+    ) {
       db.collection("students")
-      .doc(user?.uid)
-      .collection("courses")
-      .doc(userCourseId)
-      .collection("subjects")
-      .doc(userSubjectId)
-      .collection("messagesToTeacher")
-      .orderBy("timestamp", "asc")
-      .onSnapshot((snapshot) =>
-        setMessages(snapshot.docs.map((doc) => doc.data()))
-      );
+        .doc(user?.uid)
+        .collection("courses")
+        .doc(userCourseId)
+        .collection("subjects")
+        .doc(userSubjectId)
+        .collection("messagesToTeacher")
+        .orderBy("timestamp", "asc")
+        .onSnapshot((snapshot) =>
+          setMessages(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            }))
+          )
+        );
 
-      setInput('');
+      setInput("");
 
-    db.collection("Courses")
-      .doc(course_MainID)
-      .collection("Subjects")
-      .doc(course_SubjectID)
-      .collection("doubtRooms")
-      .onSnapshot((snapshot) =>
-        setRooms(
-          snapshot.docs.map((doc) => ({
-            data: doc.data(),
-          }))
-        )
-      );
+      db.collection("Courses")
+        .doc(course_MainID)
+        .collection("Subjects")
+        .doc(course_SubjectID)
+        .collection("doubtRooms")
+        .onSnapshot((snapshot) =>
+          setRooms(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+            }))
+          )
+        );
     }
 
-    console.log(messages)
-  }, [user, userCourseId , userSubjectId ,course_MainID ,course_SubjectID , messages.length]);
+    console.log(messages);
+  }, [
+    user,
+    userCourseId,
+    userSubjectId,
+    course_MainID,
+    course_SubjectID,
+    messages.length,
+  ]);
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_SEND_PDF,
+      sendPdf: false,
+    });
+  }, []);
+
 
   const goToNoticesPage = (e) => {
     e.preventDefault();
@@ -96,103 +127,111 @@ function DoubtsPage() {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    console.log(signInAs)
+    console.log(signInAs);
     console.log(input);
-   if(signInAs.name && userCourseId && userSubjectId && input){
-    console.log("User Course Id is" , userCourseId);
-    console.log("User Subject Id is" , userSubjectId);
-    db.collection("students")
-      .doc(user?.uid)
-      .collection("courses")
-      .doc(userCourseId)
-      .collection("subjects")
-      .doc(userSubjectId)
-      .collection("messagesToTeacher")
-      .add({
-        name: signInAs.name,
-        message: input,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-    let x = 0;
-    for (let i = 0; i < rooms.length; i++) {
-      if (rooms[i].data.name === signInAs.name) {
-        x = 1;
-      }
-    }
-    if (x === 0) {
-      db.collection("Courses")
-        .doc(course_MainID)
-        .collection("Subjects")
-        .doc(course_SubjectID)
-        .collection("doubtRooms")
+    if (signInAs.name && userCourseId && userSubjectId && input) {
+      console.log("User Course Id is", userCourseId);
+      console.log("User Subject Id is", userSubjectId);
+      db.collection("students")
+        .doc(user?.uid)
+        .collection("courses")
+        .doc(userCourseId)
+        .collection("subjects")
+        .doc(userSubjectId)
+        .collection("messagesToTeacher")
         .add({
           name: signInAs.name,
-        })
-        .then(() => {
-          db.collection("Courses")
-            .doc(course_MainID)
-            .collection("Subjects")
-            .doc(course_SubjectID)
-            .collection("doubtRooms")
-            .where("name", "==", signInAs.name)
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
+          message: input,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+      let x = 0;
+      for (let i = 0; i < rooms.length; i++) {
+        if (rooms[i].data.name === signInAs.name) {
+          x = 1;
+        }
+      }
+      if (x === 0) {
+        db.collection("Courses")
+          .doc(course_MainID)
+          .collection("Subjects")
+          .doc(course_SubjectID)
+          .collection("doubtRooms")
+          .add({
+            name: signInAs.name,
+          })
+          .then(() => {
+            db.collection("Courses")
+              .doc(course_MainID)
+              .collection("Subjects")
+              .doc(course_SubjectID)
+              .collection("doubtRooms")
+              .where("name", "==", signInAs.name)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
 
-                db.collection("Courses")
-                  .doc(course_MainID)
-                  .collection("Subjects")
-                  .doc(course_SubjectID)
-                  .collection("doubtRooms")
-                  .doc(doc.id)
-                  .collection("messages")
-                  .add({
-                    name: signInAs.name,
-                    message: input,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                  });
+                  db.collection("Courses")
+                    .doc(course_MainID)
+                    .collection("Subjects")
+                    .doc(course_SubjectID)
+                    .collection("doubtRooms")
+                    .doc(doc.id)
+                    .collection("messages")
+                    .add({
+                      name: signInAs.name,
+                      message: input,
+                      timestamp:
+                        firebase.firestore.FieldValue.serverTimestamp(),
+                    });
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
               });
-            })
-            .catch((error) => {
-              console.log("Error getting documents: ", error);
-            });
-        });
-    }
-    else{
-      db.collection("Courses")
-      .doc(course_MainID)
-      .collection("Subjects")
-      .doc(course_SubjectID)
-      .collection("doubtRooms")
-      .where("name", "==", signInAs.name)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
+          });
+      } else {
+        db.collection("Courses")
+          .doc(course_MainID)
+          .collection("Subjects")
+          .doc(course_SubjectID)
+          .collection("doubtRooms")
+          .where("name", "==", signInAs.name)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+              console.log(doc.id, " => ", doc.data());
 
-          db.collection("Courses")
-            .doc(course_MainID)
-            .collection("Subjects")
-            .doc(course_SubjectID)
-            .collection("doubtRooms")
-            .doc(doc.id)
-            .collection("messages")
-            .add({
-              name: signInAs.name,
-              message: input,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              db.collection("Courses")
+                .doc(course_MainID)
+                .collection("Subjects")
+                .doc(course_SubjectID)
+                .collection("doubtRooms")
+                .doc(doc.id)
+                .collection("messages")
+                .add({
+                  name: signInAs.name,
+                  message: input,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
             });
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+      }
+      setInput("");
     }
-    setInput('');
-  }
+  };
+
+  const open_send_Pdf_box = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: actionTypes.SET_SEND_PDF,
+      sendPdf: true,
+    });
   };
 
 
@@ -234,30 +273,49 @@ function DoubtsPage() {
                 Ask a doubt
               </button>
             </div>
-            {openDoubtReplies === false ? (
+            {sendPdf === false ? (
               <div className="doubtBox_doubts">
-                {messages.map((message) => 
-                  <Doubt name = {message.name} message = {message.message} timestamp = {message.timestamp}/>
-                )}
+                {messages.map((message) => (
+                  <Doubt
+                    name={message.data.name}
+                    message={message.data.message}
+                    timestamp={message.data.timestamp}
+                    type={message.data.type}
+                    fileName={message.data.fileName}
+                    fileUrl={message.data.fileUrl}
+                    id={message.id}
+                  />
+                ))}
               </div>
             ) : (
-              <DoubtReplies />
+              <UploadPdf/>
             )}
-            <div className="doubtBox_footer">
-              <div className="send_Message_box">
-                <input
-                  type="text"
-                  placeholder="Type a message "
-                  value={input}
-                  onChange={e=>setInput(e.target.value)}
-                />
-                <div className="icons">
-                  <AttachFileIcon className="attach_file_icon icon" />
-                  <InsertEmoticonIcon className="emoji_icon icon" />
-                  <SendIcon className="send_icon icon" onClick={sendMessage} />
+            {sendPdf === false && (
+              <div className="doubtBox_footer">
+                <div className="send_Message_box">
+                  <input
+                    type="text"
+                    placeholder="Type a message "
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                  />
+                  <div className="doutBox_footer_icons">
+                    <div>
+                      <ImageIcon className="footer_icon" />
+                      <VideocamIcon className="footer_icon" />
+                      <InsertDriveFileRoundedIcon
+                        className="footer_icon"
+                        onClick={open_send_Pdf_box}
+                      />
+                    </div>
+                    <SendIcon
+                      className="footer_icon footer_send_icon"
+                      onClick={sendMessage}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </DoubtBox>
           <div className="notices">
             <Notices />
@@ -307,7 +365,7 @@ const Container = styled.div`
 
   @media (max-width: 500px) {
     padding: 0px;
-    height : 100vh;
+    height: 100vh;
   }
 `;
 
@@ -332,11 +390,11 @@ const DoubtBox = styled.div`
       text-transform: uppercase;
     }
     border-bottom: 1px solid lightgray;
-  } 
+  }
 
-   .arrowBack_icon{
-     display : none;
-   }
+  .arrowBack_icon {
+    display: none;
+  }
 
   .doubtBox_doubts {
     /* background-color: #eeeded; */
@@ -345,6 +403,7 @@ const DoubtBox = styled.div`
     flex-direction: column;
     overflow-y: scroll;
     background-color: #5094ee;
+    padding-bottom : 10px;
   }
 
   .doubtBox_footer {
@@ -354,6 +413,27 @@ const DoubtBox = styled.div`
     padding: 5px;
     display: flex;
     flex-direction: row;
+  }
+
+  .doutBox_footer_icons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 8px;
+  }
+
+  .footer_icon {
+    font-size: 15px;
+    margin-right: 3px;
+
+    &:hover {
+      cursor: pointer;
+      color: #6d6969;
+    }
+  }
+
+  .footer_send_icon {
+    font-size: 18px;
   }
 
   .send_Message_box {

@@ -2,22 +2,31 @@ import React from 'react'
 import styled from "styled-components"
 import {useStateValue} from  "../../../../StateProvider"
 import {actionTypes} from "../../../../reducer"
+import {useHistory} from "react-router-dom"
 
-function Assignment() {
+function Assignment({name , description , date ,  assignmentUrl , assignmentUploadedName , id}) {
     const[{openAsignmentPopupForTeacher} , dispatch] = useStateValue();
+    const history = useHistory();
     const open_assignment_details = (e) => {
         e.preventDefault();
+        console.log("Id is" , id)
+        history.push(`/ViewAssignment/${id}`);
         dispatch({
-            type : actionTypes.OPEN_ASSIGNMENT_POPUP_FOR_TEACHER,
-            openAssignmentPopupForTeacher : true,
+            type : actionTypes.SET_ASSIGNMENT_TEACHER_DETAILS,
+            assignmentTeacherDetails : {
+                name : name,
+                description : description,
+                assignmentUrl : assignmentUrl,
+                id : id
+            }
         })
       }
     return (
        <>
           <Container>
-           <p className="assignment_title">Assignment 1</p>
-            <p className="assignment_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud...</p>
-            <p className="asssignment_due_date">Due date: 13/12/2020</p>
+           <p className="assignment_title">{name}</p>
+            <p className="assignment_description"> {description?.length <= 70 ? <>{description}</> : <>{description?.slice(0, 70)}...</>}</p>
+            <p className="asssignment_due_date">Due date: {date}</p>
             <div className="submit_button">
                 <button onClick = {open_assignment_details}>View</button>
             </div>
@@ -42,7 +51,8 @@ const Container = styled.div`
   .assignment_description {
       font-size : 12px;
       margin-bottom : 15px;
-  }
+      flex : 1;
+    }
 
   .assignment_title{
       margin-bottom : 5px;
