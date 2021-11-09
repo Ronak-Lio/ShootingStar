@@ -1,0 +1,4 @@
+.showCourseSubject{
+    display: flex;
+    flex-direction: column;
+}

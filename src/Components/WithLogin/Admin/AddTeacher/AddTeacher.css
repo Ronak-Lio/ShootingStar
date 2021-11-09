@@ -1,0 +1,64 @@
+.addTeacher{
+    display:flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.addTeacher__logo{
+    font-weight: 600;
+    font-size: larger;
+    padding-bottom: 6px;
+}
+.addTeacherIn{
+    display:flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    height: fit-content;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid lightgray;
+    padding: 22px;
+}
+.addTeacherHeader{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.addTeacherHeader>input{
+    display: flex;
+    width: 100%;
+    margin: 12px 0 6px 0;
+    border: none;
+    outline: none;
+    border: 1px solid rgb(173, 173, 173);
+    border-radius: 4px;
+    height: 34px;
+    padding: 0 6px 0 6px;
+}
+.addTeacherBody{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 12px 0 0 0;
+}
+.addTeacherBody>Button{
+    width: 100%;
+}
+@media(max-width:678px){
+    .addTeacher{
+        display:flex;
+        flex-direction: column;
+    }
+    .addTeacherHeader{
+        display: flex;
+        flex-direction: column;
+    }
+    .addTeacherHeader{
+        display: flex;
+        flex-direction: column;
+    }
+}

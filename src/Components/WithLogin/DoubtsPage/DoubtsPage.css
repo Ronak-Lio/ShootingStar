@@ -1,0 +1,91 @@
+.doubtsPage {
+  width: 100vw;
+  height: 100vh;
+}
+
+.upcoming_class {
+  display: none;
+}
+
+.notice_button_for_mobile {
+  display: none;
+}
+
+.ask_doubt_button {
+  margin-right: 10px;
+  background-color: white;
+  border-radius: 20px;
+  height: 35px;
+}
+
+.ask_doubt_button:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .upcoming_class {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 10px;
+  }
+  .notice_button {
+    margin-right: 20px;
+    background-color: white;
+    border-radius: 20px;
+    height: 35px;
+  }
+  .notice_button:hover {
+    background-color: lightgray;
+    cursor: pointer;
+  }
+
+  .notice_button {
+    margin-right: 0px !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .upcoming_class {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    padding-bottom: 0px !important;
+  }
+  .upcoming_class > p {
+    text-align: center;
+  }
+  .notice_button_for_mobile {
+    width: 100%;
+    border-radius: 5px;
+    background-color: rgb(235, 232, 232);
+    display: flex;
+    justify-content: center;
+  }
+  .notice_button {
+    display: none;
+  }
+
+  .dbPage_header {
+    display: none;
+  }
+
+  .upcoming_class {
+    display: none;
+  }
+
+  .doubtBox_header_name{
+      display: flex;
+  }
+
+  .doubtBox_header_name > p{
+      margin-left: 10px;
+      font-size: 19px !important;
+  }
+
+  .arrowBack_icon{
+    margin-top :3px;
+  }
+}

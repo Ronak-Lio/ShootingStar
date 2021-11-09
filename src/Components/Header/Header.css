@@ -1,0 +1,114 @@
+.header{
+  padding: 10px;
+  display: flex;
+  width : 100vw;
+ justify-content: space-between;
+ border-bottom : 1px solid lightgray
+}
+
+.logo{
+    height : 50px;
+}
+
+.mobile_logo{
+    display:  none;
+}
+
+.sidebar_icon{
+    display: none !important;
+}
+
+.links{
+    display: flex;
+    width : 60%;
+    justify-content: space-around;   
+}
+
+.links > a{
+    text-decoration:none;
+    color : black;
+}
+
+.links > a:hover{
+    color : #0d6efd;
+}
+
+.link_para{
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-size:  20px;
+}
+
+.header > button{
+    height: 40px;
+    width : 80px;
+    background-color : white;
+    border-radius : 20px;
+    margin-top : 8px;
+    margin-right:20px;
+}
+
+.header > button:hover{
+    background-color : lightgray;
+}
+
+.test_names{
+    display : flex;
+    flex-direction : column;
+}
+/* .test_names > p:hover{
+  cursor : pointer;
+  color : blue;
+} */
+
+.names > a{
+    text-decoration : none;
+    color : black;
+}
+
+.names > a > p{
+    font-size : 17px;
+}
+
+.test_names > p:hover > .names{
+    display: flex;
+}
+
+@media(max-width:767px){
+    .header{
+        padding: 5px;
+    }
+    .links{
+        display: none;
+    }
+
+    .logo{
+        display: none;
+    }
+
+    .mobile_logo{
+        display: flex;
+        height: 40px;
+    }
+
+    .sidebar_icon{
+        display: flex !important;
+        font-size: 37px !important;
+        margin-top: 5px;
+        margin-right : 0px;
+        color : rgb(8, 8, 99);
+    }
+
+    .header > button{
+        height: 35px;
+        width : 70px;
+        background-color : white;
+        border-radius : 20px;
+        margin-top : 3px;
+        margin-right:10px;
+    }
+
+    .icons{
+        display: flex;
+    }
+}

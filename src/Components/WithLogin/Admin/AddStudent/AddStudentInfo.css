@@ -1,0 +1,8 @@
+.showCourseSubject{
+    display: flex;
+    flex-direction: column;
+}
+.Selectcourse{
+    font-weight: 600;
+    color: rgb(28, 25, 187);
+}

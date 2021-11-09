@@ -1,0 +1,36 @@
+.LeaderBoardNumber{
+    display: flex;
+    flex-direction: column;
+    height: 9vh !important;
+    width: 100%;
+    /* padding: 12px; */
+    /* background-color: black; */
+}
+.LeadearBoardNumber__First{
+    display: flex;
+    flex: 0.5;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px;
+}
+.LeaderBoardNumber__Sec{
+    flex: 0.5;
+}
+.Serial__Num{
+    font-weight: 500;
+}
+.leader__Fotu{
+    display: flex;
+    height: 3vh;
+    width: 3vh;
+    border-radius: 50%;
+    background-color: lightgray;
+    margin: 0 12px 0 12px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+.leader__Name{
+    font-weight: 500;
+    color: rgb(51, 46, 46);
+}
