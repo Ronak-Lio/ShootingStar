@@ -2,34 +2,46 @@ import React from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
-import {useHistory} from "react-router-dom"
-function Doubt({ name, message, timestamp, type, fileName, fileUrl ,id}) {
+import { useHistory } from "react-router-dom";
+function Doubt({message}) {
   const history = useHistory();
-  const[{} , dispatch] = useStateValue();
+  const [{}, dispatch] = useStateValue();
   const view_pdf = (e) => {
     history.push("/viewPdf");
     dispatch({
-      type : actionTypes.SET_VIEW_PDF,
-      viewPdf : true
+      type: actionTypes.SET_VIEW_PDF,
+      viewPdf: true,
     });
     dispatch({
-      type : actionTypes.SET_PDF_URL,
-      pdfUrl : fileUrl
-    })
-  }
+      type: actionTypes.SET_PDF_URL,
+      pdfUrl: message?.data?.fileUrl,
+    });
+  };
   return (
     <>
       <Container>
         <div className="doubt">
           <div className="doubt_name">
-            <p>{name}</p>
+            <p>{message?.data?.name}</p>
           </div>
           <div className="doubt_message">
-            {type !== "pdf" && <p>{message}</p>}
-            {type === "pdf" && (
-              <p className = "pdf_link" onClick = {view_pdf}>
-                {fileName}
+            {message?.data?.type === "text" && <p>{message?.data?.message}</p>}
+            {message?.data?.type === "pdf" && (
+              <p className="pdf_link" onClick={view_pdf}>
+                {message?.data?.fileName}
               </p>
+            )}
+            {message?.data?.type === "image" && (
+              <>
+                {message?.data?.message?(
+                   <img className = "image_with_message"src= {message?.data?.imageURL} alt=""/>
+                ):(
+                  <img src= {message?.data?.imageURL} className="image_without_message" alt=""/>
+                )}
+               {message?.data?.message && (
+                 <p>{message?.data?.message}</p>
+               )}
+              </>
             )}
           </div>
         </div>
@@ -62,11 +74,24 @@ const Container = styled.div`
       padding-bottom: 4px !important;
     }
 
-    .pdf_link{
-      color : #0084ff;
+    .image_with_message{
+      height: 200px;
+      object-fit: contain;
+      border-top-right-radius : 10px;
+      border-top-left-radius : 10px;
+    }
+
+    .image_without_message{
+      height: 200px;
+      object-fit: contain;
+      border-radius : 10px;
+    }
+
+    .pdf_link {
+      color: #0084ff;
       &:hover {
-        cursor : pointer;
-        color : black;
+        cursor: pointer;
+        color: black;
       }
     }
   }

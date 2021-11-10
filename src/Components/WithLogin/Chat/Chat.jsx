@@ -437,7 +437,7 @@ function Chat() {
             {/* <form> */}
             <div className="doubtBox_footer">
               <div className="send_Message_box">
-                <inpute
+                <input
                   type="text"
                   placeholder="Type a message..."
                   value={input}

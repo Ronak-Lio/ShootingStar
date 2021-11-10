@@ -302,7 +302,7 @@ function ChatTeacher() {
               </div>}
             <div className="doubtBox_footer">
               <div className="send_Message_box">
-                <input placeholder={'Caption'} value={caption} type="text" onChange={e => setCaption(e.target.value)} />
+                 <input placeholder={'Caption'} value={caption} type="text" onChange={e => setCaption(e.target.value)} />
                 <div className="iconsTeacher">
                   <SendIcon className="icon" onClick={sendDoc} />
                 </div>
