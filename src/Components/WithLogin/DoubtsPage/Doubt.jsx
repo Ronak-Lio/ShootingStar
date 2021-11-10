@@ -1,11 +1,17 @@
-import React from "react";
+import React , {useState, useEffect} from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import { useHistory } from "react-router-dom";
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import ReactPlayer from 'react-player';
+import { Player } from 'video-react';
+
+
 function Doubt({message}) {
   const history = useHistory();
   const [{}, dispatch] = useStateValue();
+  const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
   const view_pdf = (e) => {
     history.push("/viewPdf");
     dispatch({
@@ -19,6 +25,22 @@ function Doubt({message}) {
   };
   return (
     <>
+    {popupshowImageFUll && (
+                <div className="popupChatTeacher">
+                    <div
+                        className="popUpTOP"
+                        onClick={() => setPopupshowImageFUll(!popupshowImageFUll)}
+                    >
+                        <div className="popUpTOP__first">
+                            <h6>{message.data?.name}</h6>
+                        </div>
+                        <ClearRoundedIcon className="backIconChat" />
+                    </div>
+                    <div className="popupbodyImage_Img">
+                        <img src={message.data?.imageURL} alt="" className="popupbody_Image_img" />
+                    </div>
+                </div>
+            )}
       <Container>
         <div className="doubt">
           <div className="doubt_name">
@@ -34,9 +56,17 @@ function Doubt({message}) {
             {message?.data?.type === "image" && (
               <>
                 {message?.data?.message?(
-                   <img className = "image_with_message"src= {message?.data?.imageURL} alt=""/>
+                   <img className = "image_with_message"src= {message?.data?.imageURL} 
+                   onClick={() => {
+                    setPopupshowImageFUll(!popupshowImageFUll)
+                }}  
+                   alt=""/>
                 ):(
-                  <img src= {message?.data?.imageURL} className="image_without_message" alt=""/>
+                  <img src= {message?.data?.imageURL} className="image_without_message" alt=""
+                  onClick={() => {
+                    setPopupshowImageFUll(!popupshowImageFUll)
+                }}  
+                  />
                 )}
                {message?.data?.message && (
                  <p>{message?.data?.message}</p>
@@ -79,12 +109,19 @@ const Container = styled.div`
       object-fit: contain;
       border-top-right-radius : 10px;
       border-top-left-radius : 10px;
+      &:hover {
+        cursor : pointer;
+      }
     }
 
     .image_without_message{
       height: 200px;
       object-fit: contain;
       border-radius : 10px;
+
+      &:hover {
+        cursor : pointer;
+      }
     }
 
     .pdf_link {
