@@ -17,7 +17,11 @@ import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
 import UploadPdf from "./UploadPdf";
-
+import { v4 as uuid } from "uuid";
+import { Player } from "video-react";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import { storage } from "../../../../firebase";
 
 function DoubtsPageForTeacher() {
   const [
@@ -39,6 +43,20 @@ function DoubtsPageForTeacher() {
   const [rooms, setRooms] = useState([]);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [caption, setCaption] = useState("");
+  const [popupshowImage, setPopupshowImage] = useState(false);
+  const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null);
+  const [doc, setDoc] = useState([]);
+  const [showTypeFile, setShowTypeFile] = useState(false);
+  const [finalMessages, setFinalMessages] = useState([]);
+  const [z, setZ] = useState();
+  const [limit, setLimit] = useState(20);
+  const [length, setLength] = useState();
+
+  var today = new Date();
+  var datetime = today.toLocaleString();
 
   useEffect(() => {
     if (user && teacherCourseId && teacherSubjectId) {
@@ -69,6 +87,38 @@ function DoubtsPageForTeacher() {
   ]);
 
   useEffect(() => {
+    if (user && teacherCourseId && teacherSubjectId) {
+      db.collection("Courses")
+        .doc(teacherCourseId)
+        .collection("Subjects")
+        .doc(teacherSubjectId)
+        .collection("doubtRooms")
+        .where("name", "==", chatName)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+
+            db.collection("Courses")
+              .doc(teacherCourseId)
+              .collection("Subjects")
+              .doc(teacherSubjectId)
+              .collection("doubtRooms")
+              .doc(doc.id)
+              .onSnapshot((snapshot) => {
+                setZ(snapshot.data().messagesLength + 1);
+                setLength(snapshot.data().messagesLength);
+              });
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    }
+  }, [user, userCourseId, userSubjectId]);
+
+  useEffect(() => {
     if (user && teacherCourseId && teacherSubjectId && chatName) {
       db.collection("Courses")
         .doc(teacherCourseId)
@@ -89,7 +139,8 @@ function DoubtsPageForTeacher() {
               .collection("doubtRooms")
               .doc(doc.id)
               .collection("messages")
-              .orderBy("timestamp", "asc")
+              .orderBy("timestamp", "desc")
+              .limit(20)
               .onSnapshot((snapshot) =>
                 setMessages(
                   snapshot.docs.map((doc) => ({
@@ -114,6 +165,10 @@ function DoubtsPageForTeacher() {
   }, [chatName]);
 
   useEffect(() => {
+    console.log("Length is" ,z)
+  } ,[length , z])
+
+  useEffect(() => {
     dispatch({
       type: actionTypes.SET_CHATNAME,
       chatName: rooms[0]?.data?.name,
@@ -122,97 +177,429 @@ function DoubtsPageForTeacher() {
 
   useEffect(() => {}, [chatName]);
 
+  const selectImage = (e) => {
+    e.preventDefault();
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
+      setPopupshowImage(!popupshowImage);
+      setShowTypeFile(!showTypeFile);
+    }
+  };
+
+  const selectVideo = (e) => {
+    setLoading(true);
+    e.preventDefault();
+    if (e.target.files[0]) {
+      setVideo(e.target.files[0]);
+      setPopupshowImage(true);
+    }
+    setLoading(false);
+  };
+
   const sendMessage = (e) => {
     e.preventDefault();
     if (input !== "") {
       console.log(signInAs);
       console.log(input);
-      if (chatName && input) {
-        db.collection("students")
-          .where("name", "==", chatName)
-          .get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              // doc.data() is never undefined for query doc snapshots
-              console.log(doc.id, " => ", doc.data());
-              console.log(signInAs);
-              db.collection("students")
-                .doc(doc.id)
-                .collection("courses")
-                .where("name", "==", teacherCourse)
-                .get()
-                .then((querySnapshot) => {
-                  querySnapshot.forEach((doc1) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    console.log(doc1.id, " => ", doc1.data());
-                    db.collection("students")
-                      .doc(doc.id)
-                      .collection("courses")
-                      .doc(doc1.id)
-                      .collection("subjects")
-                      .where("name", "==", teacherSubject)
-                      .get()
-                      .then((querySnapshot) => {
-                        querySnapshot.forEach((doc2) => {
-                          // doc.data() is never undefined for query doc snapshots
-                          console.log(doc2.id, " => ", doc2.data());
-                          console.log("REACHED", doc.id, doc1.id, doc2.id);
+      if (chatName) {
+        if (image) {
+          setLoading(true);
+          const id = uuid();
+          const upload = storage.ref(`doubtImages/${id}`).put(image);
+          upload.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-                          db.collection("students")
-                            .doc(doc.id)
-                            .collection("courses")
-                            .doc(doc1.id)
-                            .collection("subjects")
-                            .doc(doc2.id)
-                            .collection("messagesToTeacher")
-                            .add({
-                              name: signInAs?.name,
-                              message: input,
-                              type: "text",
-                              timestamp:
-                                firebase.firestore.FieldValue.serverTimestamp(),
-                            });
+              console.log(`Progress : ${progress}%`);
+              if (snapshot.state === "RUNNING") {
+                console.log(`Progress : ${progress}%`);
+              }
+            },
+            (error) => console.log(error.code),
+            async () => {
+              const url = await upload.snapshot.ref.getDownloadURL();
+              if (url) {
+                db.collection("students")
+                  .where("name", "==", chatName)
+                  .get()
+                  .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      console.log(doc.id, " => ", doc.data());
+                      console.log(signInAs);
+                      db.collection("students")
+                        .doc(doc.id)
+                        .collection("courses")
+                        .where("name", "==", teacherCourse)
+                        .get()
+                        .then((querySnapshot) => {
+                          querySnapshot.forEach((doc1) => {
+                            // doc.data() is never undefined for query doc snapshots
+                            console.log(doc1.id, " => ", doc1.data());
+                            db.collection("students")
+                              .doc(doc.id)
+                              .collection("courses")
+                              .doc(doc1.id)
+                              .collection("subjects")
+                              .where("name", "==", teacherSubject)
+                              .get()
+                              .then((querySnapshot) => {
+                                querySnapshot.forEach((doc2) => {
+                                  // doc.data() is never undefined for query doc snapshots
+                                  console.log(doc2.id, " => ", doc2.data());
+                                  console.log(
+                                    "REACHED",
+                                    doc.id,
+                                    doc1.id,
+                                    doc2.id
+                                  );
+
+                                  db.collection("students")
+                                    .doc(doc.id)
+                                    .collection("courses")
+                                    .doc(doc1.id)
+                                    .collection("subjects")
+                                    .doc(doc2.id)
+                                    .update({
+                                      doubtMessageslength: z,
+                                    });
+
+                                  db.collection("students")
+                                    .doc(doc.id)
+                                    .collection("courses")
+                                    .doc(doc1.id)
+                                    .collection("subjects")
+                                    .doc(doc2.id)
+                                    .collection("messagesToTeacher")
+                                    .add({
+                                      name: signInAs?.name,
+                                      message: input,
+                                      type: "image",
+                                      timestamp:
+                                        firebase.firestore.FieldValue.serverTimestamp(),
+                                      imageName: id,
+                                      imageOriginalName: image.name,
+                                      imageURL: url,
+                                    });
+                                });
+                              });
+                          });
                         });
-                      });
+                    });
+                  })
+                  .catch((error) => {
+                    console.log("Error getting documents: ", error);
                   });
-                });
-            });
-          })
-          .catch((error) => {
-            console.log("Error getting documents: ", error);
-          });
-        db.collection("Courses")
-          .doc(teacherCourseId)
-          .collection("Subjects")
-          .doc(teacherSubjectId)
-          .collection("doubtRooms")
-          .where("name", "==", chatName)
-          .get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              // doc.data() is never undefined for query doc snapshots
-              console.log(doc.id, " => ", doc.data());
+                db.collection("Courses")
+                  .doc(teacherCourseId)
+                  .collection("Subjects")
+                  .doc(teacherSubjectId)
+                  .collection("doubtRooms")
+                  .where("name", "==", chatName)
+                  .get()
+                  .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      console.log(doc.id, " => ", doc.data());
 
-              db.collection("Courses")
-                .doc(teacherCourseId)
-                .collection("Subjects")
-                .doc(teacherSubjectId)
-                .collection("doubtRooms")
-                .doc(doc.id)
-                .collection("messages")
-                .add({
-                  name: signInAs?.name,
-                  message: input,
-                  type: "text",
-                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                });
-            });
-          })
-          .catch((error) => {
-            console.log("Error getting documents: ", error);
-          });
+                      let y = doc.data().messagesLength;
+                      y++;
 
-        setInput("");
+                      db.collection("Courses")
+                        .doc(teacherCourseId)
+                        .collection("Subjects")
+                        .doc(teacherSubjectId)
+                        .collection("doubtRooms")
+                        .doc(doc.id)
+                        .update({
+                          messagesLength: y,
+                        });
+
+                      db.collection("Courses")
+                        .doc(teacherCourseId)
+                        .collection("Subjects")
+                        .doc(teacherSubjectId)
+                        .collection("doubtRooms")
+                        .doc(doc.id)
+                        .collection("messages")
+                        .add({
+                          name: signInAs?.name,
+                          message: input,
+                          type: "image",
+                          timestamp:
+                            firebase.firestore.FieldValue.serverTimestamp(),
+                          imageName: id,
+                          imageOriginalName: image.name,
+                          imageURL: url,
+                        });
+                    });
+                  })
+                  .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                  });
+                setLoading(false);
+                setPopupshowImage(false);
+                setImage(null);
+              }
+            }
+          );
+        } else if (video) {
+          setLoading(true);
+          const id = uuid();
+          const upload = storage.ref(`doubtVideos/${id}`).put(video);
+          upload.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+              console.log(`Progress : ${progress}%`);
+              if (snapshot.state === "RUNNING") {
+                console.log(`Progress : ${progress}%`);
+              }
+            },
+            (error) => console.log(error.code),
+            async () => {
+              const url = await upload.snapshot.ref.getDownloadURL();
+              if (url) {
+                db.collection("students")
+                  .where("name", "==", chatName)
+                  .get()
+                  .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      console.log(doc.id, " => ", doc.data());
+                      console.log(signInAs);
+                      db.collection("students")
+                        .doc(doc.id)
+                        .collection("courses")
+                        .where("name", "==", teacherCourse)
+                        .get()
+                        .then((querySnapshot) => {
+                          querySnapshot.forEach((doc1) => {
+                            // doc.data() is never undefined for query doc snapshots
+                            console.log(doc1.id, " => ", doc1.data());
+                            db.collection("students")
+                              .doc(doc.id)
+                              .collection("courses")
+                              .doc(doc1.id)
+                              .collection("subjects")
+                              .where("name", "==", teacherSubject)
+                              .get()
+                              .then((querySnapshot) => {
+                                querySnapshot.forEach((doc2) => {
+                                  // doc.data() is never undefined for query doc snapshots
+                                  console.log(doc2.id, " => ", doc2.data());
+                                  console.log(
+                                    "REACHED",
+                                    doc.id,
+                                    doc1.id,
+                                    doc2.id
+                                  );
+
+                                  db.collection("students")
+                                    .doc(doc.id)
+                                    .collection("courses")
+                                    .doc(doc1.id)
+                                    .collection("subjects")
+                                    .doc(doc2.id)
+                                    .update({
+                                      doubtMessageslength: z,
+                                    });
+
+                                  db.collection("students")
+                                    .doc(doc.id)
+                                    .collection("courses")
+                                    .doc(doc1.id)
+                                    .collection("subjects")
+                                    .doc(doc2.id)
+                                    .collection("messagesToTeacher")
+                                    .add({
+                                      name: signInAs?.name,
+                                      videoURL: url,
+                                      message: input,
+                                      timestamp:
+                                        firebase.firestore.FieldValue.serverTimestamp(),
+                                      videoName: id,
+                                      videoOriginalName: video.name,
+                                      type: "video",
+                                      date: datetime,
+                                    });
+                                });
+                              });
+                          });
+                        });
+                    });
+                  })
+                  .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                  });
+                db.collection("Courses")
+                  .doc(teacherCourseId)
+                  .collection("Subjects")
+                  .doc(teacherSubjectId)
+                  .collection("doubtRooms")
+                  .where("name", "==", chatName)
+                  .get()
+                  .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      console.log(doc.id, " => ", doc.data());
+
+                      let y = doc.data().messagesLength;
+                      y++;
+
+                      db.collection("Courses")
+                        .doc(teacherCourseId)
+                        .collection("Subjects")
+                        .doc(teacherSubjectId)
+                        .collection("doubtRooms")
+                        .doc(doc.id)
+                        .update({
+                          messagesLength: y,
+                        });
+
+                      db.collection("Courses")
+                        .doc(teacherCourseId)
+                        .collection("Subjects")
+                        .doc(teacherSubjectId)
+                        .collection("doubtRooms")
+                        .doc(doc.id)
+                        .collection("messages")
+                        .add({
+                          name: signInAs?.name,
+                          videoURL: url,
+                          message: input,
+                          timestamp:
+                            firebase.firestore.FieldValue.serverTimestamp(),
+                          videoName: id,
+                          videoOriginalName: video.name,
+                          type: "video",
+                          date: datetime,
+                        });
+                    });
+                  })
+                  .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                  });
+                setLoading(false);
+                setPopupshowImage(false);
+                setVideo(null);
+              }
+            }
+          );
+        } else {
+          db.collection("students")
+            .where("name", "==", chatName)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                console.log(signInAs);
+                db.collection("students")
+                  .doc(doc.id)
+                  .collection("courses")
+                  .where("name", "==", teacherCourse)
+                  .get()
+                  .then((querySnapshot) => {
+                    querySnapshot.forEach((doc1) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      console.log(doc1.id, " => ", doc1.data());
+                      db.collection("students")
+                        .doc(doc.id)
+                        .collection("courses")
+                        .doc(doc1.id)
+                        .collection("subjects")
+                        .where("name", "==", teacherSubject)
+                        .get()
+                        .then((querySnapshot) => {
+                          querySnapshot.forEach((doc2) => {
+                            // doc.data() is never undefined for query doc snapshots
+                            console.log(doc2.id, " => ", doc2.data());
+                            console.log("REACHED", doc.id, doc1.id, doc2.id);
+
+                            db.collection("students")
+                              .doc(doc.id)
+                              .collection("courses")
+                              .doc(doc1.id)
+                              .collection("subjects")
+                              .doc(doc2.id)
+                              .update({
+                                doubtMessageslength: z,
+                              });
+
+                            db.collection("students")
+                              .doc(doc.id)
+                              .collection("courses")
+                              .doc(doc1.id)
+                              .collection("subjects")
+                              .doc(doc2.id)
+                              .collection("messagesToTeacher")
+                              .add({
+                                name: signInAs?.name,
+                                message: input,
+                                type: "text",
+                                timestamp:
+                                  firebase.firestore.FieldValue.serverTimestamp(),
+                              });
+                          });
+                        });
+                    });
+                  });
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+          db.collection("Courses")
+            .doc(teacherCourseId)
+            .collection("Subjects")
+            .doc(teacherSubjectId)
+            .collection("doubtRooms")
+            .where("name", "==", chatName)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+
+                db.collection("Courses")
+                  .doc(teacherCourseId)
+                  .collection("Subjects")
+                  .doc(teacherSubjectId)
+                  .collection("doubtRooms")
+                  .doc(doc.id)
+                  .collection("messages")
+                  .add({
+                    name: signInAs?.name,
+                    message: input,
+                    type: "text",
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+
+                let y = doc.data().messagesLength;
+                y++;
+
+                db.collection("Courses")
+                  .doc(teacherCourseId)
+                  .collection("Subjects")
+                  .doc(teacherSubjectId)
+                  .collection("doubtRooms")
+                  .doc(doc.id)
+                  .update({
+                    messagesLength: y,
+                  });
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+
+          setInput("");
+        }
       }
     }
   };
@@ -224,6 +611,52 @@ function DoubtsPageForTeacher() {
       sendPdf: true,
     });
   };
+
+  const seeMoreMessages = (e) => {
+    e.preventDefault();
+    console.log(length)
+    if (user && teacherCourseId && teacherSubjectId && chatName) {
+      db.collection("Courses")
+        .doc(teacherCourseId)
+        .collection("Subjects")
+        .doc(teacherSubjectId)
+        .collection("doubtRooms")
+        .where("name", "==", chatName)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+
+            db.collection("Courses")
+              .doc(teacherCourseId)
+              .collection("Subjects")
+              .doc(teacherSubjectId)
+              .collection("doubtRooms")
+              .doc(doc.id)
+              .collection("messages")
+              .orderBy("timestamp", "desc")
+              .limit(limit+20)
+              .onSnapshot((snapshot) =>
+                setMessages(
+                  snapshot.docs.map((doc) => ({
+                    data: doc.data(),
+                    id: doc.id,
+                  }))
+                )
+              );
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    }
+
+    setLimit(limit+20);
+    setLength(length-20);
+  }
+
+
 
   return (
     <div className="doubtsPageforTeacher">
@@ -244,18 +677,50 @@ function DoubtsPageForTeacher() {
             </div>
             {sendPdf === false ? (
               <div className="doubt_section_doubts_messages">
-                {console.log(messages)}
-                {messages.map((message) => (
-                  <Doubt
-                    name={message.data.name}
-                    message={message.data.message}
-                    timestamp={message.data.timestamp}
-                    type={message.data.type}
-                    fileName={message.data.fileName}
-                    fileUrl={message.data.fileUrl}
-                    id={message.id}
-                  />
-                ))}
+                {popupshowImage ? (
+                  <>
+                    {loading ? (
+                      <div className="popupbodyImage_Loading">
+                        <Box sx={{ display: "flex" }}>
+                          <CircularProgress fontSize="large" />
+                        </Box>
+                      </div>
+                    ) : (
+                      <>
+                        {image && (
+                          <div className="chatTeacher__body">
+                            <img
+                              src={URL.createObjectURL(image)}
+                              className="chatTeacher__body"
+                              alt=""
+                            />
+                          </div>
+                        )}
+                        {video && (
+                          <div className="chatTeacher__bodyVideo">
+                            <h5 className={"videoMessage"}>
+                              <Player
+                                playsInline
+                                poster="/assets/poster.png"
+                                src={URL.createObjectURL(video)}
+                              />
+                            </h5>
+                            <h6 className="videoName">{video.name}</h6>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {messages.map((message) => (
+                      <Doubt message={message} />
+                    ))}
+                    {length > 20 && (
+                      <button className="see_more" onClick = {seeMoreMessages}>See More</button>
+                    )}
+                  </>
+                )}
               </div>
             ) : (
               <UploadPdf />
@@ -270,18 +735,39 @@ function DoubtsPageForTeacher() {
                     onChange={(e) => setInput(e.target.value)}
                   />
                   <div className="doutBox_footer_icons">
-                    <div>
-                      <ImageIcon className="footer_icon" />
-                      <VideocamIcon className="footer_icon" />
-                      <InsertDriveFileRoundedIcon
-                        className="footer_icon"
-                        onClick={open_send_Pdf_box}
+                    {popupshowImage === false && loading === false && (
+                      <div>
+                        <label htmlFor="image">
+                          <ImageIcon className="footer_icon" />
+                        </label>
+                        <input
+                          type="file"
+                          id={"image"}
+                          style={{ display: "none" }}
+                          onChange={selectImage}
+                          accept="image/git , image/jpeg , image/png"
+                        />
+                        <label htmlFor="video">
+                          <VideocamIcon className="footer_icon" />
+                        </label>
+                        <input
+                          type="file"
+                          id={"video"}
+                          style={{ display: "none" }}
+                          onChange={selectVideo}
+                        />
+                        <InsertDriveFileRoundedIcon
+                          className="footer_icon"
+                          onClick={open_send_Pdf_box}
+                        />
+                      </div>
+                    )}
+                    <div className="send_div">
+                      <SendIcon
+                        className="footer_icon footer_send_icon"
+                        onClick={sendMessage}
                       />
                     </div>
-                    <SendIcon
-                      className="footer_icon footer_send_icon"
-                      onClick={sendMessage}
-                    />
                   </div>
                 </div>
               </div>
@@ -370,6 +856,31 @@ const DoubtBox = styled.div`
     }
   }
 
+  .send_div {
+    display: flex;
+    width: 80%;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+
+  .send_icon {
+    margin-left: 10px;
+  }
+
+  .icons {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: 5px;
+  }
+
+  .icon {
+    font-size: 18px;
+    &:hover {
+      cursor: pointer;
+      color: #6d6969;
+    }
+  }
+
   .names_heading {
     padding-left: 20px;
     padding-top: 5px;
@@ -399,13 +910,24 @@ const DoubtBox = styled.div`
     }
   }
 
+  .see_more {
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    &:hover {
+      background-color: lightgray;
+    }
+  }
+
   .doubt_section_doubts_messages {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
     background-color: #5094ee;
-    padding-bottom: 10px;
   }
 `;
 

@@ -1,14 +1,13 @@
-import React , {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import { useHistory } from "react-router-dom";
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import ReactPlayer from 'react-player';
-import { Player } from 'video-react';
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
+import ReactPlayer from "react-player";
+import { Player } from "video-react";
 
-
-function Doubt({message}) {
+function Doubt({ message }) {
   const history = useHistory();
   const [{}, dispatch] = useStateValue();
   const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
@@ -25,22 +24,26 @@ function Doubt({message}) {
   };
   return (
     <>
-    {popupshowImageFUll && (
-                <div className="popupChatTeacher">
-                    <div
-                        className="popUpTOP"
-                        onClick={() => setPopupshowImageFUll(!popupshowImageFUll)}
-                    >
-                        <div className="popUpTOP__first">
-                            <h6>{message.data?.name}</h6>
-                        </div>
-                        <ClearRoundedIcon className="backIconChat" />
-                    </div>
-                    <div className="popupbodyImage_Img">
-                        <img src={message.data?.imageURL} alt="" className="popupbody_Image_img" />
-                    </div>
-                </div>
-            )}
+      {popupshowImageFUll && (
+        <div className="popupChatTeacher">
+          <div
+            className="popUpTOP"
+            onClick={() => setPopupshowImageFUll(!popupshowImageFUll)}
+          >
+            <div className="popUpTOP__first">
+              <h6>{message.data?.name}</h6>
+            </div>
+            <ClearRoundedIcon className="backIconChat" />
+          </div>
+          <div className="popupbodyImage_Img">
+            <img
+              src={message.data?.imageURL}
+              alt=""
+              className="popupbody_Image_img"
+            />
+          </div>
+        </div>
+      )}
       <Container>
         <div className="doubt">
           <div className="doubt_name">
@@ -55,22 +58,38 @@ function Doubt({message}) {
             )}
             {message?.data?.type === "image" && (
               <>
-                {message?.data?.message?(
-                   <img className = "image_with_message"src= {message?.data?.imageURL} 
-                   onClick={() => {
-                    setPopupshowImageFUll(!popupshowImageFUll)
-                }}  
-                   alt=""/>
-                ):(
-                  <img src= {message?.data?.imageURL} className="image_without_message" alt=""
-                  onClick={() => {
-                    setPopupshowImageFUll(!popupshowImageFUll)
-                }}  
+                {message?.data?.message ? (
+                  <img
+                    className="image_with_message"
+                    src={message?.data?.imageURL}
+                    onClick={() => {
+                      setPopupshowImageFUll(!popupshowImageFUll);
+                    }}
+                    alt=""
+                  />
+                ) : (
+                  <img
+                    src={message?.data?.imageURL}
+                    className="image_without_message"
+                    alt=""
+                    onClick={() => {
+                      setPopupshowImageFUll(!popupshowImageFUll);
+                    }}
                   />
                 )}
-               {message?.data?.message && (
-                 <p>{message?.data?.message}</p>
-               )}
+                {message?.data?.message && <p>{message?.data?.message}</p>}
+              </>
+            )}
+            {message.data?.type === "video" && (
+              <>
+              <h5 className={"videoMessage"}>
+                <Player
+                  playsInline
+                  poster="/assets/poster.png"
+                  src={message.data?.videoURL}
+                />
+              </h5>
+              {message?.data?.message && <p>{message?.data?.message}</p>}
               </>
             )}
           </div>
@@ -104,23 +123,35 @@ const Container = styled.div`
       padding-bottom: 4px !important;
     }
 
-    .image_with_message{
+    .image_with_message {
       height: 200px;
       object-fit: contain;
-      border-top-right-radius : 10px;
-      border-top-left-radius : 10px;
+      border-top-right-radius: 10px;
+      border-top-left-radius: 10px;
       &:hover {
-        cursor : pointer;
+        cursor: pointer;
+      }
+
+      @media (max-width: 820px) {
+        width : 100%;
+        object-fit: contain;
+        height : auto;
       }
     }
 
-    .image_without_message{
+    .image_without_message {
       height: 200px;
       object-fit: contain;
-      border-radius : 10px;
+      border-radius: 10px;
 
       &:hover {
-        cursor : pointer;
+        cursor: pointer;
+      }
+
+      @media (max-width: 820px) {
+        width : 100%;
+        object-fit: contain;
+        height : auto;
       }
     }
 
