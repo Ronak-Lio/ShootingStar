@@ -19,14 +19,9 @@ function HeaderMain() {
       signInAs,
       showDiv,
       user,
-      course_Subject,
-      course_Main,
-      course_SubjectID,
-      course_MainID,
     },
     dispatch,
   ] = useStateValue();
-  // const [showDiv, setShowDiv] = useState(false);
   const history = useHistory();
   const [coursesArray, setCoursesArray] = useState([]);
 
@@ -47,17 +42,7 @@ function HeaderMain() {
   }, [user]);
 
   useEffect(() => {
-    if (!course_Subject) {
-      // set by default course and subject
-      dispatch({
-        type: actionTypes.SET_COURSE,
-        course_Subject: coursesArray[0]?.data?.subjects[0],
-      });
-      dispatch({
-        type: actionTypes.SET_COURSE_MAIN,
-        course_Main: coursesArray[0]?.data?.name,
-      });
-      // set bydefault subjectid and course id
+    if (!signInAs?.currentCourse) {
       if (coursesArray[0]?.data?.name) {
         db.collection("Courses")
           .where("name", "==", coursesArray[0]?.data?.name)
@@ -65,11 +50,6 @@ function HeaderMain() {
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               console.log("doc?.id", doc?.id);
-              // dispacth course name id
-              dispatch({
-                type: actionTypes.SET_COURSE_MAIN_ID,
-                course_MainID: doc.id,
-              });
               db.collection("Courses")
                 .doc(doc.id)
                 .collection("Subjects")
@@ -77,11 +57,16 @@ function HeaderMain() {
                 .get()
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc1) => {
-                    // dispatch student course subject id
-                    dispatch({
-                      type: actionTypes.SET_COURSE_SUBJECT_ID,
-                      course_SubjectID: doc1.id,
-                    });
+                    if (!signInAs?.currentCourse) {
+                      db.collection('users').doc(user.uid).set({
+                        currentCourse: coursesArray[0]?.data?.name,
+                        currentSubject: coursesArray[0]?.data?.subjects[0],
+                        currentCourseID: doc?.id,
+                        currentSubjectID: doc1.id,
+                        name: signInAs.name,
+                        value: signInAs.value,
+                      })
+                    }
                   });
                 })
                 .catch((error) => {
@@ -93,69 +78,37 @@ function HeaderMain() {
             console.log("Error getting documents: ", error);
           });
 
-        }
+      }
     }
   }, [coursesArray]);
 
   useEffect(() => {
-    if (course_Main && course_Subject) {
-      db.collection("Courses")
-        .where("name", "==", course_Main)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            console.log("doc?.id", doc?.id);
-            dispatch({
-              type: actionTypes.SET_COURSE_MAIN_ID,
-              course_MainID: doc.id,
-            });
-            db.collection("Courses")
-              .doc(doc.id)
-              .collection("Subjects")
-              .where("name", "==", course_Subject)
-              .get()
-              .then((querySnapshot) => {
-                querySnapshot.forEach((doc1) => {
-                  dispatch({
-                    type: actionTypes.SET_COURSE_SUBJECT_ID,
-                    course_SubjectID: doc1.id,
-                  });
-                });
-              })
-              .catch((error) => {
-                console.log("Error getting documents: ", error);
-              });
-          });
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-
+    if (signInAs?.currentSubject) {
       db.collection("students")
         .doc(user.uid)
         .collection("courses")
-        .where("name", "==", course_Main)
+        .where("name", "==", signInAs?.currentCourse)
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             console.log("doc?.id", doc?.id);
-            dispatch({
-              type: actionTypes.SET_USER_COURSEID,
-              userCourseId: doc.id,
-            });
             db.collection("students")
               .doc(user.uid)
               .collection("courses")
               .doc(doc.id)
               .collection("subjects")
-              .where("name", "==", course_Subject)
+              .where("name", "==", signInAs?.currentSubject)
               .get()
               .then((querySnapshot) => {
                 querySnapshot.forEach((doc1) => {
-                  dispatch({
-                    type: actionTypes.SET_USER_SUBJECTID,
-                    userSubjectId: doc1.id,
-                  });
+                  if(!signInAs?.usercurrentCourseID){
+                    db.collection('users').doc(user?.uid).update({
+                      usercurrentCourseID:doc?.id,
+                      usercurrentSubjectID:doc1?.id,
+                    })
+                  }else{
+
+                  }
                 });
               })
               .catch((error) => {
@@ -167,7 +120,7 @@ function HeaderMain() {
           console.log("Error getting documents: ", error);
         });
     }
-  }, [course_Subject]);
+  }, [signInAs?.currentSubject]);
 
   return (
     <>
@@ -216,9 +169,9 @@ function HeaderMain() {
           <div className="HeaderMain__Right__Div">
             <div className="HeaderMain__Selectcourse">
               <div className="HeaderMain__Selectcourse__Name">
-                {course_Subject}
+                {signInAs?.currentCourse}
                 {", "}
-                {course_Main}
+                {signInAs?.currentSubject}
               </div>
               <div
                 className="HeaderMain__SelectCourse_icon"
@@ -238,7 +191,6 @@ function HeaderMain() {
               }
             >
               {coursesArray.map((course) => (
-                //  <p>{course.data.name}</p>
                 <HeaderCourse course={course} />
               ))}
             </div>
@@ -256,7 +208,7 @@ function HeaderMain() {
       <div className="HeaderMain__For__Mobile">
         <div
           className="headerMain__chat"
-          onClick={() => history.push("/mainchat")}
+          onClick={() => history.push("/chat")}
         >
           <IconButton>
             <ChatIcon />

@@ -110,6 +110,27 @@
         margin: 1px 1px 8px 1px;
         width: 100%;
   }
+  .profile_Fotu_Update{
+    color: gray;
+    z-index: -1;
+}
+.profile_Fotu_UpdateIcon{
+ position: relative;
+ left: -45px;
+ bottom: -33px;
+ color: rgb(49, 51, 49);
+}
+.updateImageCSS{
+  position: fixed;
+  bottom: 10vh;
+  right: 10vw;
+  border: none;
+  background-color: none;
+}
+.SendIcon{
+  border:none;
+  color: blue;
+}
   @media (max-width: 768px) {
     .profile__bodyInUpdate {
       height: 100%; 

@@ -54,6 +54,12 @@
   align-items: flex-start;
   justify-content: flex-start;
 }
+.update__profile__Name{
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  word-break: break-all;
+}
 .update__profile__Name>h6{
   display: flex;
   max-width: 200px;
@@ -92,6 +98,7 @@
   margin: 1px 4px 0 4px;
   height: 40px;
   border: 1px solid lightgray;
+  /* border: 1px solid rgb(170, 167, 167); */
   border-radius: 4px;
   align-items: center;
   justify-content: center;

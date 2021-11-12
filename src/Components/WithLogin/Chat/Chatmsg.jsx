@@ -1,30 +1,12 @@
-// import React from 'react'
-
-// function Chatmsg({message}) {
-//     return ( 
-//             <div className="chat__message__my">
-//               <h6>{message.data?.sendby && message.data?.sendby}</h6>
-//               <div className="chat__message_div">
-//               <h5>
-//                  {message.data?.message}
-//               </h5>
-//               <p>{message.data?.date}</p>
-//               </div>
-//               </div>
-//     )
-// }
-
-// export default Chatmsg;
 import React, { useState } from 'react';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import ReactPlayer from 'react-player';
+import ArrowCircleDownRoundedIcon from '@mui/icons-material/ArrowCircleDownRounded';
 import { Player } from 'video-react';
 
 function Chatmsg({ message }) {
     const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
 
     return (
-        // <div className="chatmsg">
         <>
             {popupshowImageFUll && (
                 <div className="popupChatTeacher">
@@ -49,14 +31,19 @@ function Chatmsg({ message }) {
                         setPopupshowImageFUll(!popupshowImageFUll);
                     }}>
                         <img src={message.data?.imageURL} alt="" className={'imageMessage'} />
+                        <p>{message.data?.imageOriginalName}</p>
                     </div>}
-                    {message.data?.videoURL && <h5 className={'videoMessage'}> 
+                    {message.data?.videoURL && <div className={'videoMessage'}> 
                         <Player
                             playsInline
                             poster="/assets/poster.png"
                             src={message.data?.videoURL}
                         />
-                    </h5>}
+                          <div className="Name_Download">
+                            <p>{message.data?.videoOriginalName}</p>
+                            <a href={message.data?.videoURL}><ArrowCircleDownRoundedIcon fontSize="large" /></a>
+                            </div>
+                    </div>}
                     <h5>
                         {message.data?.message}
                     </h5>
