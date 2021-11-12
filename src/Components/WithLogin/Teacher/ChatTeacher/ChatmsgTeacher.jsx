@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import ReactPlayer from 'react-player';
 import { Player } from 'video-react';
+import ArrowCircleDownRoundedIcon from '@mui/icons-material/ArrowCircleDownRounded';
 
 function ChatmsgTeacher({ message }) {
     const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
@@ -31,15 +31,24 @@ function ChatmsgTeacher({ message }) {
                     {message.data?.imageURL && <div onClick={() => {
                         setPopupshowImageFUll(!popupshowImageFUll);
                     }}>
-                        <img src={message.data?.imageURL} alt="" className={'imageMessage'} />
+                        <img src={message.data?.imageURL} alt="" className='imageMessage' />
+                        <p>{message.data?.imageOriginalName}</p>
                     </div>}
-                    {message.data?.videoURL && <h5 className={'videoMessage'}> 
-                        <Player
-                            playsInline
-                            poster="/assets/poster.png"
-                            src={message.data?.videoURL}
-                        />
-                    </h5>}
+                    {message.data?.videoURL && <>
+                        <div className='videoMessage'>
+                            <Player
+                                playsInline
+                                poster="/assets/poster.png"
+                                src={message.data?.videoURL}
+                            />
+                            <div className="Name_Download">
+                            <p>{message.data?.videoOriginalName}</p>
+                            <a href={message.data?.videoURL}><ArrowCircleDownRoundedIcon fontSize="large" /></a>
+                            </div>
+                        </div>
+
+                    </>
+                    }
                     <h5>
                         {message.data?.message}
                     </h5>

@@ -45,48 +45,46 @@ function HeaderTeacher() {
   }, [user]);
  
   useEffect(() => {
-    if (teacherCourse==null && coursesArray[0]?.data?.name) {
-      dispatch({
-        type: actionTypes.SET_TEACHER_COURSE,
-        teacherCourse: coursesArray[0]?.data?.name,
-      });
-      dispatch({
-        type: actionTypes.SET_TEACHER_SUBJECT,
-        teacherSubject: coursesArray[0]?.data?.subjects[0],
-      });
-      db.collection("Courses")
-        .where("name", "==",coursesArray[0]?.data?.name)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => { 
-            dispatch({
-              type: actionTypes.SET_TEACHER_COURSE_ID,
-              teacherCourseId: doc.id,
-            });
-            db.collection("Courses")
-              .doc(doc.id)
-              .collection("Subjects")
-              .where("name", "==", coursesArray[0]?.data?.subjects[0])
-              .get()
-              .then((querySnapshot) => {
-                querySnapshot.forEach((doc1) => {
-                  dispatch({
-                    type: actionTypes.SET_TEACHER_SUBJECT_ID,
-                    teacherSubjectId: doc1.id,
+    if (!signInAs?.currentCourse) {
+      if (coursesArray[0]?.data?.name) {
+        db.collection("Courses")
+          .where("name", "==", coursesArray[0]?.data?.name)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              console.log("doc?.id", doc?.id);
+              db.collection("Courses")
+                .doc(doc.id)
+                .collection("Subjects")
+                .where("name", "==", coursesArray[0]?.data?.subjects[0])
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc1) => {
+                    if (!signInAs?.currentCourse) {
+                      db.collection('users').doc(user.uid).set({
+                        currentCourse: coursesArray[0]?.data?.name,
+                        currentSubject: coursesArray[0]?.data?.subjects[0],
+                        currentCourseID: doc?.id,
+                        currentSubjectID: doc1.id,
+                        name: signInAs.name,
+                        value: signInAs.value,
+                      })
+                    }
                   });
+                })
+                .catch((error) => {
+                  console.log("Error getting documents: ", error);
                 });
-              })
-              .catch((error) => {
-                console.log("Error getting documents: ", error);
-              });
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
           });
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
+
+      }
     }
   }, [coursesArray]);
-  console.log(coursesArray[0]?.data?.subjects[0]);
+ 
   return (
     <>
       <div className="headerMain">
@@ -144,9 +142,9 @@ function HeaderTeacher() {
           <div className="HeaderMain__Right__Div">
             <div className="HeaderMain__Selectcourse">
               <div className="HeaderMain__Selectcourse__Name">
-                {teacherCourse}
+                {signInAs?.currentSubject}
                 {", "}
-                {teacherSubject}
+                {signInAs?.currentCourse}
               </div>
               <div
                 className="HeaderMain__SelectCourse_icon"

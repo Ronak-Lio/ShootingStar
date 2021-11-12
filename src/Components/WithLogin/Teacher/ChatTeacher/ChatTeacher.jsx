@@ -4,42 +4,29 @@ import SendIcon from "@mui/icons-material/Send";
 import { IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useHistory } from "react-router";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { useStateValue } from "../../../../StateProvider";
 import db from "../../../../firebase";
 import ChatmsgTeacher from "./ChatmsgTeacher";
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import VideoLibraryRoundedIcon from '@mui/icons-material/VideoLibraryRounded';
 import ImageRoundedIcon from '@mui/icons-material/ImageRounded';
-import { display } from "@mui/system";
 import firebase from 'firebase'
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import ImageViewer from 'react-simple-image-viewer';
-import CheckDocument from "./CheckDocument";
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import { actionTypes } from "../../../../reducer";
 import { v4 as uuid } from 'uuid';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { Player } from 'video-react';
-import Index from "../../Scroll/Index";
-
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 
 function ChatTeacher() {
   const [
     {
       signInAs,
-      user,
-      teacherSubject,
-      teacherSubjectId,
-      teacherCourseId,
-    },
-    dispatch
+      user
+    }
   ] = useStateValue();
 
   const [loading, setLoading] = useState(false);
   const [caption, setCaption] = useState('');
-  const [imageURL, setImagesURL] = useState('');
   const [popupshowImage, setPopupshowImage] = useState(false);
   const [input, setInput] = useState("");
   const [image, setImage] = useState(null);
@@ -51,7 +38,7 @@ function ChatTeacher() {
 
 
   // scorll work going here
-  
+
   // date
   var today = new Date();
   var datetime = today.toLocaleString();
@@ -59,11 +46,11 @@ function ChatTeacher() {
   // send message 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (teacherCourseId && teacherSubjectId && input) {
+    if (signInAs?.currentCourseID && signInAs?.currentSubjectID && input) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("chat")
         .add({
           message: input,
@@ -79,11 +66,11 @@ function ChatTeacher() {
   };
   // all message
   useEffect(() => {
-    if (teacherSubjectId && teacherCourseId) {
+    if (signInAs?.currentSubjectID && signInAs?.currentCourseID) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("chat")
         .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
@@ -95,7 +82,7 @@ function ChatTeacher() {
           );
         });
     }
-  }, [teacherSubjectId, teacherCourseId]);
+  }, [signInAs?.currentSubjectID, signInAs?.currentCourseID]);
 
   //  select image
   const selectImage = (e) => {
@@ -106,39 +93,6 @@ function ChatTeacher() {
     }
   }
 
-  // send image 
-  // const sendImage = async (e) => {
-  //   setLoading(true);
-  //   e.preventDefault();
-  //   const id = uuid();
-  //   const imagesRef = firebase.storage().ref('chatImages').child(id);
-  //   await imagesRef.put(image);
-  //   imagesRef.getDownloadURL().then((url) => {
-  //     if (teacherCourseId && teacherSubjectId) {
-  //       db.collection("Courses")
-  //         .doc(teacherCourseId)
-  //         .collection("Subjects")
-  //         .doc(teacherSubjectId)
-  //         .collection("chat")
-  //         .add({
-  //           message: input,
-  //           caption: caption,
-  //           imageURL: url,
-  //           name: user?.email,
-  //           date: datetime,
-  //           sendby: signInAs?.name,
-  //           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-  //           imageName:id,
-  //         })
-  //         .then(() => {
-  //           setInput('');
-  //           setCaption('');
-  //           setPopupshowImage(false);
-  //           setLoading(false);
-  //         });
-  //     }
-  //   })
-  // }
   // select video 
   const selectVideo = (e) => {
     setLoading(true);
@@ -148,47 +102,9 @@ function ChatTeacher() {
       setPopupshowImage(true);
     }
     setLoading(false);
+    setShowTypeFile(!showTypeFile)
   }
-  // send video 
-  // const sendVideo = async(e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   if (video) {
-  //     // setPopupshowImage(true);
-  //     const ID = uuid();
-  //     const imagesRef = firebase.storage().ref('chatVideo').child(ID);
-  //     await imagesRef.put(e.target.files[0]);
-  //     imagesRef.getDownloadURL().then((URL) => {
-  //       if (teacherCourseId && teacherSubjectId && e.target.files[0]) {
-  //         db.collection("Courses")
-  //           .doc(teacherCourseId)
-  //           .collection("Subjects")
-  //           .doc(teacherSubjectId)
-  //           .collection("chat")
-  //           .add({
-  //             message: input,
-  //             caption: caption,
-  //             videoURL: URL,
-  //             name: user?.email,
-  //             date: datetime,
-  //             sendby: signInAs?.name,
-  //             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-  //             videoName:ID,
-  //           })
-  //           .then(() => {
-  //             setInput('');
-  //             setCaption('');
-  //             // setPopupshowImage(false);
-  //             setLoading(false);
-  //             setVideo('');
-  //             setShowTypeFile(!showTypeFile);
-  //           });
-  //       }else{
-  //         alert('!!!')
-  //       }
-  //     })
-  //   }
-  // }l
+
   const sendDoc = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -197,11 +113,11 @@ function ChatTeacher() {
       const imagesRef = firebase.storage().ref('chatVideo').child(ID);
       await imagesRef.put(video);
       imagesRef.getDownloadURL().then((URL) => {
-        if (teacherCourseId && teacherSubjectId && video) {
+        if (signInAs?.currentCourseID && signInAs?.currentSubjectID && video) {
           db.collection("Courses")
-            .doc(teacherCourseId)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(teacherSubjectId)
+            .doc(signInAs?.currentSubjectID)
             .collection("chat")
             .add({
               message: input,
@@ -223,7 +139,7 @@ function ChatTeacher() {
               setShowTypeFile(!showTypeFile);
             });
         } else {
-          alert('!!!')
+          alert('Ohh! Something went wrong')
         }
       })
     }
@@ -232,11 +148,11 @@ function ChatTeacher() {
       const imagesRef = firebase.storage().ref('chatImages').child(id);
       await imagesRef.put(image);
       imagesRef.getDownloadURL().then((url) => {
-        if (teacherCourseId && teacherSubjectId) {
+        if (signInAs?.currentCourseID && signInAs?.currentSubjectID) {
           db.collection("Courses")
-            .doc(teacherCourseId)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(teacherSubjectId)
+            .doc(signInAs?.currentSubjectID)
             .collection("chat")
             .add({
               message: input,
@@ -273,7 +189,7 @@ function ChatTeacher() {
               </IconButton>
             </div>
             <div className="chatTeacher__headerFirst__account">
-              {teacherSubject}
+              {signInAs?.currentSubject}
             </div>
           </div>
         </div>
@@ -286,24 +202,42 @@ function ChatTeacher() {
             </div>
           </div> : <>
             {image &&
-              <div className="chatTeacher__body">
-                <img src={URL.createObjectURL(image)} className="chatTeacher__body" alt="" />
+              <div className="chatTeacher__body_Video">
+                <div className="videoCancelUpload" onClick={() => {
+                  setVideo(null);
+                  setPopupshowImage(false);
+                }}>
+                  <ClearRoundedIcon />
+                </div>
+                <div className="videoMessageOut">
+                  
+                  <img src={URL.createObjectURL(image)} alt="" className='videoMessage'/>
+                  <h6 className="videoName">{image.name}</h6>
+                </div>
               </div>}
             {video &&
-              <div className="chatTeacher__bodyVideo">
-                <h5 className={'videoMessage'}>
-                  <Player
-                    playsInline
-                    poster="/assets/poster.png"
-                    src={URL.createObjectURL(video)}
-                  />
-                </h5>
-                <h6 className="videoName">{video.name}</h6>
+              <div className="chatTeacher__body">
+                <div className="videoCancelUpload" onClick={() => {
+                  setVideo(null);
+                  setPopupshowImage(false);
+                }}>
+                  <ClearRoundedIcon />
+                </div>
+                <div className="videoMessageOut">
+                  <div className='videoMessage'>
+                    <Player
+                      playsInline
+                      poster="/assets/poster.png"
+                      src={URL.createObjectURL(video)}
+                    />
+                  </div>
+                  <h6 className="videoName">{video.name}</h6>
+                </div>
               </div>}
-            <div className="doubtBox_footer">
-              <div className="send_Message_box">
+            <div className="doubtBox_footerForCaption">
+              <div className="send_Message_box_ForCaption">
                 <input placeholder={'Caption'} value={caption} type="text" onChange={e => setCaption(e.target.value)} />
-                <div className="iconsTeacher">
+                <div className="sendCaption">
                   <SendIcon className="icon" onClick={sendDoc} />
                 </div>
               </div>
@@ -313,7 +247,6 @@ function ChatTeacher() {
           :
           <>
             <div className="chatTeacher__body">
-            <Index />
               {messages.map((message) => (
                 <div
                   className={
@@ -326,8 +259,8 @@ function ChatTeacher() {
                 </div>
               ))}
             </div>
-            {/* <form> */}
-            <div className="doubtBox_footer">
+            {/* footer */}
+            <div className="doubtBox_footerForChat">
               <div className="send_Message_box">
                 <input
                   type="text"
@@ -335,39 +268,37 @@ function ChatTeacher() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />
-                <div className="iconsTeacher">
-                  {showTypeFile && <div className="showtypeFile">
-                    <div className="show_typeImage">
-                      <label htmlFor="image">
-                        <ImageRoundedIcon className="chatIcon" />
-                      </label>
-                      <input type="file" id={'image'} style={{ display: 'none' }} onChange={selectImage} accept="image/git , image/jpeg , image/png" />
+                  <div className="iconsTeacher">
+                <div className="iconDiv">
+                    <div className="showtypeFile">
+                      <div className="show_typeImage">
+                        <label htmlFor="image">
+                          <ImageRoundedIcon />
+                        </label>
+                        <input type="file" id={'image'} style={{ display: 'none' }} onChange={selectImage} accept="image/git , image/jpeg , image/png" />
+                      </div>
+                      <div className="show_typeVideo">
+                        <label htmlFor="video">
+                          <VideoLibraryRoundedIcon />
+                        </label>
+                        <input type="file" id={'video'} style={{ display: 'none' }} onChange={selectVideo} />
+                      </div>
+                      <div className="show_typeDocument" >
+                        <label htmlFor="doc">
+                          <InsertDriveFileRoundedIcon />
+                        </label>
+                        <input type="file" id={'doc'} style={{ display: 'none' }} onChange={e => {
+                          setDoc(e.target.value)
+                        }} accept="image/pdf , image/html , image/js" />
+                      </div>
                     </div>
-                    <div className="show_typeVideo">
-                      <label htmlFor="video">
-                        <VideoLibraryRoundedIcon className="chatIcon" /></label>
-                      <input type="file" id={'video'} style={{ display: 'none' }} onChange={selectVideo} />
+                    <div>
+                    <SendIcon className="icon" onClick={sendMessage} />
                     </div>
-                    <div className="show_typeDocument" >
-                      <label htmlFor="doc">
-                        <InsertDriveFileRoundedIcon />
-                      </label>
-                      <input type="file" id={'doc'} style={{ display: 'none' }} onChange={e => {
-                        setDoc(e.target.value)
-                      }} accept="image/pdf , image/html , image/js" />
-                    </div>
-                  </div>}
-                  <AttachFileIcon
-                    className="icon"
-                    onClick={() => {
-                      setShowTypeFile(!showTypeFile);
-                    }}
-                  />
-                  <SendIcon className="icon" onClick={sendMessage} />
+                  </div>
                 </div>
               </div>
             </div>
-            {/* </form> */}
           </>}
       </div>
     </>

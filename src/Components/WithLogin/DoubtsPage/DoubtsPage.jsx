@@ -3,9 +3,6 @@ import styled from "styled-components";
 import "./DoubtsPage.css";
 import Doubt from "./Doubt";
 import SendIcon from "@mui/icons-material/Send";
-import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import DoubtReplies from "./DoubtReplies";
 import { useStateValue } from "../../../StateProvider";
 import Notices from "../Notices/Notices";
 import { useHistory } from "react-router-dom";
@@ -19,7 +16,7 @@ import firebase from "firebase";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
-import UploadPdf from "./UploadPdf"
+import UploadPdf from "./UploadPdf";
 
 function DoubtsPage() {
   const [

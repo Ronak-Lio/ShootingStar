@@ -6,15 +6,15 @@ import db from '../../../firebase';
 import { useStateValue } from '../../../StateProvider';
 
 function Notices() {
-    const [{ signInAs, user, course_Subject, course_Main,course_SubjectID,course_MainID }, dispatch] =useStateValue();
+    const [{ signInAs}] =useStateValue();
     const [notices,setNotices]=useState([]);
     
     useEffect(() => {
-        if (course_MainID && course_SubjectID) {
+        if (signInAs?.currentCourseID) {
           db.collection("Courses")
-            .doc(course_MainID)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(course_SubjectID)
+            .doc(signInAs?.currentSubjectID)
             .collection("notices")
             .onSnapshot((snapshot) =>
               setNotices(
@@ -25,8 +25,7 @@ function Notices() {
               )
             );
         }
-      }, [course_MainID, course_SubjectID]);
-console.log(notices)
+      }, [signInAs?.currentCourseID,signInAs?.currentSubjectID]);
     return (
         <>
             <Container> 

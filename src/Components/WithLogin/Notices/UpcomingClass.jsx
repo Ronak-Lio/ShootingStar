@@ -4,15 +4,15 @@ import db from "../../../firebase";
 import { useStateValue } from "../../../StateProvider";
 
 function UpcomingClass() {
-  const [{ signInAs, user, course_Subject, course_Main,course_SubjectID,course_MainID }, dispatch] =useStateValue();
+  const [{ signInAs}] =useStateValue();
     const [noticesHeader,setNoticesHeader]=useState([]);
     
     useEffect(() => {
-        if (course_MainID && course_SubjectID) {
+        if (signInAs?.currentCourseID && signInAs?.currentSubjectID) {
           db.collection("Courses")
-            .doc(course_MainID)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(course_SubjectID)
+            .doc(signInAs?.currentSubjectID)
             .collection("noticesHeader")
             .onSnapshot((snapshot) =>
               setNoticesHeader(
@@ -23,8 +23,8 @@ function UpcomingClass() {
               )
             );
         }
-      }, [course_MainID, course_SubjectID]);
-      // console.log(noticesHeader[0].data.)
+      }, [signInAs?.currentCourseID, signInAs?.currentSubjectID]);
+      
   return (
     <>
       <Container>
