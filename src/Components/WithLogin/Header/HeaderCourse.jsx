@@ -19,14 +19,12 @@ function HeaderCourse({ course }) {
         {Array(course.data?.subjects.length)
           .fill()
           .map((_, i) => (
-            // <button onClick={selectSubject(course.data?.subjects[i])}>
             <h6>
               <HeaderSubject
                 subject={course.data?.subjects[i]}
                 course={course.data?.name}
               />
             </h6>
-            // </button>
           ))}
       </div>
     </div>
