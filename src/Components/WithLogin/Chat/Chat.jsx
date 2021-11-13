@@ -285,7 +285,7 @@ function Chat() {
                       </div>
                       <div className="show_typeDocument" >
                         <label htmlFor="doc">
-                          <InsertDriveFileRoundedIcon />
+                          <InsertDriveFileRoundedIcon/>
                         </label>
                         <input type="file" id={'doc'} style={{ display: 'none' }} accept="image/pdf , image/html , image/js" />
                       </div>

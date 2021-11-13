@@ -48,6 +48,7 @@ function DoubtsPageForTeacher() {
   const [z, setZ] = useState();
   const [limit, setLimit] = useState(20);
   const [length, setLength] = useState();
+  const[roomId , setRoomId] = useState();
 
   var today = new Date();
   var datetime = today.toLocaleString();
@@ -91,6 +92,7 @@ function DoubtsPageForTeacher() {
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
+            setRoomId(doc.id)
 
             db.collection("Courses")
               .doc(signInAs?.currentCourseID)
@@ -147,7 +149,7 @@ function DoubtsPageForTeacher() {
           console.log("Error getting documents: ", error);
         });
     }
-  }, [chatName, sendPdf]);
+  }, [chatName, sendPdf , signInAs?.currentSubject , signInAs?.currentCourse]);
 
   useEffect(() => {
     dispatch({
@@ -706,7 +708,7 @@ function DoubtsPageForTeacher() {
                 ) : (
                   <>
                     {messages.map((message) => (
-                      <Doubt message={message} />
+                      <Doubt message={message} roomId = {roomId}/>
                     ))}
                     {length > 20 && (
                       <button className="see_more" onClick = {seeMoreMessages}>See More</button>
