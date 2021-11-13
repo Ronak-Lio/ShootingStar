@@ -16,18 +16,18 @@ function StudentAssignmentStatus({
   const [submissiondetails, setSubmissionDetails] = useState(false);
   const history = useHistory();
   const [
-    { teacherCourseId, teacherSubjectId, user, assignmentTeacherDetails },
+    { signInAs, user, assignmentTeacherDetails },
     dispatch,
   ] = useStateValue();
   const [checkedAssignmentDetails, setCheckedAssignmentDetails] = useState([]);
   const [lateSubmitted, setLateSubmitted] = useState(false);
 
   useEffect(() => {
-    if (user && teacherSubjectId && teacherCourseId && name && assignmentName) {
+    if (user && signInAs?.currentSubjectID && signInAs?.currentCourseID && name && assignmentName) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("assignments")
         .where("name", "==", assignmentName)
         .get()
@@ -37,9 +37,9 @@ function StudentAssignmentStatus({
             console.log(doc.id, " => ", doc.data());
 
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("assignments")
               .doc(doc.id)
               .collection("answers")
@@ -49,9 +49,9 @@ function StudentAssignmentStatus({
                 querySnapshot.forEach((doc1) => {
                   console.log(doc1.id, "=>", doc1.data());
                   db.collection("Courses")
-                    .doc(teacherCourseId)
+                    .doc(signInAs?.currentCourseID)
                     .collection("Subjects")
-                    .doc(teacherSubjectId)
+                    .doc(signInAs?.currentSubjectID)
                     .collection("assignments")
                     .doc(doc.id)
                     .collection("answers")

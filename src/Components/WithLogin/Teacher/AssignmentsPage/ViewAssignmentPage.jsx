@@ -12,19 +12,19 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 
 function ViewAssignmentPage() {
- const [{ openAssignmentPopupForTeacher  , teacherSubjectId , teacherCourseId , user }, dispatch] = useStateValue();
+ const [{ openAssignmentPopupForTeacher  , signInAs, user }, dispatch] = useStateValue();
   const[answers , setAnswers] = useState([]);
   const {assignmentId} = useParams();
   const[assignmentTeacherDetails , setAssignmentTeacherDetails] = useState([]);
   const history = useHistory();
 
   useEffect(() => {
-    console.log(teacherSubjectId);
-      if(user && assignmentId && teacherCourseId && teacherSubjectId ){
+    console.log(signInAs?.currentSubjectID);
+      if(user && assignmentId && signInAs?.currentCourseID && signInAs?.currentSubjectID ){
     db.collection("Courses")
-    .doc(teacherCourseId)
+    .doc(signInAs?.currentCourseID)
     .collection("Subjects")
-    .doc(teacherSubjectId)
+    .doc(signInAs?.currentSubjectID)
     .collection("assignments")
     .doc(assignmentId).onSnapshot((snapshot) => {
       console.log(snapshot);
@@ -32,15 +32,15 @@ function ViewAssignmentPage() {
     })
       }
     console.log("ASSIGNMENTDETIALS ARE ",assignmentTeacherDetails)
-  } , [assignmentId ,  teacherSubjectId , teacherCourseId , assignmentTeacherDetails.length , user])
+  } , [assignmentId ,  signInAs?.currentSubjectID , signInAs?.currentCourseID , assignmentTeacherDetails.length , user])
 
   useEffect(() => {
-    if(user && teacherCourseId && teacherSubjectId && assignmentTeacherDetails?.name){
+    if(user && signInAs?.currentCourseID && signInAs?.currentSubjectID && assignmentTeacherDetails?.name){
     console.log(assignmentTeacherDetails) 
     db.collection("Courses")
-    .doc(teacherCourseId)
+    .doc(signInAs?.currentCourseID)
     .collection("Subjects")
-    .doc(teacherSubjectId)
+    .doc(signInAs?.currentSubjectID)
     .collection("assignments")
     .doc(assignmentId)
     .collection("answers")
@@ -53,7 +53,7 @@ function ViewAssignmentPage() {
      )
     )
     }
-  } , [assignmentTeacherDetails , answers.length , assignmentId , teacherSubjectId , teacherCourseId]);
+  } , [assignmentTeacherDetails , answers.length , assignmentId , signInAs?.currentSubjectID , signInAs?.currentCourseID]);
 
   const goBack = (e) => {
     e.preventDefault();

@@ -19,14 +19,10 @@ function UploadCorrectedAssignment() {
     {
       openAsignmentPopup,
       user,
-      teacherCourseId,
-      teacherSubjectId,
       signInAs,
       assignmentTeacherDetails,
       studentName,
       uploadCorrectedAssignment,
-      teacherCourse, 
-      teacherSubject
     },
     dispatch,
   ] = useStateValue();
@@ -122,7 +118,7 @@ function UploadCorrectedAssignment() {
                   db.collection("students")
                     .doc(doc.id)
                     .collection("courses")
-                    .where("name", "==", teacherCourse)
+                    .where("name", "==", signInAs?.currentCourse)
                     .get()
                     .then((querySnapshot) => {
                       querySnapshot.forEach((doc1) => {
@@ -134,7 +130,7 @@ function UploadCorrectedAssignment() {
                           .collection("courses")
                           .doc(doc1.id)
                           .collection("subjects")
-                          .where("name", "==", teacherSubject)
+                          .where("name", "==", signInAs?.currentSubject)
                           .get()
                           .then((querySnapshot) => {
                             querySnapshot.forEach((doc2) => {
@@ -183,9 +179,9 @@ function UploadCorrectedAssignment() {
                 console.log("Error getting documents: ", error);
               });
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("assignments")
               .where("name", "==", assignmentTeacherDetails.name)
               .get()
@@ -195,9 +191,9 @@ function UploadCorrectedAssignment() {
                   console.log(doc.id, " => ", doc.data());
 
                   db.collection("Courses")
-                    .doc(teacherCourseId)
+                    .doc(signInAs?.currentCourseID)
                     .collection("Subjects")
-                    .doc(teacherSubjectId)
+                    .doc(signInAs?.currentSubjectID)
                     .collection("assignments")
                     .doc(doc.id)
                     .collection("answers")
@@ -207,9 +203,9 @@ function UploadCorrectedAssignment() {
                       querySnapshot.forEach((doc1) => {
                         console.log(doc1.id, "=>", doc1.data());
                         db.collection("Courses")
-                          .doc(teacherCourseId)
+                          .doc(signInAs?.currentCourseID)
                           .collection("Subjects")
-                          .doc(teacherSubjectId)
+                          .doc(signInAs?.currentSubjectID)
                           .collection("assignments")
                           .doc(doc.id)
                           .collection("answers")

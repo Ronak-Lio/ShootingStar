@@ -8,17 +8,17 @@ import StudentAssignmentStatus from "./StudentAssignmentStatus";
 import db , {storage} from "../../../../firebase"
 
 function AssignmentPopup() {
-  const [{ openAssignmentPopupForTeacher , assignmentTeacherDetails , teacherSubjectId , teacherCourseId , user }, dispatch] = useStateValue();
+  const [{ openAssignmentPopupForTeacher , assignmentTeacherDetails , signInAs, user }, dispatch] = useStateValue();
   const[answers , setAnswers] = useState([]);
 
-
+  
   useEffect(() => {
-    if(user && teacherCourseId && teacherSubjectId && assignmentTeacherDetails?.name){
+    if(user && signInAs?.currentCourseID && signInAs?.currentSubjectID && assignmentTeacherDetails?.name){
     console.log(assignmentTeacherDetails) 
     db.collection("Courses")
-    .doc(teacherCourseId)
+    .doc(signInAs?.currentCourseID)
     .collection("Subjects")
-    .doc(teacherSubjectId)
+    .doc(signInAs?.currentSubjectID)
     .collection("assignments")
     .where("name", "==", assignmentTeacherDetails?.name)
     .get()
@@ -27,9 +27,9 @@ function AssignmentPopup() {
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, " => ", doc.data());
         db.collection("Courses")
-          .doc(teacherCourseId)
+          .doc(signInAs?.currentCourseID)
           .collection("Subjects")
-          .doc(teacherSubjectId)
+          .doc(signInAs?.currentSubjectID)
           .collection("assignments")
           .doc(doc.id)
           .collection("answers")

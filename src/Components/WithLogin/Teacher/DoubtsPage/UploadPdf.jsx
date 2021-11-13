@@ -18,14 +18,10 @@ function UploadCorrectedAssignment() {
   const [
     {
       user,
-      teacherCourseId,
-      teacherSubjectId,
       signInAs,
       assignmentTeacherDetails,
       studentName,
       chatName,
-      teacherCourse,
-      teacherSubject,
     },
     dispatch,
   ] = useStateValue();
@@ -122,7 +118,7 @@ function UploadCorrectedAssignment() {
                   db.collection("students")
                     .doc(doc.id)
                     .collection("courses")
-                    .where("name", "==", teacherCourse)
+                    .where("name", "==", signInAs?.currentCourse)
                     .get()
                     .then((querySnapshot) => {
                       querySnapshot.forEach((doc1) => {
@@ -134,7 +130,7 @@ function UploadCorrectedAssignment() {
                           .collection("courses")
                           .doc(doc1.id)
                           .collection("subjects")
-                          .where("name", "==", teacherSubject)
+                          .where("name", "==", signInAs?.currentSubject)
                           .get()
                           .then((querySnapshot) => {
                             querySnapshot.forEach((doc2) => {
@@ -167,9 +163,9 @@ function UploadCorrectedAssignment() {
                 console.log("Error getting documents: ", error);
               });
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("doubtRooms")
               .where("name", "==", chatName)
               .get()
@@ -179,9 +175,9 @@ function UploadCorrectedAssignment() {
                   console.log(doc.id, " => ", doc.data());
 
                   db.collection("Courses")
-                    .doc(teacherCourseId)
+                    .doc(signInAs?.currentCourseID)
                     .collection("Subjects")
-                    .doc(teacherSubjectId)
+                    .doc(signInAs?.currentSubjectID)
                     .collection("doubtRooms")
                     .doc(doc.id)
                     .collection("messages")

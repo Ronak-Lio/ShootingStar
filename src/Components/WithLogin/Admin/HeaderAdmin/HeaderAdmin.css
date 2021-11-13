@@ -1,9 +1,25 @@
-.HeaderAdmin{
-    display: flex;
-    border: 2px solid lightgray;
-    justify-content: space-around;
+.headerAdmin__out{
+    display: flex; 
+    justify-content: space-between;
     align-items: center;
-    width: 90vw;
+    width:100vw;
+    border-bottom: 1px solid lightgray;
+    padding: 10px 5px 10px 5px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.Admin__home{
+    flex: 0.4;
+    display: flex;
+    padding-left:20px;
+    align-items: center;
+}
+.HeaderAdmin{
+    flex: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .HeaderAdminFirst{
     padding: 12px;
@@ -11,9 +27,8 @@
     font-weight: 600;
     font-size: larger;
     font-family:Georgia, 'Times New Roman', Times, serif;
+    cursor: pointer;
 }
-.add_teacher{
-    width: 100%;
-    height: 100%;
+.add_teacher{ 
     border: 1px solid lightgreen;
 }
