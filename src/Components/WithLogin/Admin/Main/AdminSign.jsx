@@ -1,4 +1,3 @@
-// import Button from '@restart/ui/esm/Button';
 import React, { useState } from 'react'
 import db, { auth } from '../../../../firebase';
 import { actionTypes } from '../../../../reducer';
@@ -12,9 +11,7 @@ function AdminSign() {
     const signIn=()=>{
         auth
       .signInWithEmailAndPassword(email, password)
-      .then((auth) => {
-
-    //     d                                                      
+      .then((auth) => {                                             
       setEmail('');
       setPassword('');
       })
@@ -35,7 +32,7 @@ function AdminSign() {
                 onChange={(e) => setEmail(e.target.value)}
               />
               <input
-                placeholder="Password "
+                placeholder="Password"
                 type="text"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
