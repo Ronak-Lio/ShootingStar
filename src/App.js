@@ -79,6 +79,7 @@ function App() {
     <Router>
       <Switch>
         <Route path="/chat">
+          {signInAs?(<>
           <div className="chat_Show">
             {signInAs && signInAs.value === "teacher" ? (
               <ChatTeacher />
@@ -93,57 +94,68 @@ function App() {
               <Main />
             )}
           </div>
+          </>):
+          (
+            <Home/>
+          )}
         </Route>
         {/* for check docuemnt 3/11/2021 */}
 
         <Route path="/checkdocument">
-          <CheckDocument />
+          {signInAs?(<CheckDocument />):(
+            <Home/>
+          )}
         </Route>
 
         <Route path="/notification">
-          <Notification />
+          {signInAs?(<Notification />):(
+            <Home/>
+          )}
         </Route>
         <Route path="/update">
-          <UpdatePage />
+          {signInAs?(<UpdatePage />):(<Home/>)}
         </Route>
         <Route path="/admin">
-          <Admin />
+          {signInAs?(<Admin />):(<Home/>)}
         </Route>
         <Route path="/addcourse">
-          <AddCourse />
+          {signInAs?(<AddCourse />):(<Home/>)}
         </Route>
         <Route path="/addteacher">
-          <Admin />
+         {signInAs?( <Admin />):(<Home/>)}
         </Route>
         <Route path="/addstudent">
-          <Admin />
+          {signInAs?(<Admin />):(<Home/>)}
         </Route>
         {/* <Route path="/addteacherinfo">
         <AddTeacherInfo/>
         </Route> */}
         <Route path="/addadmin">
-        <Admin/>
+       {signInAs?( <Admin/>):(<Home/>)}
         </Route>
         <Route path="/leaderboard">
-          <LeaderBoard />
+          {signInAs?(<LeaderBoard />):(<Home/>)}
         </Route>
         <Route path="/main">
+         {signInAs?( <>
           {signInAs && signInAs.value === "teacher" ? (
             <MainTeacher />
           ) : (
             <Main />
           )}
+          </>):(<Home/>)}
         </Route>
         <Route path="/AssignmentsPage">
+         {signInAs?( <>
           {signInAs && signInAs.value === "teacher" ? (
             <AssignmentsPageForTeacher />
           ) : (
             <AssignmentsPage />
           )}
+          </>):(<Home/>)}
         </Route>
-
         <Route path="/profile">
-          <Profile />
+          {signInAs?(<Profile />):(<Home/>)}
         </Route>
         <Route path="/contact">
           <Contact />
@@ -182,32 +194,34 @@ function App() {
           <Login />
         </Route>
         <Route path="/NoticesPage">
-          <NoticesPage />
+         {signInAs?( <NoticesPage />):(<Home/>)}
         </Route>
         <Route path="/DoubtsPage">
+          {signInAs?(<>
           {signInAs && signInAs.value === "teacher" ? (
             <DoubtsPageForTeacher />
           ) : (
             <DoubtsPage />
           )}
+          </>):(<Home/>)}
         </Route>
         <Route path="/doubtsMessagesPageForTeachers">
-          <MessagesSectionForMobile />
+          {signInAs?(<MessagesSectionForMobile />):(<Home/>)}
         </Route>
         <Route path="/submitAssignment">
-          <SubmitAssignment />
+          {signInAs?(<SubmitAssignment />):(<Home/>)}
         </Route>
         <Route path="/uploadCorrectedAssignmentPage">
-          <UploadCorrectedAssignment />
+          {signInAs?(<UploadCorrectedAssignment />):(<Home/>)}
         </Route>
         <Route path="/uploadCreatedAssignment">
-          <UploadCreatedAssignment />
+          {signInAs?(<UploadCreatedAssignment />):(<Home/>)}
         </Route>
         <Route path="/ViewAssignment/:assignmentId">
-          <ViewAssignmentPage />
+          {signInAs?(<ViewAssignmentPage />):(<Home/>)}
         </Route>
         <Route path="/viewPdf">
-          <ViewPdf />
+          {signInAs?(<ViewPdf />):(<Home/>)}
         </Route>
         <Route path="/loading">
           <Loading />
