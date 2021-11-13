@@ -18,8 +18,6 @@ function UploadCorrectedAssignment() {
   const [
     {
       user,
-      teacherCourseId,
-      teacherSubjectId,
       signInAs,
       assignmentTeacherDetails,
       studentName,

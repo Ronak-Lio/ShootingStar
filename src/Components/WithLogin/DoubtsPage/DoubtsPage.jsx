@@ -28,13 +28,8 @@ function DoubtsPage() {
   const [
     {
       openDoubtReplies,
-      course_MainID,
-      course_SubjectID,
       user,
-      userCourseId,
-      userSubjectId,
       signInAs,
-      course_Subject,
       sendPdf,
     },
     dispatch,
@@ -62,40 +57,40 @@ function DoubtsPage() {
   useEffect(() => {
     if (
       user &&
-      userCourseId &&
-      userSubjectId &&
-      course_MainID &&
-      course_SubjectID
+      signInAs?.usercurrentCourseID &&
+      signInAs?.usercurrentSubjectID &&
+      signInAs?.currentCourseID &&
+      signInAs?.currentSubjectID
     ){
       db.collection("students")
       .doc(user?.uid)
       .collection("courses")
-      .doc(userCourseId)
+      .doc(signInAs?.usercurrentCourseID)
       .collection("subjects")
-      .doc(userSubjectId)
+      .doc(signInAs?.usercurrentSubjectID)
       .onSnapshot((snapshot) => {
          setLength(snapshot.data().doubtMessageslength)
       });
     } 
   } , [user,
-    userCourseId,
-    userSubjectId])
+    signInAs?.usercurrentCourseID,
+    signInAs?.usercurrentSubjectID])
 
   useEffect(() => {
     if (
       user &&
-      userCourseId &&
-      userSubjectId &&
-      course_MainID &&
-      course_SubjectID
+      signInAs?.usercurrentCourseID &&
+      signInAs?.usercurrentSubjectID &&
+      signInAs?.currentCourseID &&
+      signInAs?.currentSubjectID
     ) {
 
       db.collection("students")
       .doc(user?.uid)
       .collection("courses")
-      .doc(userCourseId)
+      .doc(signInAs?.usercurrentCourseID)
       .collection("subjects")
-      .doc(userSubjectId)
+      .doc(signInAs?.usercurrentSubjectID)
       .onSnapshot((snapshot) => {
          setZ(snapshot.data().doubtMessageslength + 1);
       });
@@ -104,9 +99,9 @@ function DoubtsPage() {
       db.collection("students")
         .doc(user?.uid)
         .collection("courses")
-        .doc(userCourseId)
+        .doc(signInAs?.usercurrentCourseID)
         .collection("subjects")
-        .doc(userSubjectId)
+        .doc(signInAs?.usercurrentSubjectID)
         .collection("messagesToTeacher")
         .orderBy("timestamp", "desc")
         .limit(20)
@@ -122,9 +117,9 @@ function DoubtsPage() {
       setInput("");
 
       db.collection("Courses")
-        .doc(course_MainID)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(course_SubjectID)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .onSnapshot((snapshot) =>
           setRooms(
@@ -138,10 +133,10 @@ function DoubtsPage() {
     console.log(messages);
   }, [
     user,
-    userCourseId,
-    userSubjectId,
-    course_MainID,
-    course_SubjectID,
+    signInAs?.usercurrentCourseID,
+    signInAs?.usercurrentSubjectID,
+    signInAs?.currentCourseID,
+    signInAs?.currentSubjectID,
   ]);
 
   useEffect(() => {
@@ -190,9 +185,9 @@ function DoubtsPage() {
     e.preventDefault();
     console.log(signInAs);
     console.log(input);
-    if (signInAs.name && userCourseId && userSubjectId) {
-      console.log("User Course Id is", userCourseId);
-      console.log("User Subject Id is", userSubjectId);
+    if (signInAs.name && signInAs?.usercurrentCourseID && signInAs?.usercurrentSubjectID) {
+      console.log("User Course Id is", signInAs?.usercurrentCourseID);
+      console.log("User Subject Id is", signInAs?.usercurrentSubjectID);
       if (image) {
         setLoading(true);
         const id = uuid();
@@ -215,9 +210,9 @@ function DoubtsPage() {
               db.collection("students")
                 .doc(user?.uid)
                 .collection("courses")
-                .doc(userCourseId)
+                .doc(signInAs?.usercurrentCourseID)
                 .collection("subjects")
-                .doc(userSubjectId)
+                .doc(signInAs?.usercurrentSubjectID)
                 .collection("messagesToTeacher")
                 .add({
                   name: signInAs?.name,
@@ -238,17 +233,17 @@ function DoubtsPage() {
                 db.collection("students")
                   .doc(user?.uid)
                   .collection("courses")
-                  .doc(userCourseId)
+                  .doc(signInAs?.usercurrentCourseID)
                   .collection("subjects")
-                  .doc(userSubjectId)
+                  .doc(signInAs?.usercurrentSubjectID)
                   .update({
                     doubtMessageslength: 0,
                   });
 
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .add({
                     name: signInAs.name,
@@ -256,9 +251,9 @@ function DoubtsPage() {
                   })
                   .then(() => {
                     db.collection("Courses")
-                      .doc(course_MainID)
+                      .doc(signInAs?.currentCourseID)
                       .collection("Subjects")
-                      .doc(course_SubjectID)
+                      .doc(signInAs?.currentSubjectID)
                       .collection("doubtRooms")
                       .where("name", "==", signInAs.name)
                       .get()
@@ -268,9 +263,9 @@ function DoubtsPage() {
                           console.log(doc.id, " => ", doc.data());
 
                           db.collection("Courses")
-                            .doc(course_MainID)
+                            .doc(signInAs?.currentCourseID)
                             .collection("Subjects")
-                            .doc(course_SubjectID)
+                            .doc(signInAs?.currentSubjectID)
                             .collection("doubtRooms")
                             .doc(doc.id)
                             .collection("messages")
@@ -294,16 +289,16 @@ function DoubtsPage() {
                 db.collection("students")
                   .doc(user?.uid)
                   .collection("courses")
-                  .doc(userCourseId)
+                  .doc(signInAs?.usercurrentCourseID)
                   .collection("subjects")
-                  .doc(userSubjectId)
+                  .doc(signInAs?.usercurrentSubjectID)
                   .update({
                     doubtMessageslength: z,
                   });
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .where("name", "==", signInAs.name)
                   .get()
@@ -316,9 +311,9 @@ function DoubtsPage() {
                       y++;
 
                       db.collection("Courses")
-                        .doc(course_MainID)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(course_SubjectID)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .update({
@@ -326,9 +321,9 @@ function DoubtsPage() {
                         });
 
                       db.collection("Courses")
-                        .doc(course_MainID)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(course_SubjectID)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .collection("messages")
@@ -375,9 +370,9 @@ function DoubtsPage() {
               db.collection("students")
                 .doc(user?.uid)
                 .collection("courses")
-                .doc(userCourseId)
+                .doc(signInAs?.usercurrentCourseID)
                 .collection("subjects")
-                .doc(userSubjectId)
+                .doc(signInAs?.usercurrentSubjectID)
                 .collection("messagesToTeacher")
                 .add({
                   name: signInAs?.name,
@@ -399,16 +394,16 @@ function DoubtsPage() {
                 db.collection("students")
                   .doc(user?.uid)
                   .collection("courses")
-                  .doc(userCourseId)
+                  .doc(signInAs?.usercurrentCourseID)
                   .collection("subjects")
-                  .doc(userSubjectId)
+                  .doc(signInAs?.usercurrentSubjectID)
                   .update({
                     doubtMessageslength: 1,
                   });
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .add({
                     name: signInAs.name,
@@ -416,9 +411,9 @@ function DoubtsPage() {
                   })
                   .then(() => {
                     db.collection("Courses")
-                      .doc(course_MainID)
+                      .doc(signInAs?.currentCourseID)
                       .collection("Subjects")
-                      .doc(course_SubjectID)
+                      .doc(signInAs?.currentSubjectID)
                       .collection("doubtRooms")
                       .where("name", "==", signInAs.name)
                       .get()
@@ -428,9 +423,9 @@ function DoubtsPage() {
                           console.log(doc.id, " => ", doc.data());
 
                           db.collection("Courses")
-                            .doc(course_MainID)
+                            .doc(signInAs?.currentCourseID)
                             .collection("Subjects")
-                            .doc(course_SubjectID)
+                            .doc(signInAs?.currentSubjectID)
                             .collection("doubtRooms")
                             .doc(doc.id)
                             .collection("messages")
@@ -455,17 +450,17 @@ function DoubtsPage() {
                 db.collection("students")
                   .doc(user?.uid)
                   .collection("courses")
-                  .doc(userCourseId)
+                  .doc(signInAs?.usercurrentCourseID)
                   .collection("subjects")
-                  .doc(userSubjectId)
+                  .doc(signInAs?.usercurrentSubjectID)
                   .update({
                     doubtMessageslength: z,
                   });
 
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .where("name", "==", signInAs.name)
                   .get()
@@ -478,9 +473,9 @@ function DoubtsPage() {
                       y++;
 
                       db.collection("Courses")
-                        .doc(course_MainID)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(course_SubjectID)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .update({
@@ -488,9 +483,9 @@ function DoubtsPage() {
                         });
 
                       db.collection("Courses")
-                        .doc(course_MainID)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(course_SubjectID)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .collection("messages")
@@ -520,9 +515,9 @@ function DoubtsPage() {
         db.collection("students")
           .doc(user?.uid)
           .collection("courses")
-          .doc(userCourseId)
+          .doc(signInAs?.usercurrentCourseID)
           .collection("subjects")
-          .doc(userSubjectId)
+          .doc(signInAs?.usercurrentSubjectID)
           .collection("messagesToTeacher")
           .add({
             name: signInAs.name,
@@ -540,17 +535,17 @@ function DoubtsPage() {
           db.collection("students")
             .doc(user?.uid)
             .collection("courses")
-            .doc(userCourseId)
+            .doc(signInAs?.usercurrentCourseID)
             .collection("subjects")
-            .doc(userSubjectId)
+            .doc(signInAs?.usercurrentSubjectID)
             .update({
               doubtMessageslength: 0,
             });
 
           db.collection("Courses")
-            .doc(course_MainID)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(course_SubjectID)
+            .doc(signInAs?.currentSubjectID)
             .collection("doubtRooms")
             .add({
               name: signInAs.name,
@@ -558,9 +553,9 @@ function DoubtsPage() {
             })
             .then(() => {
               db.collection("Courses")
-                .doc(course_MainID)
+                .doc(signInAs?.currentCourseID)
                 .collection("Subjects")
-                .doc(course_SubjectID)
+                .doc(signInAs?.currentSubjectID)
                 .collection("doubtRooms")
                 .where("name", "==", signInAs.name)
                 .get()
@@ -570,9 +565,9 @@ function DoubtsPage() {
                     console.log(doc.id, " => ", doc.data());
 
                     db.collection("Courses")
-                      .doc(course_MainID)
+                      .doc(signInAs?.currentCourseID)
                       .collection("Subjects")
-                      .doc(course_SubjectID)
+                      .doc(signInAs?.currentSubjectID)
                       .collection("doubtRooms")
                       .doc(doc.id)
                       .collection("messages")
@@ -593,16 +588,16 @@ function DoubtsPage() {
           db.collection("students")
             .doc(user?.uid)
             .collection("courses")
-            .doc(userCourseId)
+            .doc(signInAs?.usercurrentCourseID)
             .collection("subjects")
-            .doc(userSubjectId)
+            .doc(signInAs?.usercurrentSubjectID)
             .update({
               doubtMessageslength: z,
             });
           db.collection("Courses")
-            .doc(course_MainID)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(course_SubjectID)
+            .doc(signInAs?.currentSubjectID)
             .collection("doubtRooms")
             .where("name", "==", signInAs.name)
             .get()
@@ -615,9 +610,9 @@ function DoubtsPage() {
                 y++;
 
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .doc(doc.id)
                   .update({
@@ -625,9 +620,9 @@ function DoubtsPage() {
                   });
 
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .doc(doc.id)
                   .collection("messages")
@@ -654,9 +649,9 @@ function DoubtsPage() {
     db.collection("students")
     .doc(user?.uid)
     .collection("courses")
-    .doc(userCourseId)
+    .doc(signInAs?.usercurrentCourseID)
     .collection("subjects")
-    .doc(userSubjectId)
+    .doc(signInAs?.usercurrentSubjectID)
     .collection("messagesToTeacher")
     .orderBy("timestamp", "desc")
     .limit(limit+20)
@@ -728,7 +723,7 @@ function DoubtsPage() {
                   className="arrowBack_icon"
                   onClick={back_to_previous_page}
                 />
-                <p>{course_Subject}</p>
+                <p>{signInAs?.currentSubject}</p>
               </div>
               {popupshowImage === false && loading === false && (
                 <button

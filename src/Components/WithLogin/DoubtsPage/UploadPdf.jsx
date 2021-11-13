@@ -18,13 +18,7 @@ function UploadPdf() {
   const [
     {
       user,
-      course_Main,
-      course_MainID,
       signInAs,
-      course_Subject,
-      course_SubjectID,
-      userCourseId,
-      userSubjectId,
     },
     dispatch,
   ] = useStateValue();
@@ -50,16 +44,16 @@ function UploadPdf() {
   useEffect(() => {
     if (
       user &&
-      userCourseId &&
-      userSubjectId &&
-      course_MainID &&
-      course_SubjectID
+      signInAs?.usercurrentCourseID &&
+      signInAs?.usercurrentSubjectID &&
+      signInAs?.currentCourseID &&
+      signInAs?.currentSubjectID
     ) {
 
       db.collection("Courses")
-        .doc(course_MainID)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(course_SubjectID)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .onSnapshot((snapshot) =>
           setRooms(
@@ -71,10 +65,10 @@ function UploadPdf() {
     }
   }, [
     user,
-    userCourseId,
-    userSubjectId,
-    course_MainID,
-    course_SubjectID,
+    signInAs?.usercurrentCourseID,
+    signInAs?.usercurrentSubjectID,
+    signInAs?.currentCourseID,
+    signInAs?.currentSubjectID,
     rooms.length
   ]);
 
@@ -145,9 +139,9 @@ function UploadPdf() {
             db.collection("students")
               .doc(user.uid)
               .collection("courses")
-              .doc(userCourseId)
+              .doc(signInAs?.usercurrentCourseID)
               .collection("subjects")
-              .doc(userSubjectId)
+              .doc(signInAs?.usercurrentSubjectID)
               .collection("messagesToeacher")
               .add({
                 name: signInAs?.name,
@@ -164,18 +158,18 @@ function UploadPdf() {
               }
               if (x === 0) {
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .add({
                     name: signInAs.name,
                   })
                   .then(() => {
                     db.collection("Courses")
-                      .doc(course_MainID)
+                      .doc(signInAs?.currentCourseID)
                       .collection("Subjects")
-                      .doc(course_SubjectID)
+                      .doc(signInAs?.currentSubjectID)
                       .collection("doubtRooms")
                       .where("name", "==", signInAs.name)
                       .get()
@@ -185,9 +179,9 @@ function UploadPdf() {
                           console.log(doc.id, " => ", doc.data());
         
                           db.collection("Courses")
-                            .doc(course_MainID)
+                            .doc(signInAs?.currentCourseID)
                             .collection("Subjects")
-                            .doc(course_SubjectID)
+                            .doc(signInAs?.currentSubjectID)
                             .collection("doubtRooms")
                             .doc(doc.id)
                             .collection("messages")
@@ -206,9 +200,9 @@ function UploadPdf() {
                   });
               } else {
                 db.collection("Courses")
-                  .doc(course_MainID)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(course_SubjectID)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .where("name", "==", signInAs.name)
                   .get()
@@ -218,9 +212,9 @@ function UploadPdf() {
                       console.log(doc.id, " => ", doc.data());
         
                       db.collection("Courses")
-                        .doc(course_MainID)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(course_SubjectID)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .collection("messages")

@@ -21,10 +21,6 @@ function SubmitAssignment() {
       openAsignmentPopup,
       assignmentStudentDetails,
       user,
-      userCourseId,
-      userSubjectId,
-      course_MainID,
-      course_SubjectID,
       signInAs,
     },
     dispatch,
@@ -132,9 +128,9 @@ function SubmitAssignment() {
         db.collection("students")
         .doc(user.uid)
         .collection("courses")
-        .doc(userCourseId)
+        .doc(signInAs?.usercurrentCourseID)
         .collection("subjects")
-        .doc(userSubjectId)
+        .doc(signInAs?.usercurrentSubjectID)
         .collection("assignments")
         .where("name", "==", assignmentStudentDetails.name)
         .get()
@@ -145,9 +141,9 @@ function SubmitAssignment() {
             db.collection("students")
               .doc(user.uid)
               .collection("courses")
-              .doc(userCourseId)
+              .doc(signInAs?.usercurrentCourseID)
               .collection("subjects")
-              .doc(userSubjectId)
+              .doc(signInAs?.usercurrentSubjectID)
               .collection("assignments")
               .doc(doc.id)
               .update({
@@ -162,9 +158,9 @@ function SubmitAssignment() {
         });
        console.log(fileUrl)
       db.collection("Courses")
-        .doc(course_MainID)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(course_SubjectID)
+        .doc(signInAs?.currentSubjectID)
         .collection("assignments")
         .where("name", "==", assignmentStudentDetails?.name)
         .get()
@@ -173,9 +169,9 @@ function SubmitAssignment() {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
             db.collection("Courses")
-              .doc(course_MainID)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(course_SubjectID)
+              .doc(signInAs?.currentSubjectID)
               .collection("assignments")
               .doc(doc.id)
               .collection("answers")

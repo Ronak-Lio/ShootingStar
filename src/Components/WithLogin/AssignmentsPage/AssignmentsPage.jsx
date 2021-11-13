@@ -12,7 +12,7 @@ import HeaderMain from "../Header/HeaderMain";
 import db from "../../../firebase";
 import VewAssignmentPopup from "./VewAssignmentPopup";
 function AssignmentsPage() {
-  const [{ openAsignmentPopup, user, userCourseId, userSubjectId }, dispatch] =
+  const [{ openAsignmentPopup, user, signInAs}, dispatch] =
     useStateValue();
   const history = useHistory();
   const [assignments, setAssignments] = useState([]);
@@ -21,14 +21,14 @@ function AssignmentsPage() {
 
   useEffect(() => {
     console.log(user);
-    console.log(userCourseId, "&&&", userSubjectId);
-    if (user && userCourseId && userSubjectId) {
+    console.log(signInAs?.usercurrentCourseID, "&&&",);
+    if (user && signInAs?.usercurrentCourseID && signInAs?.usercurrentSubjectID) {
       db.collection("students")
         .doc(user.uid)
         .collection("courses")
-        .doc(userCourseId)
+        .doc(signInAs?.usercurrentCourseID)
         .collection("subjects")
-        .doc(userSubjectId)
+        .doc(signInAs?.usercurrentSubjectID)
         .collection("assignments")
         .onSnapshot((snapshot) => {
           setAssignments(
@@ -39,7 +39,7 @@ function AssignmentsPage() {
         });
     };
     console.log("Assignments are" , assignments)
-  }, [user, userCourseId, userSubjectId, assignments.length]);
+  }, [user, signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID, assignments.length]);
 
   const open_noticesPopup = (e) => {
     e.preventDefault();

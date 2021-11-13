@@ -28,14 +28,10 @@ function MessagesSectionForMobile() {
       openDoubtReplies,
       user,
       signInAs,
-      teacherCourseId,
-      teacherSubjectId,
       userCourseId,
       userSubjectId,
       chatName,
       sendPdf,
-      teacherCourse,
-      teacherSubject,
     },
     dispatch,
   ] = useStateValue();
@@ -58,15 +54,15 @@ function MessagesSectionForMobile() {
   var datetime = today.toLocaleString();
 
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId) {
-      console.log(teacherCourseId);
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID) {
+      console.log(signInAs?.currentCourseID);
 
       setInput("");
 
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .onSnapshot((snapshot) =>
           setRooms(
@@ -78,23 +74,23 @@ function MessagesSectionForMobile() {
     }
   }, [
     user,
-    teacherCourseId,
-    teacherSubjectId,
+    signInAs?.currentCourseID,
+    signInAs?.currentSubjectID,
     userCourseId,
     userSubjectId,
     messages.length,
   ]);
 
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId) {
-      console.log(teacherCourseId);
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID) {
+      console.log(signInAs?.currentCourseID);
 
       setInput("");
 
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .onSnapshot((snapshot) =>
           setRooms(
@@ -106,19 +102,19 @@ function MessagesSectionForMobile() {
     }
   }, [
     user,
-    teacherCourseId,
-    teacherSubjectId,
+    signInAs?.currentCourseID,
+    signInAs?.currentSubjectID,
     userCourseId,
     userSubjectId,
     messages.length,
   ]);
 
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId && chatName) {
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID && chatName) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .where("name", "==", chatName)
         .get()
@@ -128,9 +124,9 @@ function MessagesSectionForMobile() {
             console.log(doc.id, " => ", doc.data());
 
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("doubtRooms")
               .doc(doc.id)
               .collection("messages")
@@ -152,11 +148,11 @@ function MessagesSectionForMobile() {
   }, [chatName]);
 
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId) {
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .where("name", "==", chatName)
         .get()
@@ -166,9 +162,9 @@ function MessagesSectionForMobile() {
             console.log(doc.id, " => ", doc.data());
 
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("doubtRooms")
               .doc(doc.id)
               .onSnapshot((snapshot) => {
@@ -227,7 +223,7 @@ function MessagesSectionForMobile() {
                       db.collection("students")
                         .doc(doc.id)
                         .collection("courses")
-                        .where("name", "==", teacherCourse)
+                        .where("name", "==", signInAs?.currentCourse)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc1) => {
@@ -238,7 +234,7 @@ function MessagesSectionForMobile() {
                               .collection("courses")
                               .doc(doc1.id)
                               .collection("subjects")
-                              .where("name", "==", teacherSubject)
+                              .where("name", "==", signInAs?.currentSubject)
                               .get()
                               .then((querySnapshot) => {
                                 querySnapshot.forEach((doc2) => {
@@ -288,9 +284,9 @@ function MessagesSectionForMobile() {
                     console.log("Error getting documents: ", error);
                   });
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .where("name", "==", chatName)
                   .get()
@@ -303,9 +299,9 @@ function MessagesSectionForMobile() {
                       y++;
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .update({
@@ -313,9 +309,9 @@ function MessagesSectionForMobile() {
                         });
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .collection("messages")
@@ -370,7 +366,7 @@ function MessagesSectionForMobile() {
                       db.collection("students")
                         .doc(doc.id)
                         .collection("courses")
-                        .where("name", "==", teacherCourse)
+                        .where("name", "==", signInAs?.currentCourse)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc1) => {
@@ -381,7 +377,7 @@ function MessagesSectionForMobile() {
                               .collection("courses")
                               .doc(doc1.id)
                               .collection("subjects")
-                              .where("name", "==", teacherSubject)
+                              .where("name", "==", signInAs?.currentSubject)
                               .get()
                               .then((querySnapshot) => {
                                 querySnapshot.forEach((doc2) => {
@@ -432,9 +428,9 @@ function MessagesSectionForMobile() {
                     console.log("Error getting documents: ", error);
                   });
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .where("name", "==", chatName)
                   .get()
@@ -447,9 +443,9 @@ function MessagesSectionForMobile() {
                       y++;
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .update({
@@ -457,9 +453,9 @@ function MessagesSectionForMobile() {
                         });
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .collection("messages")
@@ -497,7 +493,7 @@ function MessagesSectionForMobile() {
                 db.collection("students")
                   .doc(doc.id)
                   .collection("courses")
-                  .where("name", "==", teacherCourse)
+                  .where("name", "==", signInAs?.currentCourse)
                   .get()
                   .then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
@@ -508,7 +504,7 @@ function MessagesSectionForMobile() {
                         .collection("courses")
                         .doc(doc1.id)
                         .collection("subjects")
-                        .where("name", "==", teacherSubject)
+                        .where("name", "==", signInAs?.currentSubject)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc2) => {
@@ -550,9 +546,9 @@ function MessagesSectionForMobile() {
               console.log("Error getting documents: ", error);
             });
           db.collection("Courses")
-            .doc(teacherCourseId)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(teacherSubjectId)
+            .doc(signInAs?.currentSubjectID)
             .collection("doubtRooms")
             .where("name", "==", chatName)
             .get()
@@ -562,9 +558,9 @@ function MessagesSectionForMobile() {
                 console.log(doc.id, " => ", doc.data());
 
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .doc(doc.id)
                   .collection("messages")
@@ -579,9 +575,9 @@ function MessagesSectionForMobile() {
                 y++;
 
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .doc(doc.id)
                   .update({
@@ -630,11 +626,11 @@ function MessagesSectionForMobile() {
   const seeMoreMessages = (e) => {
     e.preventDefault();
     console.log(length);
-    if (user && teacherCourseId && teacherSubjectId && chatName) {
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID && chatName) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .where("name", "==", chatName)
         .get()
@@ -644,9 +640,9 @@ function MessagesSectionForMobile() {
             console.log(doc.id, " => ", doc.data());
 
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("doubtRooms")
               .doc(doc.id)
               .collection("messages")

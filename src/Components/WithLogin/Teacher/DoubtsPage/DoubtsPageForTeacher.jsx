@@ -29,14 +29,8 @@ function DoubtsPageForTeacher() {
       openDoubtReplies,
       user,
       signInAs,
-      teacherCourseId,
-      teacherSubjectId,
-      userCourseId,
-      userSubjectId,
       chatName,
       sendPdf,
-      teacherCourse,
-      teacherSubject,
     },
     dispatch,
   ] = useStateValue();
@@ -59,15 +53,15 @@ function DoubtsPageForTeacher() {
   var datetime = today.toLocaleString();
 
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId) {
-      console.log(teacherCourseId);
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID) {
+      console.log(signInAs?.currentCourseID);
 
       setInput("");
 
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .onSnapshot((snapshot) =>
           setRooms(
@@ -79,19 +73,17 @@ function DoubtsPageForTeacher() {
     }
   }, [
     user,
-    teacherCourseId,
-    teacherSubjectId,
-    userCourseId,
-    userSubjectId,
+    signInAs?.currentCourseID,
+    signInAs?.currentSubjectID,
     messages.length,
   ]);
 
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId) {
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .where("name", "==", chatName)
         .get()
@@ -101,9 +93,9 @@ function DoubtsPageForTeacher() {
             console.log(doc.id, " => ", doc.data());
 
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("doubtRooms")
               .doc(doc.id)
               .onSnapshot((snapshot) => {
@@ -116,14 +108,14 @@ function DoubtsPageForTeacher() {
           console.log("Error getting documents: ", error);
         });
     }
-  }, [user, userCourseId, userSubjectId]);
+  }, [user , signInAs?.currentSubjectID  , signInAs?.currentCourseID]);
 
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId && chatName) {
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID && chatName) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .where("name", "==", chatName)
         .get()
@@ -133,9 +125,9 @@ function DoubtsPageForTeacher() {
             console.log(doc.id, " => ", doc.data());
 
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("doubtRooms")
               .doc(doc.id)
               .collection("messages")
@@ -232,7 +224,7 @@ function DoubtsPageForTeacher() {
                       db.collection("students")
                         .doc(doc.id)
                         .collection("courses")
-                        .where("name", "==", teacherCourse)
+                        .where("name", "==", signInAs?.currentCourse)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc1) => {
@@ -243,7 +235,7 @@ function DoubtsPageForTeacher() {
                               .collection("courses")
                               .doc(doc1.id)
                               .collection("subjects")
-                              .where("name", "==", teacherSubject)
+                              .where("name", "==", signInAs?.currentSubject)
                               .get()
                               .then((querySnapshot) => {
                                 querySnapshot.forEach((doc2) => {
@@ -293,9 +285,9 @@ function DoubtsPageForTeacher() {
                     console.log("Error getting documents: ", error);
                   });
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .where("name", "==", chatName)
                   .get()
@@ -308,9 +300,9 @@ function DoubtsPageForTeacher() {
                       y++;
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .update({
@@ -318,9 +310,9 @@ function DoubtsPageForTeacher() {
                         });
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .collection("messages")
@@ -375,7 +367,7 @@ function DoubtsPageForTeacher() {
                       db.collection("students")
                         .doc(doc.id)
                         .collection("courses")
-                        .where("name", "==", teacherCourse)
+                        .where("name", "==", signInAs?.currentCourse)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc1) => {
@@ -386,7 +378,7 @@ function DoubtsPageForTeacher() {
                               .collection("courses")
                               .doc(doc1.id)
                               .collection("subjects")
-                              .where("name", "==", teacherSubject)
+                              .where("name", "==", signInAs?.currentSubject)
                               .get()
                               .then((querySnapshot) => {
                                 querySnapshot.forEach((doc2) => {
@@ -437,9 +429,9 @@ function DoubtsPageForTeacher() {
                     console.log("Error getting documents: ", error);
                   });
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .where("name", "==", chatName)
                   .get()
@@ -452,9 +444,9 @@ function DoubtsPageForTeacher() {
                       y++;
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .update({
@@ -462,9 +454,9 @@ function DoubtsPageForTeacher() {
                         });
 
                       db.collection("Courses")
-                        .doc(teacherCourseId)
+                        .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
-                        .doc(teacherSubjectId)
+                        .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
                         .doc(doc.id)
                         .collection("messages")
@@ -502,7 +494,7 @@ function DoubtsPageForTeacher() {
                 db.collection("students")
                   .doc(doc.id)
                   .collection("courses")
-                  .where("name", "==", teacherCourse)
+                  .where("name", "==", signInAs?.currentCourse)
                   .get()
                   .then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
@@ -513,7 +505,7 @@ function DoubtsPageForTeacher() {
                         .collection("courses")
                         .doc(doc1.id)
                         .collection("subjects")
-                        .where("name", "==", teacherSubject)
+                        .where("name", "==", signInAs?.currentSubject)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc2) => {
@@ -555,9 +547,9 @@ function DoubtsPageForTeacher() {
               console.log("Error getting documents: ", error);
             });
           db.collection("Courses")
-            .doc(teacherCourseId)
+            .doc(signInAs?.currentCourseID)
             .collection("Subjects")
-            .doc(teacherSubjectId)
+            .doc(signInAs?.currentSubjectID)
             .collection("doubtRooms")
             .where("name", "==", chatName)
             .get()
@@ -567,9 +559,9 @@ function DoubtsPageForTeacher() {
                 console.log(doc.id, " => ", doc.data());
 
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .doc(doc.id)
                   .collection("messages")
@@ -584,9 +576,9 @@ function DoubtsPageForTeacher() {
                 y++;
 
                 db.collection("Courses")
-                  .doc(teacherCourseId)
+                  .doc(signInAs?.currentCourseID)
                   .collection("Subjects")
-                  .doc(teacherSubjectId)
+                  .doc(signInAs?.currentSubjectID)
                   .collection("doubtRooms")
                   .doc(doc.id)
                   .update({
@@ -615,11 +607,11 @@ function DoubtsPageForTeacher() {
   const seeMoreMessages = (e) => {
     e.preventDefault();
     console.log(length)
-    if (user && teacherCourseId && teacherSubjectId && chatName) {
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID && chatName) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("doubtRooms")
         .where("name", "==", chatName)
         .get()
@@ -629,9 +621,9 @@ function DoubtsPageForTeacher() {
             console.log(doc.id, " => ", doc.data());
 
             db.collection("Courses")
-              .doc(teacherCourseId)
+              .doc(signInAs?.currentCourseID)
               .collection("Subjects")
-              .doc(teacherSubjectId)
+              .doc(signInAs?.currentSubjectID)
               .collection("doubtRooms")
               .doc(doc.id)
               .collection("messages")

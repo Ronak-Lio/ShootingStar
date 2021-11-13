@@ -6,10 +6,11 @@ import { useHistory } from "react-router-dom";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import ReactPlayer from "react-player";
 import { Player } from "video-react";
+import ArrowCircleDownRoundedIcon from '@mui/icons-material/ArrowCircleDownRounded';
 
 function Doubt({ message }) {
   const history = useHistory();
-  const [{}, dispatch] = useStateValue();
+  const [{signInAs}, dispatch] = useStateValue();
   const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
   const view_pdf = (e) => {
     history.push("/viewPdf");
@@ -45,7 +46,9 @@ function Doubt({ message }) {
         </div>
       )}
       <Container>
-        <div className="doubt">
+        <div   className={
+          message?.data?.name === signInAs?.name ? `doubt` : `doubt_receiver`
+        }>
           <div className="doubt_name">
             <p>{message?.data?.name}</p>
           </div>
@@ -77,18 +80,23 @@ function Doubt({ message }) {
                     }}
                   />
                 )}
+                <p>{message.data?.imageOriginalName}</p>
                 {message?.data?.message && <p>{message?.data?.message}</p>}
               </>
             )}
             {message.data?.type === "video" && (
               <>
-              <h5 className={"videoMessage"}>
-                <Player
-                  playsInline
-                  poster="/assets/poster.png"
-                  src={message.data?.videoURL}
-                />
-              </h5>
+               <div className={'videoMessage'}> 
+                        <Player
+                            playsInline
+                            poster="/assets/poster.png"
+                            src={message.data?.videoURL}
+                        />
+                          <div className="Name_Download">
+                            <p>{message.data?.videoOriginalName}</p>
+                            <a href={message.data?.videoURL}><ArrowCircleDownRoundedIcon fontSize="large" /></a>
+                            </div>
+                    </div>
               {message?.data?.message && <p>{message?.data?.message}</p>}
               </>
             )}
@@ -105,6 +113,17 @@ const Container = styled.div`
     flex-direction: column;
     margin-right: 10px;
     margin-left: auto;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    max-width: 60%;
+    width: fit-content;
+  }
+
+  .doubt_receiver{
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-right: auto;
     margin-top: 10px;
     margin-bottom: 4px;
     max-width: 60%;
@@ -132,7 +151,7 @@ const Container = styled.div`
         cursor: pointer;
       }
 
-      @media (max-width: 820px) {
+      @media (max-width: 1200px) {
         width : 100%;
         object-fit: contain;
         height : auto;
