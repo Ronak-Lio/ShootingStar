@@ -35,16 +35,13 @@ import UploadCreatedAssignment from "./Components/WithLogin/Teacher/AssignmentsP
 
 import ChatTeacher from "./Components/WithLogin/Teacher/ChatTeacher/ChatTeacher";
 import Admin from "./Components/WithLogin/Admin/Main/Main";
-import AddStudent from "./Components/WithLogin/Admin/AddStudent/AddStudent";
-import AddTeacher from "./Components/WithLogin/Admin/AddTeacher/AddTeacher";
-import AddAdmin from "./Components/WithLogin/Admin/AddAdmin/AddAdmin";
 import AddTeacherInfo from "./Components/WithLogin/Admin/AddTeacher/AddTeacherInfo";
-import AddCourse from "./Components/WithLogin/Admin/AddCourse/AddCourse";
 import ViewAssignmentPage from "./Components/WithLogin/Teacher/AssignmentsPage/ViewAssignmentPage";
 import UpdatePage from "./Components/WithLogin/Profile/UpdatePage";
 import CheckDocument from "./Components/WithLogin/Teacher/ChatTeacher/CheckDocument";
 import ViewPdf from "./Components/WithLogin/ViewPdf/ViewPdf";
 import Loading from "./Components/WithLogin/Loading/Loading";
+import Courses from "./Components/WithLogin/Admin/Main/Courses";
 
 function App() {
   const [{ signInAs, user }, dispatch] = useStateValue();
@@ -109,18 +106,15 @@ function App() {
         <Route path="/admin">
           <Admin />
         </Route>
-        <Route path="/addcourse">
-          <AddCourse />
+        <Route path="/addcourses">
+        <Admin/>
         </Route>
         <Route path="/addteacher">
           <Admin />
         </Route>
         <Route path="/addstudent">
           <Admin />
-        </Route>
-        {/* <Route path="/addteacherinfo">
-        <AddTeacherInfo/>
-        </Route> */}
+        </Route> 
         <Route path="/addadmin">
         <Admin/>
         </Route>

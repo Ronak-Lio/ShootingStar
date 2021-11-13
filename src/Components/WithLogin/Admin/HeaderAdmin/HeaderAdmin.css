@@ -7,13 +7,14 @@
     padding: 10px 5px 10px 5px;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1;
 }
 .Admin__home{
     flex: 0.4;
     display: flex;
     padding-left:20px;
     align-items: center;
+    z-index: 100;
 }
 .HeaderAdmin{
     flex: 0.6;
@@ -31,4 +32,12 @@
 }
 .add_teacher{ 
     border: 1px solid lightgreen;
+}
+@media(max-width:768px){
+    .HeaderAdminFirst{
+        font-weight: 500;
+        font-size: medium;
+        font-family:Georgia, 'Times New Roman', Times, serif;
+        cursor: pointer;
+    } 
 }

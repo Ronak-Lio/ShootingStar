@@ -19,31 +19,24 @@ function HeaderAdmin() {
         <div className="HeaderAdminFirst" onClick={() => {
           history.push('/admin')
         }}>
-          Home
+          Users
           {window.location.pathname === "/admin" && <div className="add_teacher"></div>
           }
         </div>
         <div className="HeaderAdminFirst" onClick={() => {
-          history.push('/addstudent')
+          history.push('/addcourses')
         }}>
-          Add Student
-          {window.location.pathname === "/addstudent" && <div className="add_teacher"></div>
-          }
-        </div>
-        <div className="HeaderAdminFirst" onClick={() => {
-          history.push('/addteacher')
-        }}>
-          Add Teacher
-          {window.location.pathname === "/addteacher" && <div className="add_teacher"></div>
+         Courses
+          {window.location.pathname === "/addcourses" && <div className="add_teacher"></div>
           }
         </div>
         <div className="HeaderAdminFirst" onClick={() => {
           history.push('/addadmin')
         }}>
-          Add Admin
+          Admin
           {window.location.pathname === "/addadmin" && <div className="add_teacher"></div>
           }
-        </div>
+        </div> 
       </div>
     </div>
   );

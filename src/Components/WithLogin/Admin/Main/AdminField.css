@@ -13,7 +13,21 @@
 .totalUser__Header{
     background-color: lightgray;
     padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.totalUser__Header__SecHead{
+    display: flex;
+}
+.totalUser__Header__Cross{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .totalUser__Body{
     padding: 12px;
+}
+.admin{
+    z-index: -1;
 }
