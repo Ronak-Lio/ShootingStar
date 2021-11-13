@@ -1,0 +1,19 @@
+.adminField{
+    display: flex;
+    align-items: center;
+}
+.TotalUsers{
+   display: flex;
+   flex-direction: column;
+   width: 90vw;
+   border: 1px solid lightgray;
+   border-radius: 4px;
+   margin: 10px;
+}
+.totalUser__Header{
+    background-color: lightgray;
+    padding: 12px;
+}
+.totalUser__Body{
+    padding: 12px;
+}

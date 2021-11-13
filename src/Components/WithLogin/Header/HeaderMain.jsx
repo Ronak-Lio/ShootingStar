@@ -18,7 +18,7 @@ function HeaderMain() {
     {
       signInAs,
       showDiv,
-      user,
+      user, 
     },
     dispatch,
   ] = useStateValue();
@@ -48,8 +48,7 @@ function HeaderMain() {
           .where("name", "==", coursesArray[0]?.data?.name)
           .get()
           .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              console.log("doc?.id", doc?.id);
+            querySnapshot.forEach((doc) => { 
               db.collection("Courses")
                 .doc(doc.id)
                 .collection("Subjects")
@@ -83,15 +82,14 @@ function HeaderMain() {
   }, [coursesArray]);
 
   useEffect(() => {
-    if (signInAs?.currentSubject) {
+    if (signInAs?.currentSubject && user) {
       db.collection("students")
         .doc(user.uid)
         .collection("courses")
         .where("name", "==", signInAs?.currentCourse)
         .get()
         .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            console.log("doc?.id", doc?.id);
+          querySnapshot.forEach((doc) => { 
             db.collection("students")
               .doc(user.uid)
               .collection("courses")
@@ -100,15 +98,11 @@ function HeaderMain() {
               .where("name", "==", signInAs?.currentSubject)
               .get()
               .then((querySnapshot) => {
-                querySnapshot.forEach((doc1) => {
-                  if(!signInAs?.usercurrentCourseID){
+                querySnapshot.forEach((doc1) => { 
                     db.collection('users').doc(user?.uid).update({
                       usercurrentCourseID:doc?.id,
                       usercurrentSubjectID:doc1?.id,
-                    })
-                  }else{
-
-                  }
+                    }) 
                 });
               })
               .catch((error) => {
@@ -120,7 +114,9 @@ function HeaderMain() {
           console.log("Error getting documents: ", error);
         });
     }
-  }, [signInAs?.currentSubject]);
+  }, [signInAs?.currentSubject, user]);
+
+  console.log("fuck",signInAs?.usercurrentSubjectID);
 
   return (
     <>

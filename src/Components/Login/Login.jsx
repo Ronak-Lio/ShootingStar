@@ -55,6 +55,8 @@ function Login() {
           });
         });
       history.push("/main");
+    }else if(signInAs?.value  === "admin"){
+      history.push('/admin');
     }
   }, [signInAs, user]);
   const create_new_account = (e) => {
