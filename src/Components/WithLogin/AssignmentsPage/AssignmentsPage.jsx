@@ -22,7 +22,7 @@ function AssignmentsPage() {
   useEffect(() => {
     console.log(user);
     console.log(signInAs?.usercurrentCourseID, "&&&",);
-    if (user && signInAs?.usercurrentCourseID && signInAs?.usercurrentSubjectID) {
+    if (user && signInAs?.usercurrentCourseID && signInAs?.usercurrentSubjectID){
       db.collection("students")
         .doc(user.uid)
         .collection("courses")
@@ -55,7 +55,9 @@ function AssignmentsPage() {
   };
   return (
     <div className="assignmentsPage">
-      <HeaderMain />
+      <div className="assignmentsPage_header">
+        <HeaderMain/>
+      </div>
       <div className="upcoming_class_div">
         <p>Upcoming Class at 14:33 on Monday</p>
         <div className="upcoming_class_div_button">
@@ -127,11 +129,10 @@ function AssignmentsPage() {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  height: fit-content;
+  height: 80vh;
   padding-top: 10px;
   background-color: #7db3ff;
-  
-  
+  overflow-y : scroll;
 
   .notices {
     flex: 0.3;
@@ -152,6 +153,8 @@ const Assignments = styled.div`
   flex: 0.7;
   display: flex;
   flex-direction: column;
+  height : fit-content;
+  overflow-y : scroll;
 
   .due_assignments {
     text-align: center;
