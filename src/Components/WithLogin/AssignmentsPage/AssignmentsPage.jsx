@@ -41,18 +41,19 @@ function AssignmentsPage() {
     console.log("Assignments are" , assignments)
   }, [user, signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID, assignments.length]);
 
-  const open_noticesPopup = (e) => {
-    e.preventDefault();
-    dispatch({
-      type: actionTypes.OPEN_NOTICES_POPUP,
-      openNoticesPopup: true,
-    });
-  };
+  useEffect(() =>{
+     if(assignments.length > 0) {
+         for(let i = 0; i < assignments.length; i++) {
+           if(assignments[i].data.status === "submitted"){
+             submittedAssignments.push(assignments[i])
+           }
+         }
+     }
+  } ,[assignments.length , signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID,]);
 
-  const open_noticePage_for_mobile = (e) => {
-    e.preventDefault();
-    history.push("/noticesPage");
-  };
+  useEffect(() =>{
+        setSubmittedAssignments([]);
+  } , [ user , signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID]);
   return (
     <div className="assignmentsPage">
       <div className="assignmentsPage_header">
@@ -60,17 +61,6 @@ function AssignmentsPage() {
       </div>
       <div className="upcoming_class_div">
         <p>Upcoming Class at 14:33 on Monday</p>
-        <div className="upcoming_class_div_button">
-          <button className="notices_for_ipad" onClick={open_noticesPopup}>
-            Notices
-          </button>
-          <button
-            className="notices_for_mobile"
-            onClick={open_noticePage_for_mobile}
-          >
-            Notices
-          </button>
-        </div>
       </div>
       <Container>
         <Assignments>
@@ -94,6 +84,7 @@ function AssignmentsPage() {
               </>
             ))}
           </div>
+       {submittedAssignments.length > 0 && (   <>
           <p className="submitted_assignments">Submitted Assignments</p>
           <div className="submitted_assignments_div">
             {console.log(assignments)}
@@ -114,6 +105,7 @@ function AssignmentsPage() {
               </>
             ))}
           </div>
+          </>)}
         </Assignments>
         <div className="notices">
           <Notices />
@@ -129,7 +121,7 @@ function AssignmentsPage() {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  height: 80vh;
+  height: 88vh;
   padding-top: 10px;
   background-color: #7db3ff;
   overflow-y : scroll;

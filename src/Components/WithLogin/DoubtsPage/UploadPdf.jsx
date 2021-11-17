@@ -15,13 +15,7 @@ import Loading from "../../WithLogin/Loading/Loading";
 
 function UploadPdf() {
   const history = useHistory();
-  const [
-    {
-      user,
-      signInAs,
-    },
-    dispatch,
-  ] = useStateValue();
+  const [{ user, signInAs }, dispatch] = useStateValue();
   // for onchange event
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfFileError, setPdfFileError] = useState("");
@@ -39,7 +33,11 @@ function UploadPdf() {
 
   const [loading, setLoading] = useState(false);
 
-  const[rooms , setRooms] = useState([]);
+  const [rooms, setRooms] = useState([]);
+
+  const[teacher , setTeacher] = useState();
+
+  const[z , setZ] = useState()
 
   useEffect(() => {
     if (
@@ -49,7 +47,6 @@ function UploadPdf() {
       signInAs?.currentCourseID &&
       signInAs?.currentSubjectID
     ) {
-
       db.collection("Courses")
         .doc(signInAs?.currentCourseID)
         .collection("Subjects")
@@ -62,6 +59,26 @@ function UploadPdf() {
             }))
           )
         );
+
+        db.collection("students")
+        .doc(user?.uid)
+        .collection("courses")
+        .doc(signInAs?.usercurrentCourseID)
+        .collection("subjects")
+        .doc(signInAs?.usercurrentSubjectID)
+        .onSnapshot((snapshot) => {
+          setZ(snapshot.data().doubtMessageslength + 1);
+        });
+
+        db.collection("Courses")
+        .doc(signInAs?.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
+        .onSnapshot((snapshot) => {
+          setTeacher(snapshot.data().teacher);
+        });
+
+
     }
   }, [
     user,
@@ -69,22 +86,25 @@ function UploadPdf() {
     signInAs?.usercurrentSubjectID,
     signInAs?.currentCourseID,
     signInAs?.currentSubjectID,
-    rooms.length
+    rooms.length,
   ]);
-
 
   const handlePdfFileChange = (e) => {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        let reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = (e) => {
-          setPdfFile(e.target.result);
-          setFileName(selectedFile.name);
-          setFile(selectedFile);
-          setPdfFileError("");
-        };
+        if(selectedFile.size < 1000*1024){
+          let reader = new FileReader();
+          reader.readAsDataURL(selectedFile);
+          reader.onloadend = (e) => {
+            setPdfFile(e.target.result);
+            setFileName(selectedFile.name);
+            setFile(selectedFile);
+            setPdfFileError("");
+          };
+        }else{
+          setPdfFileError("Please enter a file below 1 MB");
+        }
       } else {
         setPdfFile(null);
         setPdfFileError("Please select valid pdf file");
@@ -135,14 +155,43 @@ function UploadPdf() {
         async () => {
           const downloadURL = await upload.snapshot.ref.getDownloadURL();
           setLoading(false);
+
+          // name: signInAs?.name,
+          // fileName: fileName,
+          // fileUrl: downloadURL,
+          // type: "pdf",
+          // timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+
           if (downloadURL && fileName) {
+            db.collection("notificationsForTeachers")
+              .where("name", "==", teacher)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+
+                  db.collection("notificationsForTeachers")
+                    .doc(doc.id)
+                    .collection("notifications")
+                    .add({
+                      message2: `Message from ${signInAs?.name}`,
+                      timestamp:
+                        firebase.firestore.FieldValue.serverTimestamp(),
+                    });
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+
             db.collection("students")
-              .doc(user.uid)
+              .doc(user?.uid)
               .collection("courses")
               .doc(signInAs?.usercurrentCourseID)
               .collection("subjects")
               .doc(signInAs?.usercurrentSubjectID)
-              .collection("messagesToeacher")
+              .collection("messagesToTeacher")
               .add({
                 name: signInAs?.name,
                 fileName: fileName,
@@ -150,88 +199,123 @@ function UploadPdf() {
                 type: "pdf",
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               });
-              let x = 0;
-              for (let i = 0; i < rooms.length; i++) {
-                if (rooms[i].data.name === signInAs.name) {
-                  x = 1;
-                }
+            let x = 0;
+            for (let i = 0; i < rooms.length; i++) {
+              if (rooms[i].data.name === signInAs.name) {
+                x = 1;
               }
-              if (x === 0) {
-                db.collection("Courses")
-                  .doc(signInAs?.currentCourseID)
-                  .collection("Subjects")
-                  .doc(signInAs?.currentSubjectID)
-                  .collection("doubtRooms")
-                  .add({
-                    name: signInAs.name,
-                  })
-                  .then(() => {
+            }
+            if (x === 0) {
+              db.collection("students")
+                .doc(user?.uid)
+                .collection("courses")
+                .doc(signInAs?.usercurrentCourseID)
+                .collection("subjects")
+                .doc(signInAs?.usercurrentSubjectID)
+                .update({
+                  doubtMessageslength: 0,
+                });
+
+              db.collection("Courses")
+                .doc(signInAs?.currentCourseID)
+                .collection("Subjects")
+                .doc(signInAs?.currentSubjectID)
+                .collection("doubtRooms")
+                .add({
+                  name: signInAs.name,
+                  messagesLength: 1,
+                })
+                .then(() => {
+                  db.collection("Courses")
+                    .doc(signInAs?.currentCourseID)
+                    .collection("Subjects")
+                    .doc(signInAs?.currentSubjectID)
+                    .collection("doubtRooms")
+                    .where("name", "==", signInAs.name)
+                    .get()
+                    .then((querySnapshot) => {
+                      querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        console.log(doc.id, " => ", doc.data());
+
+                        db.collection("Courses")
+                          .doc(signInAs?.currentCourseID)
+                          .collection("Subjects")
+                          .doc(signInAs?.currentSubjectID)
+                          .collection("doubtRooms")
+                          .doc(doc.id)
+                          .collection("messages")
+                          .add({
+                            name: signInAs?.name,
+                            fileName: fileName,
+                            fileUrl: downloadURL,
+                            type: "pdf",
+                            timestamp:
+                              firebase.firestore.FieldValue.serverTimestamp(),
+                          });
+                      });
+                    })
+                    .catch((error) => {
+                      console.log("Error getting documents: ", error);
+                    });
+                });
+            } else {
+              db.collection("students")
+                .doc(user?.uid)
+                .collection("courses")
+                .doc(signInAs?.usercurrentCourseID)
+                .collection("subjects")
+                .doc(signInAs?.usercurrentSubjectID)
+                .update({
+                  doubtMessageslength: z,
+                });
+              db.collection("Courses")
+                .doc(signInAs?.currentCourseID)
+                .collection("Subjects")
+                .doc(signInAs?.currentSubjectID)
+                .collection("doubtRooms")
+                .where("name", "==", signInAs.name)
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
+
+                    let y = doc.data().messagesLength;
+                    y++;
+
                     db.collection("Courses")
                       .doc(signInAs?.currentCourseID)
                       .collection("Subjects")
                       .doc(signInAs?.currentSubjectID)
                       .collection("doubtRooms")
-                      .where("name", "==", signInAs.name)
-                      .get()
-                      .then((querySnapshot) => {
-                        querySnapshot.forEach((doc) => {
-                          // doc.data() is never undefined for query doc snapshots
-                          console.log(doc.id, " => ", doc.data());
-        
-                          db.collection("Courses")
-                            .doc(signInAs?.currentCourseID)
-                            .collection("Subjects")
-                            .doc(signInAs?.currentSubjectID)
-                            .collection("doubtRooms")
-                            .doc(doc.id)
-                            .collection("messages")
-                            .add({
-                                name: signInAs?.name,
-                                fileName: fileName,
-                                fileUrl: downloadURL,
-                                type: "pdf",
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            });
-                        });
-                      })
-                      .catch((error) => {
-                        console.log("Error getting documents: ", error);
+                      .doc(doc.id)
+                      .update({
+                        messagesLength: y,
+                      });
+
+                    db.collection("Courses")
+                      .doc(signInAs?.currentCourseID)
+                      .collection("Subjects")
+                      .doc(signInAs?.currentSubjectID)
+                      .collection("doubtRooms")
+                      .doc(doc.id)
+                      .collection("messages")
+                      .add({
+                        name: signInAs?.name,
+                        fileName: fileName,
+                        fileUrl: downloadURL,
+                        type: "pdf",
+                        timestamp:
+                          firebase.firestore.FieldValue.serverTimestamp(),
                       });
                   });
-              } else {
-                db.collection("Courses")
-                  .doc(signInAs?.currentCourseID)
-                  .collection("Subjects")
-                  .doc(signInAs?.currentSubjectID)
-                  .collection("doubtRooms")
-                  .where("name", "==", signInAs.name)
-                  .get()
-                  .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                      // doc.data() is never undefined for query doc snapshots
-                      console.log(doc.id, " => ", doc.data());
-        
-                      db.collection("Courses")
-                        .doc(signInAs?.currentCourseID)
-                        .collection("Subjects")
-                        .doc(signInAs?.currentSubjectID)
-                        .collection("doubtRooms")
-                        .doc(doc.id)
-                        .collection("messages")
-                        .add({
-                            name: signInAs?.name,
-                            fileName: fileName,
-                            fileUrl: downloadURL,
-                            type: "pdf",
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    });
-                  })
-                  .catch((error) => {
-                    console.log("Error getting documents: ", error);
-                  });
-              }
-             
+                })
+                .catch((error) => {
+                  console.log("Error getting documents: ", error);
+                });
+              
+            }
 
             dispatch({
               type: actionTypes.SET_SEND_PDF,

@@ -170,7 +170,7 @@ const Container = styled.div`
     margin-left: auto;
     margin-top: 10px;
     margin-bottom: 4px;
-    max-width: 60%;
+    max-width: 50%;
     width: fit-content;
   }
 
@@ -181,7 +181,7 @@ const Container = styled.div`
     margin-right: auto;
     margin-top: 10px;
     margin-bottom: 4px;
-    max-width: 60%;
+    max-width: 50%;
     width: fit-content;
   }
 
@@ -221,7 +221,7 @@ const Container = styled.div`
     }
 
     .image_with_message {
-      height: 200px;
+      width : 100%;
       object-fit: contain;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
@@ -248,7 +248,7 @@ const Container = styled.div`
     }
 
     .image_without_message {
-      height: 200px;
+      width : 100%;
       object-fit: contain;
       border-radius: 10px;
 
