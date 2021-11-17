@@ -53,18 +53,14 @@ function UploadCorrectedAssignment() {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        if(selectedFile.size < 1000*1024){
-          let reader = new FileReader();
-          reader.readAsDataURL(selectedFile);
-          reader.onloadend = (e) => {
-            setPdfFile(e.target.result);
-            setFileName(selectedFile.name);
-            setFile(selectedFile);
-            setPdfFileError("");
-          };
-        }else{
-          setPdfFileError("Please enter a file below 1 MB");
-        }
+        let reader = new FileReader();
+        reader.readAsDataURL(selectedFile);
+        reader.onloadend = (e) => {
+          setPdfFile(e.target.result);
+          setFileName(selectedFile.name);
+          setFile(selectedFile);
+          setPdfFileError("");
+        };
       } else {
         setPdfFile(null);
         setPdfFileError("Please select valid pdf file");
@@ -110,7 +106,7 @@ function UploadCorrectedAssignment() {
           const fileUrl = downloadURL;
           setLoading(false);
           history.push("/AssignmentsPage");
-          if (marks && fileUrl && fileName && studentName) {
+          if (marks && fileUrl && fileName) {
             db.collection("students")
               .where("name", "==", studentName)
               .get()
@@ -182,35 +178,6 @@ function UploadCorrectedAssignment() {
               .catch((error) => {
                 console.log("Error getting documents: ", error);
               });
-
-              //updating marks for leaderboard
-              
-              db.collection("Courses")
-              .doc(signInAs?.currentCourseID)
-              .collection("Subjects")
-              .doc(signInAs?.currentSubjectID)
-              .collection("students")
-              .where("name", "==", studentName)
-              .get()
-              .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                  // doc.data() is never undefined for query doc snapshots
-                  console.log(doc.id, " => ", doc.data());
-                  
-                  db.collection("Courses")
-                  .doc(signInAs?.currentCourseID)
-                  .collection("Subjects")
-                  .doc(signInAs?.currentSubjectID)
-                  .collection("students").doc(doc.id).update({
-                    marks : marks
-                  })
-                   
-                });
-              })
-              .catch((error) => {
-                console.log("Error getting documents: ", error);
-              });
-              
             db.collection("Courses")
               .doc(signInAs?.currentCourseID)
               .collection("Subjects")

@@ -25,8 +25,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { storage } from "../../../firebase";
 
 function DoubtsPage() {
-  const [{ openDoubtReplies, user, signInAs, sendPdf }, dispatch] =
-    useStateValue();
+  const [
+    {
+      openDoubtReplies,
+      user,
+      signInAs,
+      sendPdf,
+    },
+    dispatch,
+  ] = useStateValue();
   const history = useHistory();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -40,13 +47,13 @@ function DoubtsPage() {
   const [showTypeFile, setShowTypeFile] = useState(false);
   const [finalMessages, setFinalMessages] = useState([]);
   const [z, setZ] = useState();
-  const [limit, setLimit] = useState(20);
-  const [length, setLength] = useState();
-  const [teacher, setTeacher] = useState();
+  const[limit , setLimit] = useState(20);
+  const[length , setLength] = useState();
 
   var today = new Date();
   var datetime = today.toLocaleString();
 
+
   useEffect(() => {
     if (
       user &&
@@ -54,26 +61,20 @@ function DoubtsPage() {
       signInAs?.usercurrentSubjectID &&
       signInAs?.currentCourseID &&
       signInAs?.currentSubjectID
-    ) {
+    ){
       db.collection("students")
-        .doc(user?.uid)
-        .collection("courses")
-        .doc(signInAs?.usercurrentCourseID)
-        .collection("subjects")
-        .doc(signInAs?.usercurrentSubjectID)
-        .onSnapshot((snapshot) => {
-          setLength(snapshot.data().doubtMessageslength);
-        });
-
-      db.collection("Courses")
-        .doc(signInAs?.currentCourseID)
-        .collection("Subjects")
-        .doc(signInAs?.currentSubjectID)
-        .onSnapshot((snapshot) => {
-          setTeacher(snapshot.data().teacher);
-        });
-    }
-  }, [user, signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID]);
+      .doc(user?.uid)
+      .collection("courses")
+      .doc(signInAs?.usercurrentCourseID)
+      .collection("subjects")
+      .doc(signInAs?.usercurrentSubjectID)
+      .onSnapshot((snapshot) => {
+         setLength(snapshot.data().doubtMessageslength)
+      });
+    } 
+  } , [user,
+    signInAs?.usercurrentCourseID,
+    signInAs?.usercurrentSubjectID])
 
   useEffect(() => {
     if (
@@ -83,15 +84,17 @@ function DoubtsPage() {
       signInAs?.currentCourseID &&
       signInAs?.currentSubjectID
     ) {
+
       db.collection("students")
-        .doc(user?.uid)
-        .collection("courses")
-        .doc(signInAs?.usercurrentCourseID)
-        .collection("subjects")
-        .doc(signInAs?.usercurrentSubjectID)
-        .onSnapshot((snapshot) => {
-          setZ(snapshot.data().doubtMessageslength + 1);
-        });
+      .doc(user?.uid)
+      .collection("courses")
+      .doc(signInAs?.usercurrentCourseID)
+      .collection("subjects")
+      .doc(signInAs?.usercurrentSubjectID)
+      .onSnapshot((snapshot) => {
+         setZ(snapshot.data().doubtMessageslength + 1);
+      });
+
 
       db.collection("students")
         .doc(user?.uid)
@@ -137,8 +140,8 @@ function DoubtsPage() {
   ]);
 
   useEffect(() => {
-    console.log("Length is", z);
-  }, [length, z, teacher]);
+    console.log("Length is" ,z)
+  } ,[length , z])
 
   useEffect(() => {
     dispatch({
@@ -182,201 +185,169 @@ function DoubtsPage() {
     e.preventDefault();
     console.log(signInAs);
     console.log(input);
-    if (
-      signInAs.name &&
-      signInAs?.usercurrentCourseID &&
-      signInAs?.usercurrentSubjectID
-    ) {
+    if (signInAs.name && signInAs?.usercurrentCourseID && signInAs?.usercurrentSubjectID) {
       console.log("User Course Id is", signInAs?.usercurrentCourseID);
       console.log("User Subject Id is", signInAs?.usercurrentSubjectID);
       if (image) {
-        if(image.size < 1000*1024){
-          setLoading(true);
-          const id = uuid();
-          const upload = storage.ref(`doubtImages/${id}`).put(image);
-  
-          console.log("Image size is " , image.size)
-          upload.on(
-            "state_changed",
-            (snapshot) => {
-              const progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  
+        setLoading(true);
+        const id = uuid();
+        const upload = storage.ref(`doubtImages/${id}`).put(image);
+        upload.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+            console.log(`Progress : ${progress}%`);
+            if (snapshot.state === "RUNNING") {
               console.log(`Progress : ${progress}%`);
-              if (snapshot.state === "RUNNING") {
-                console.log(`Progress : ${progress}%`);
+            }
+          },
+          (error) => console.log(error.code),
+          async () => {
+            const url = await upload.snapshot.ref.getDownloadURL();
+            if (url) {
+              db.collection("students")
+                .doc(user?.uid)
+                .collection("courses")
+                .doc(signInAs?.usercurrentCourseID)
+                .collection("subjects")
+                .doc(signInAs?.usercurrentSubjectID)
+                .collection("messagesToTeacher")
+                .add({
+                  name: signInAs?.name,
+                  imageURL: url,
+                  message: input,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  imageName: id,
+                  imageOriginalName: image.name,
+                  type: "image",
+                });
+              let x = 0;
+              for (let i = 0; i < rooms.length; i++) {
+                if (rooms[i].data.name === signInAs.name) {
+                  x = 1;
+                }
               }
-            },
-            (error) => console.log(error.code),
-            async () => {
-              const url = await upload.snapshot.ref.getDownloadURL();
-              if (url) {
-                db.collection("notificationsForTeachers")
-                  .where("name", "==", teacher)
-                  .get()
-                  .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                      // doc.data() is never undefined for query doc snapshots
-                      console.log(doc.id, " => ", doc.data());
-  
-                      db.collection("notificationsForTeachers")
-                        .doc(doc.id)
-                        .collection("notifications")
-                        .add({
-                          message2: `Message from ${signInAs?.name}`,
-                          timestamp:
-                            firebase.firestore.FieldValue.serverTimestamp(),
-                        });
-                    });
-                  })
-                  .catch((error) => {
-                    console.log("Error getting documents: ", error);
-                  });
-  
+              if (x === 0) {
                 db.collection("students")
                   .doc(user?.uid)
                   .collection("courses")
                   .doc(signInAs?.usercurrentCourseID)
                   .collection("subjects")
                   .doc(signInAs?.usercurrentSubjectID)
-                  .collection("messagesToTeacher")
-                  .add({
-                    name: signInAs?.name,
-                    imageURL: url,
-                    message: input,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    imageName: id,
-                    imageOriginalName: image.name,
-                    type: "image",
+                  .update({
+                    doubtMessageslength: 0,
                   });
-                let x = 0;
-                for (let i = 0; i < rooms.length; i++) {
-                  if (rooms[i].data.name === signInAs.name) {
-                    x = 1;
-                  }
-                }
-                if (x === 0) {
-                  db.collection("students")
-                    .doc(user?.uid)
-                    .collection("courses")
-                    .doc(signInAs?.usercurrentCourseID)
-                    .collection("subjects")
-                    .doc(signInAs?.usercurrentSubjectID)
-                    .update({
-                      doubtMessageslength: 0,
-                    });
-  
-                  db.collection("Courses")
-                    .doc(signInAs?.currentCourseID)
-                    .collection("Subjects")
-                    .doc(signInAs?.currentSubjectID)
-                    .collection("doubtRooms")
-                    .add({
-                      name: signInAs.name,
-                      messagesLength: 1,
-                    })
-                    .then(() => {
+
+                db.collection("Courses")
+                  .doc(signInAs?.currentCourseID)
+                  .collection("Subjects")
+                  .doc(signInAs?.currentSubjectID)
+                  .collection("doubtRooms")
+                  .add({
+                    name: signInAs.name,
+                    messagesLength: 1,
+                  })
+                  .then(() => {
+                    db.collection("Courses")
+                      .doc(signInAs?.currentCourseID)
+                      .collection("Subjects")
+                      .doc(signInAs?.currentSubjectID)
+                      .collection("doubtRooms")
+                      .where("name", "==", signInAs.name)
+                      .get()
+                      .then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                          // doc.data() is never undefined for query doc snapshots
+                          console.log(doc.id, " => ", doc.data());
+
+                          db.collection("Courses")
+                            .doc(signInAs?.currentCourseID)
+                            .collection("Subjects")
+                            .doc(signInAs?.currentSubjectID)
+                            .collection("doubtRooms")
+                            .doc(doc.id)
+                            .collection("messages")
+                            .add({
+                              name: signInAs?.name,
+                              imageURL: url,
+                              message: input,
+                              timestamp:
+                                firebase.firestore.FieldValue.serverTimestamp(),
+                              imageName: id,
+                              imageOriginalName: image.name,
+                              type: "image",
+                            });
+                        });
+                      })
+                      .catch((error) => {
+                        console.log("Error getting documents: ", error);
+                      });
+                  });
+              } else {
+                db.collection("students")
+                  .doc(user?.uid)
+                  .collection("courses")
+                  .doc(signInAs?.usercurrentCourseID)
+                  .collection("subjects")
+                  .doc(signInAs?.usercurrentSubjectID)
+                  .update({
+                    doubtMessageslength: z,
+                  });
+                db.collection("Courses")
+                  .doc(signInAs?.currentCourseID)
+                  .collection("Subjects")
+                  .doc(signInAs?.currentSubjectID)
+                  .collection("doubtRooms")
+                  .where("name", "==", signInAs.name)
+                  .get()
+                  .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      console.log(doc.id, " => ", doc.data());
+
+                      let y = doc.data().messagesLength;
+                      y++;
+
                       db.collection("Courses")
                         .doc(signInAs?.currentCourseID)
                         .collection("Subjects")
                         .doc(signInAs?.currentSubjectID)
                         .collection("doubtRooms")
-                        .where("name", "==", signInAs.name)
-                        .get()
-                        .then((querySnapshot) => {
-                          querySnapshot.forEach((doc) => {
-                            // doc.data() is never undefined for query doc snapshots
-                            console.log(doc.id, " => ", doc.data());
-  
-                            db.collection("Courses")
-                              .doc(signInAs?.currentCourseID)
-                              .collection("Subjects")
-                              .doc(signInAs?.currentSubjectID)
-                              .collection("doubtRooms")
-                              .doc(doc.id)
-                              .collection("messages")
-                              .add({
-                                name: signInAs?.name,
-                                imageURL: url,
-                                message: input,
-                                timestamp:
-                                  firebase.firestore.FieldValue.serverTimestamp(),
-                                imageName: id,
-                                imageOriginalName: image.name,
-                                type: "image",
-                              });
-                          });
-                        })
-                        .catch((error) => {
-                          console.log("Error getting documents: ", error);
+                        .doc(doc.id)
+                        .update({
+                          messagesLength: y,
+                        });
+
+                      db.collection("Courses")
+                        .doc(signInAs?.currentCourseID)
+                        .collection("Subjects")
+                        .doc(signInAs?.currentSubjectID)
+                        .collection("doubtRooms")
+                        .doc(doc.id)
+                        .collection("messages")
+                        .add({
+                          name: signInAs?.name,
+                          imageURL: url,
+                          message: input,
+                          timestamp:
+                            firebase.firestore.FieldValue.serverTimestamp(),
+                          imageName: id,
+                          imageOriginalName: image.name,
+                          type: "image",
                         });
                     });
-                } else {
-                  db.collection("students")
-                    .doc(user?.uid)
-                    .collection("courses")
-                    .doc(signInAs?.usercurrentCourseID)
-                    .collection("subjects")
-                    .doc(signInAs?.usercurrentSubjectID)
-                    .update({
-                      doubtMessageslength: z,
-                    });
-                  db.collection("Courses")
-                    .doc(signInAs?.currentCourseID)
-                    .collection("Subjects")
-                    .doc(signInAs?.currentSubjectID)
-                    .collection("doubtRooms")
-                    .where("name", "==", signInAs.name)
-                    .get()
-                    .then((querySnapshot) => {
-                      querySnapshot.forEach((doc) => {
-                        // doc.data() is never undefined for query doc snapshots
-                        console.log(doc.id, " => ", doc.data());
-  
-                        let y = doc.data().messagesLength;
-                        y++;
-  
-                        db.collection("Courses")
-                          .doc(signInAs?.currentCourseID)
-                          .collection("Subjects")
-                          .doc(signInAs?.currentSubjectID)
-                          .collection("doubtRooms")
-                          .doc(doc.id)
-                          .update({
-                            messagesLength: y,
-                          });
-  
-                        db.collection("Courses")
-                          .doc(signInAs?.currentCourseID)
-                          .collection("Subjects")
-                          .doc(signInAs?.currentSubjectID)
-                          .collection("doubtRooms")
-                          .doc(doc.id)
-                          .collection("messages")
-                          .add({
-                            name: signInAs?.name,
-                            imageURL: url,
-                            message: input,
-                            timestamp:
-                              firebase.firestore.FieldValue.serverTimestamp(),
-                            imageName: id,
-                            imageOriginalName: image.name,
-                            type: "image",
-                          });
-                      });
-                    })
-                    .catch((error) => {
-                      console.log("Error getting documents: ", error);
-                    });
-                  setLoading(false);
-                  setPopupshowImage(false);
-                }
+                  })
+                  .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                  });
+                setLoading(false);
+                setPopupshowImage(false);
               }
             }
-          );
-        }else{
-          alert("Please select a file below 1 MB")
-        }
+          }
+        );
       } else if (video) {
         setLoading(true);
         const id = uuid();
@@ -396,31 +367,6 @@ function DoubtsPage() {
           async () => {
             const url = await upload.snapshot.ref.getDownloadURL();
             if (url) {
-
-              db.collection("notificationsForTeachers")
-              .where("name", "==", teacher)
-              .get()
-              .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                  // doc.data() is never undefined for query doc snapshots
-                  console.log(doc.id, " => ", doc.data());
-
-                  db.collection("notificationsForTeachers")
-                    .doc(doc.id)
-                    .collection("notifications")
-                    .add({
-                      message2: `Message from ${signInAs?.name}`,
-                      timestamp:
-                        firebase.firestore.FieldValue.serverTimestamp(),
-                    });
-                });
-              })
-              .catch((error) => {
-                console.log("Error getting documents: ", error);
-              });
-
-
-
               db.collection("students")
                 .doc(user?.uid)
                 .collection("courses")
@@ -566,31 +512,6 @@ function DoubtsPage() {
           }
         );
       } else {
-
-        db.collection("notificationsForTeachers")
-        .where("name", "==", teacher)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-
-            db.collection("notificationsForTeachers")
-              .doc(doc.id)
-              .collection("notifications")
-              .add({
-                message1 : input,
-                message2: `Message from ${signInAs?.name}`,
-                timestamp:
-                  firebase.firestore.FieldValue.serverTimestamp(),
-              });
-          });
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-
-
         db.collection("students")
           .doc(user?.uid)
           .collection("courses")
@@ -724,28 +645,28 @@ function DoubtsPage() {
 
   const seeMoreMessages = (e) => {
     e.preventDefault();
-    console.log(length);
+    console.log(length)
     db.collection("students")
-      .doc(user?.uid)
-      .collection("courses")
-      .doc(signInAs?.usercurrentCourseID)
-      .collection("subjects")
-      .doc(signInAs?.usercurrentSubjectID)
-      .collection("messagesToTeacher")
-      .orderBy("timestamp", "desc")
-      .limit(limit + 20)
-      .onSnapshot((snapshot) =>
-        setMessages(
-          snapshot.docs.map((doc) => ({
-            id: doc.id,
-            data: doc.data(),
-          }))
-        )
-      );
+    .doc(user?.uid)
+    .collection("courses")
+    .doc(signInAs?.usercurrentCourseID)
+    .collection("subjects")
+    .doc(signInAs?.usercurrentSubjectID)
+    .collection("messagesToTeacher")
+    .orderBy("timestamp", "desc")
+    .limit(limit+20)
+    .onSnapshot((snapshot) =>
+      setMessages(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      )
+    );
 
-    setLimit(limit + 20);
-    setLength(length - 20);
-  };
+    setLimit(limit+20);
+    setLength(length-20);
+  }
 
   const open_send_Pdf_box = (e) => {
     e.preventDefault();
@@ -783,6 +704,15 @@ function DoubtsPage() {
         <div className="upcoming_class">
           <p>Upcoming class at 14:33 on Monday</p>
           <div className="header_buttons">
+            <button className="notice_button" onClick={open_noticesPopup}>
+              Notices
+            </button>
+            <button
+              className="notice_button_for_mobile"
+              onClick={goToNoticesPage}
+            >
+              Notices
+            </button>
           </div>
         </div>
         <Container>
@@ -846,9 +776,7 @@ function DoubtsPage() {
                       <Doubt message={message} />
                     ))}
                     {length > 20 && (
-                      <button className="see_more" onClick={seeMoreMessages}>
-                        See More
-                      </button>
+                      <button className="see_more" onClick = {seeMoreMessages}>See More</button>
                     )}
                   </>
                 )}
@@ -952,7 +880,7 @@ const Container = styled.div`
 
   @media (max-width: 500px) {
     padding: 0px;
-    height: 100%;
+    height: 100vh;
   }
 `;
 
@@ -981,10 +909,6 @@ const DoubtBox = styled.div`
 
   .arrowBack_icon {
     display: none;
-
-    @media(max-width : 500px){
-        display : flex;
-    }
   }
 
   .doubtBox_doubts {
