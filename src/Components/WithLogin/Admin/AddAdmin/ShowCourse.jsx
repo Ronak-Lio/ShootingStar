@@ -9,12 +9,7 @@ function ShowCourse({ course }) {
   const [showSubject, setShowSubject] = useState(false);
   const [showCourseSubject, setShowCourseSubject] = useState("");
 console.log(newteachercourse)
-  useEffect(() => {
-    // dispatch({
-    //   type:actionTypes.SIGN_IN_AS,
-    //   signInAs:snapshot.data(),
-    //  })
-  }, [user?.uid]);
+   
   return (
     <div>
       <div

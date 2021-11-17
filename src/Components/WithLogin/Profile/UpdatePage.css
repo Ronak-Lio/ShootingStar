@@ -72,11 +72,18 @@
     align-items: center;
     justify-content: center;
   }
-  
+  .profile__Photo{
+    display: flex;
+    height: 100px;
+    width: 100px; 
+    border-radius: 50%;
+  }
   .profile__Fotu_1Update{
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 12px;
+    
   }
   .update__profileUpdate > button {
     display: flex;
@@ -113,6 +120,7 @@
   .profile_Fotu_Update{
     color: gray;
     z-index: -1;
+    height: 120px;
 }
 .profile_Fotu_UpdateIcon{
  position: relative;
@@ -126,10 +134,20 @@
   right: 10vw;
   border: none;
   background-color: none;
+  z-index: 100;
 }
 .SendIcon{
   border:none;
   color: blue;
+}
+.imageForProfile{
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.imageForProfile>img{
+   height: 120px;
+   width: 120px;
 }
   @media (max-width: 768px) {
     .profile__bodyInUpdate {

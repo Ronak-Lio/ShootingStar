@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import { Player } from 'video-react';
 import ArrowCircleDownRoundedIcon from '@mui/icons-material/ArrowCircleDownRounded';
+import { Worker } from "@react-pdf-viewer/core";
+import { Viewer } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 
 function ChatmsgTeacher({ message }) {
     const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
+    const [popupshowPdfFUll, setPopupshowPdfFUll] = useState(false);
+    const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
+    console.log(message.data?.fileUrl);
     return (
-        // <div className="chatmsg">
         <>
             {popupshowImageFUll && (
                 <div className="popupChatTeacher">
@@ -22,6 +27,27 @@ function ChatmsgTeacher({ message }) {
                     </div>
                     <div className="popupbodyImage_Img">
                         <img src={message.data?.imageURL} alt="" className="popupbody_Image_img" />
+                    </div>
+                </div>
+            )}
+            {popupshowPdfFUll && (
+                <div className="popupChatTeacher">
+                    <div
+                        className="popUpTOP"
+                        onClick={() => setPopupshowPdfFUll(!popupshowPdfFUll)}
+                    >
+                        <div className="popUpTOP__first">
+                            <h6>{message.data?.sendby && message.data?.sendby}</h6>
+                        </div>
+                        <ClearRoundedIcon className="backIconChat" />
+                    </div>
+                    <div className="popupbodyImage_Img"> 
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+                    <Viewer
+                      fileUrl={message.data?.fileUrl}
+                      plugins={[defaultLayoutPluginInstance]}
+                    />
+                  </Worker> 
                     </div>
                 </div>
             )}
@@ -50,8 +76,13 @@ function ChatmsgTeacher({ message }) {
                     </>
                     }
                     <h5>
-                        {message.data?.message}
+                        {message.data?.message && message.data?.message}
                     </h5>
+                            
+                        {message.data?.fileUrl && <h5 onClick={()=>{setPopupshowPdfFUll(true)
+                        
+                        }}>{message.data?.fileName}</h5>}
+
                     {message.data?.caption && <h5>
                         {message.data?.caption}
                     </h5>}

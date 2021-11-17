@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from "react";
+import './Show.css'
+import Showsubject from "./Showsubject";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import db from "../../../../firebase";
 import { useStateValue } from "../../../../StateProvider";
-import { actionTypes } from "../../../../reducer";
+import db from "../../../../firebase";
 
-function ShowCourse({ course }) {
-  const[{newteachercourse,user} , dispatch] = useStateValue();
+function Showcourse({ course, id,email }) {
+  const [{ newteachercourse, user }, dispatch] = useStateValue();
   const [showSubject, setShowSubject] = useState(false);
   const [showCourseSubject, setShowCourseSubject] = useState("");
-console.log(newteachercourse)
-   
+
+  const [alreadyadd, setAlreadyadd] = useState('');
+  const [alreadyaddSub, setAlreadyaddSub] = useState([]);
+
+  useEffect(() => { 
+    if (course && id) {
+      db.collection('addByAdmin').doc(id).collection('courses').where('name', '==', course?.data?.name).get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            setAlreadyadd(doc.id); 
+            setAlreadyaddSub(doc.data()); 
+          }) 
+        })
+    }
+  }, []);
+
   return (
-    <div>
+    <>
       <div
         className="addTeacherCourse_Show"
         onClick={() => setShowCourseSubject(!showCourseSubject)}
@@ -27,18 +42,14 @@ console.log(newteachercourse)
           {showSubject && (
             <div className="head_second">
               {course.data.subjects.map((sub) => (
-                <ul>
-                  <li>
-                    {sub}
-                  </li>
-                </ul>
-              ))}
+                <Showsubject course={course} sub={sub} id={id} />
+              ))} 
             </div>
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default ShowCourse;
+export default Showcourse;

@@ -1,0 +1,32 @@
+.showsubject{
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    background-color: white;
+    padding: 12px;
+    width: 100%;
+}
+.showSubject__button{
+    color: white;
+    display: flex;
+    border: none;
+    border-radius: 1px;
+    border: 1px solid #1976d2;
+    outline: none;
+    background-color: #2370bd;
+    width: 100%;
+    padding: 6px;
+}
+.showsubjectforadd{
+    display: flex;
+}
+.showEmail{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 600;
+    font-size: large;
+}
+.head__first__sec{
+    display: flex;
+}

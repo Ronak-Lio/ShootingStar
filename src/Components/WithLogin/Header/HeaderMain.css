@@ -170,6 +170,13 @@
 .headerCourse{
     cursor: pointer;
 }
+.profile__Photo_header{
+    display: flex;
+    height: 50px;
+    width: 50px; 
+    border-radius: 50%;
+}
+
 @media(max-width:1085px){
     .logo{
         display: none;
@@ -213,5 +220,11 @@
     }
     .HeaderMain__HiddenDiv{
         width: 60%;
+    }
+    .profile__Photo_header{
+        display: flex;
+        height: 50px;
+        width: 50px;
+        margin: 12px;
     }
 }

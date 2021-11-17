@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import User from './User';
-import Courses from './Courses';
+// import React, { useState } from 'react';
+// import User from './User';
+// import Courses from './Courses';
 
-function Admin() {
+// function Admin() {
   
-  return (
-    <div className="admin">
-      <div className="adminHome__body">
-        <User />
-      </div>
-    </div>
-  )
-}
+//   return (
+//     <div className="admin">
+//       <div className="adminHome__body">
+//         <User />
+//       </div>
+//     </div>
+//   )
+// }
 
-export default Admin;
+// export default Admin;

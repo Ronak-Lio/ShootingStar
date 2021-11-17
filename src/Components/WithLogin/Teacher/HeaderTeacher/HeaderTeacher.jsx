@@ -13,36 +13,12 @@ import { useStateValue } from "../../../../StateProvider";
 import { actionTypes } from "../../../../reducer";
 import HeaderCourse from "../../Header/HeaderCourse";
 import HeaderCourseTeacher from "./HeaderCourseTeacher";
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 function HeaderTeacher() {
-  const [{ user,signInAs, showDiv,teacherSubject,teacherCourse,coursesArray}, dispatch] = useStateValue();
+  const [{ user,signInAs, showDiv,coursesArray}, dispatch] = useStateValue();
   const history = useHistory();
-  // const [coursesArray, setCoursesArray] = useState([]);
 
-  useEffect(() => {
-    if (user?.uid) {
-      db.collection("teachers")
-        .doc(user?.uid)
-        .collection("courses")
-        .onSnapshot((snapshot) =>
-          // setCoursesArray(
-            // snapshot.docs.map((doc) => ({
-            //   data: doc.data(),
-            //   id: doc.id,
-            // }))
-          // )
-         {
-          dispatch({
-            type: actionTypes.SET_COURSES_ARRAY,
-            coursesArray:snapshot.docs.map((doc) => ({
-              data: doc.data(),
-              id: doc.id,
-            }))
-          })
-         }
-        );
-    }
-  }, [user]);
  
   useEffect(() => {
     if (!signInAs?.currentCourse) {
@@ -125,6 +101,20 @@ function HeaderTeacher() {
                 <LeaderboardIcon />
               </IconButton>
               <div className="headerMain__chat__text">LeaderBoard</div>
+            </div>
+             
+            {/* import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'; */}
+            <div
+              className="headerMain__assignment"
+              onClick={() => history.push("/")}
+            >
+              <IconButton>
+                <NotificationsActiveIcon />
+              </IconButton>
+              <div className="header__notifications__length">
+                9
+              </div>
+              <div className="headerMain__chat__text">Notifications</div>
             </div>
           </div>
         </div>

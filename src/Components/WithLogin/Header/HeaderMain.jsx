@@ -12,35 +12,21 @@ import HeaderCourse from "./HeaderCourse";
 import db from "../../../firebase";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 function HeaderMain() {
   const [
     {
       signInAs,
+      signInAsCourses,
       showDiv,
       user, 
+      coursesArray,
     },
     dispatch,
   ] = useStateValue();
   const history = useHistory();
-  const [coursesArray, setCoursesArray] = useState([]);
-
-  useEffect(() => {
-    if (user?.uid) {
-      db.collection("students")
-        .doc(user?.uid)
-        .collection("courses")
-        .onSnapshot((snapshot) =>
-          setCoursesArray(
-            snapshot.docs.map((doc) => ({
-              data: doc.data(),
-              id: doc.id,
-            }))
-          )
-        );
-    }
-  }, [user]);
-
+  
   useEffect(() => {
     if (!signInAs?.currentCourse) {
       if (coursesArray[0]?.data?.name) {
@@ -116,7 +102,6 @@ function HeaderMain() {
     }
   }, [signInAs?.currentSubject, user]);
 
-  console.log("fuck",signInAs?.usercurrentSubjectID);
 
   return (
     <>
@@ -159,6 +144,18 @@ function HeaderMain() {
               </IconButton>
               <div className="headerMain__chat__text">LeaderBoard</div>
             </div>
+            <div
+              className="headerMain__assignment"
+              onClick={() => history.push("/")}
+            >
+              <IconButton>
+                <NotificationsActiveIcon />
+              </IconButton>
+              <div className="header__notifications__length">
+                9
+              </div>
+              <div className="headerMain__chat__text">Notifications</div>
+            </div>
           </div>
         </div>
         <div className="HeaderMain__Right">
@@ -186,7 +183,7 @@ function HeaderMain() {
                 showDiv ? "HeaderMain__HiddenDiv" : "HeaderMain__HiddenDiv_hide"
               }
             >
-              {coursesArray.map((course) => (
+              {coursesArray && coursesArray.map((course) => (
                 <HeaderCourse course={course} />
               ))}
             </div>
@@ -197,7 +194,11 @@ function HeaderMain() {
               history.push("/profile");
             }}
           >
-            <AccountCircleRoundedIcon fontSize="large" />
+            {signInAs?.imageURL ?
+                <img src={signInAs?.imageURL} className="profile__Photo_header" alt="image" />
+                :
+                <AccountCircleRoundedIcon style={{ fontSize: 40, color: "lightgray" }} />
+              }
           </div>
         </div>
       </div>

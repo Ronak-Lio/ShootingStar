@@ -4,80 +4,66 @@ import { Button } from "@mui/material";
 import ShowCourse from "./ShowCourse";
 import db from "../../../../firebase";
 import { useStateValue } from "../../../../StateProvider";
+import Showcourse from "../Showcourse/Showcourse";
 
 function AddTeacherInfo() {
-  const[{newteachercourse,newteachercoursesubject,user} , dispatch] = useStateValue();
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [courses,setCourses]=useState([]);
-  const [contact,setContact]=useState('');
+  const [{ newteachercourse, newteachercoursesubject, user }] = useStateValue();
+  const [email, setEmail] = useState("");
+  const [courses, setCourses] = useState([]);
+  const [courseName, setCourseName] = useState('');
+  const [courseSubject, setCourseSubject] = useState([]);
+  const [id, setId] = useState('');
 
-  useEffect(()=>{ 
-    db.collection('CoursesName').onSnapshot((snapshot)=>(
-      setCourses( snapshot.docs.map((doc) => ({ 
+  useEffect(() => {
+    db.collection('CoursesName').onSnapshot((snapshot) => (
+      setCourses(snapshot.docs.map((doc) => ({
         data: doc.data(),
         id: doc.id,
       })))
     ))
-  },[])
+  }, [])
 
-  const AddTeacherInfo = (e) => {
-    e.preventDefault();
-    db.collection('users').doc(user?.uid).set({
-      name:name,
-      value:'teacher',
-      // courseName:newteachercourse,
-      // courseSubject:newteachercoursesubject,
-      email:user.email,
-      address:address,
-      contact:contact,
-    }).then(()=>{
-      db.collection('teachers').doc(user.uid).set({
-        name:name,
-        // subjects:newteachercoursesubject,
-        email:user.email,
-        address:address,
-        contact:contact,
-      })
-    })
-  };
+  // useEffect(()=>{ 
+  //  db.collection('addByAdmin').where('email',"==",email).get()
+  //   .then((querySnapshot)=>{
+  //     querySnapshot.forEach((doc)=>{ 
+  //       setId(doc.id);
+  //     })
+  //   })  
+  // },[email])
+  
+  const searchUser = () => {
+    if (email) {
+      db.collection('addByAdmin').where('email', "==", email).get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            setId(doc.id);
+          })
+        })
+    }
+  }
 
   return (
     <div className="addTeacher">
       <div className="addTeacherIn">
-        <div className="addTeacher__logo">ADD TEACHER INFO</div>
+        <div className="addTeacher__logo">Add Course</div>
         <div className="addTeacherHeader">
           <input
-            placeholder="Name "
-            value={name}
+            placeholder="Enter User Email "
+            value={email}
             type="text"
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          <input
-            placeholder="Name "
-            value={address}
-            type="text"
-            onChange={(e) => setAddress(e.target.value)}
-          />
-          <input
-            placeholder="Name "
-            value={contact}
-            type="number"
-            onChange={(e) => setContact(e.target.value)}
-          />
-          <div className="addTeacherCourse">
-              Select Course
-            {courses.map((course)=>(
-            <ShowCourse course={course}/> 
-            ))}
-          </div>
-          <div className="addTeacherSubject"></div>
-        </div>
-        <div className="showCourseSubject">
-          Selected Course : {newteachercoursesubject}
-        </div>
-        <div className="addTeacherBody">
-          <Button variant="contained" onClick={AddTeacherInfo}>Submit</Button>
+          <button onClick={searchUser}>Search</button>
+          {id && <>
+            <div className="showEmail">
+              Email : {email}
+            </div>
+            <div className="addTeacherCourse">
+              {courses.map((course) => (
+                <Showcourse course={course} id={id} email={email} />
+              ))}
+            </div></>}
         </div>
       </div>
     </div>

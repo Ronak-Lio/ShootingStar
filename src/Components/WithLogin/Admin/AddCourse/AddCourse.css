@@ -26,6 +26,10 @@
     border: 1px solid gray;
     width: 90%;
     max-width: 500px;
+    margin-top:10vh ;
+}
+.addCourseName__lite{
+    display: flex;
 }
 .addCourseName>form{
     padding: 12px;
@@ -42,4 +46,13 @@ span{
 .Button__send{
     padding: 0;
     height: 40px;
+    width: 100%;
+}
+.inputField{
+    display: flex;
+    align-items: center;
+}
+.AddCourse__plus_minusIcon{
+    display: flex;
+    flex-direction: row;
 }

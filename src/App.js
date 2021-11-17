@@ -32,7 +32,6 @@ import { useStateValue } from "./StateProvider";
 import SubmitAssignment from "./Components/WithLogin/AssignmentsPage/SubmitAssignment";
 import UploadCorrectedAssignment from "./Components/WithLogin/Teacher/AssignmentsPage/UplaodCorrectedAssignment";
 import UploadCreatedAssignment from "./Components/WithLogin/Teacher/AssignmentsPage/UploadCreatedAssignment";
-
 import ChatTeacher from "./Components/WithLogin/Teacher/ChatTeacher/ChatTeacher";
 import Admin from "./Components/WithLogin/Admin/Main/Main";
 import AddTeacherInfo from "./Components/WithLogin/Admin/AddTeacher/AddTeacherInfo";
@@ -42,9 +41,12 @@ import CheckDocument from "./Components/WithLogin/Teacher/ChatTeacher/CheckDocum
 import ViewPdf from "./Components/WithLogin/ViewPdf/ViewPdf";
 import Loading from "./Components/WithLogin/Loading/Loading";
 import Courses from "./Components/WithLogin/Admin/Main/Courses";
+import AddCourse from "./Components/WithLogin/Admin/AddCourse/AddCourse";
+import AddCourseSubject from "./Components/WithLogin/Admin/AddCourse/AddCourseSubject";
+import EditCourse from "./Components/WithLogin/Admin/AddCourse/EditCourses";
 
 function App() {
-  const [{ signInAs, user }, dispatch] = useStateValue();
+  const [{ signInAs,signInAsId, user,signInAsCourses}, dispatch] = useStateValue();
 
   useEffect(() => {
     // will only run once when the app component loads...
@@ -64,13 +66,53 @@ function App() {
       db.collection("users")
         .doc(user?.uid)
         .onSnapshot((snapshot) =>
-          dispatch({
+         { dispatch({
             type: actionTypes.SIGN_IN_AS,
             signInAs: snapshot.data(),
           })
+        }
         );
     }
   }, [user?.uid]);
+  useEffect(()=>{
+    if(user?.email){
+      db.collection('addByAdmin').where("email","==",user?.email)
+      .get()
+      .then((querySnapshot)=>{
+        querySnapshot.forEach((doc)=>{
+          console.log("object",doc?.id)
+          dispatch({
+            type: actionTypes.SET_SIGN_IN_AS_ID,
+            signInAsId: doc?.id,
+          })
+        })
+    })
+    }
+  },[user?.email])
+ 
+  useEffect(()=>{
+    if(signInAsId)
+   db.collection('addByAdmin').doc(signInAsId).collection('courses').onSnapshot((snapshot)=>(
+    dispatch({
+      type: actionTypes.SET_COURSES_ARRAY,
+      coursesArray: snapshot.docs.map((doc) => ({ 
+        data: doc.data(),
+        id: doc.id,
+      })),
+    })
+))
+  },[signInAsId])
+  // case actionTypes.SET_SIGN_IN_AS_ID:
+  //     return {
+  //       ...state,
+  //       signInAsId: action.signInAsId,
+  //     };
+
+  //   case actionTypes.SET_SIGN_IN_AS_COURSES:
+  //     return {
+  //       ...state,
+  //       signInAsCourses: action.signInAsCourses,
+  //     };
 
   return (
     <Router>
@@ -92,9 +134,34 @@ function App() {
           </div>
         </Route>
         {/* for check docuemnt 3/11/2021 */}
+       
 
+        <Route path="/addcoursesubject">
+          <AddCourseSubject />
+        </Route>
         <Route path="/checkdocument">
           <CheckDocument />
+        </Route>
+        <Route path="/adduserinfo">
+          <AddCourse />
+        </Route>
+        <Route path="/addteacher">
+          <Admin />
+        </Route>
+        <Route path="/addteacherinfo">
+          <Admin />
+        </Route>
+        <Route path="/addstudentinfo">
+          <Admin />
+        </Route>
+        <Route path="/addstudent">
+          <Admin />
+        </Route>
+        <Route path="/addcourses">
+          <Admin />
+        </Route>
+        <Route path="/editcourses">
+          <EditCourse />
         </Route>
 
         <Route path="/notification">
@@ -106,8 +173,11 @@ function App() {
         <Route path="/admin">
           <Admin />
         </Route>
-        <Route path="/addcourses">
+        <Route path="/addcourse">
         <Admin/>
+        </Route>
+        <Route path="/addcoursebyadmin">
+        <AddCourse/>
         </Route>
         <Route path="/addteacher">
           <Admin />

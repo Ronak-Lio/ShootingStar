@@ -150,12 +150,22 @@
     justify-content: center;
     padding: 12px;
 }
+.header__notifications__length{
+    display: flex;
+    position: absolute;
+    top: 10px;
+    font-weight: bold;
+    color: rgb(255, 6, 6);
+    padding-left: 12px;
+    z-index: 100;
+}
 @media(max-width:1085px){
     .logo{
         display: none;
     }
     .logo_m{
         display:flex ;
+        max-height: 10vh;
     }
     .headerMain__Dehazeicon{
         display: flex;

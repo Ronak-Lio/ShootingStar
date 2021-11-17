@@ -4,7 +4,7 @@ import { actionTypes } from "../../../reducer";
 import { useStateValue } from "../../../StateProvider";
 
 function HeaderSubject({ subject, course }) {
-  const [{ signInAs,showDiv, user, course_Subject, course_Main, course_SubjectID,course_MainID}, dispatch]=useStateValue();
+  const [{ signInAs,showDiv, user, course_SubjectID,course_MainID}, dispatch]=useStateValue();
   const selectSubject=()=> {
     if(subject){
       console.log("objectobjectobject",course)

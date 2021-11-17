@@ -12,27 +12,23 @@ function AddAdminInfo() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [courses, setCourses] = useState([]);
-
-  useEffect(() => {
-    db.collection("CoursesName").onSnapshot((snapshot) =>
-      setCourses(
-        snapshot.docs.map((doc) => ({
-          data: doc.data(),
-          id: doc.id,
-        }))
-      )
-    );
-  }, []);
+  const [already, setAlready] = useState(false)
 
   const AddAdminInfo = (e) => {
     e.preventDefault();
-    db.collection("users").add({
-      name: name,
-      value: "teacher",
-      courseName: newteachercourse,
-      courseSubject: newteachercoursesubject,
-      email: user.email,
-    });
+    db.collection('addByAdmin').where("email", '==', email).get()
+      .then((querySnapshot) => {
+          if (querySnapshot.empty === true) {
+            db.collection("addByAdmin").add({
+              value: "admin",
+              email: email,
+            });
+            setEmail('')
+          }else{
+            alert('This email address is already exist');
+            setEmail('')
+          }
+      })
   };
 
   return (
@@ -41,37 +37,15 @@ function AddAdminInfo() {
         <div className="addTeacher__logo">ADD ADMIN INFO</div>
         <div className="addTeacherHeader">
           <input
-            placeholder="Name "
-            value={name}
-            type="text"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <input
             placeholder="Email "
             value={email}
             type="text"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <input
-            placeholder="Password "
-            value={password}
-            type="text"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <div className="addTeacherCourse">
-            Select Course
-            {courses.map((course) => (
-              <ShowCourse course={course} />
-            ))}
-          </div>
-          <div className="addTeacherSubject"></div>
-        </div>
-        <div className="showCourseSubject">
-          Selected Course : {newteachercoursesubject}
         </div>
         <div className="addTeacherBody">
           <Button variant="contained" onClick={AddAdminInfo}>
-            Submit
+            Add
           </Button>
         </div>
       </div>

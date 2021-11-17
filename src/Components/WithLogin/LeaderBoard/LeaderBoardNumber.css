@@ -1,8 +1,9 @@
 .LeaderBoardNumber{
     display: flex;
-    flex-direction: column;
     height: 9vh !important;
     width: 100%;
+    align-items: center;
+    justify-content: center;
     /* padding: 12px; */
     /* background-color: black; */
 }
@@ -15,13 +16,20 @@
 }
 .LeaderBoardNumber__Sec{
     flex: 0.5;
+    align-items: center;
+    justify-content: center;
 }
 .Serial__Num{
     font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .leader__Fotu{
     display: flex;
+    max-height: 3vh;
     height: 3vh;
+    max-width: 3vh;
     width: 3vh;
     border-radius: 50%;
     background-color: lightgray;
@@ -29,6 +37,7 @@
     align-items: center;
     justify-content: center;
     font-weight: 600;
+    padding: 5px;
 }
 .leader__Name{
     font-weight: 500;

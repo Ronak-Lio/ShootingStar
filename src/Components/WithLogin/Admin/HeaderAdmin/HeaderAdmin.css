@@ -8,6 +8,8 @@
     position: sticky;
     top: 0;
     z-index: 1;
+    background-color: rgb(214, 216, 216);
+    height: 10vh;
 }
 .Admin__home{
     flex: 0.4;
@@ -30,9 +32,10 @@
     font-family:Georgia, 'Times New Roman', Times, serif;
     cursor: pointer;
 }
-.add_teacher{ 
+.add_teacher{
     border: 1px solid lightgreen;
 }
+
 @media(max-width:768px){
     .HeaderAdminFirst{
         font-weight: 500;

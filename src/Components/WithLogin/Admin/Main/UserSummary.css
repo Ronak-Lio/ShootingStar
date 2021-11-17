@@ -1,0 +1,66 @@
+.userSummary{
+  display: flex;
+  flex-direction: column;
+  margin: 2%;
+  width: 96%;
+}
+.userSummary__header{
+  display: flex;
+  padding: 12px ;
+}
+.userSummary__Header__text{
+    display: flex;
+    font-size: large;
+    font-weight: bold;
+    color: rgb(54, 47, 47);
+    font-style: italic;
+    padding: 0 12px;
+}
+.userSummary__Header__js{
+    display: flex;
+    font-size: large;
+    font-weight: bold;
+    font-style: italic;
+}
+.userSummary__body{
+   display: flex;
+   flex-direction: column;
+   background-color: rgb(241, 241, 241);
+   padding: 12px;
+}
+.body__student{
+  display: flex;
+  background-color: rgb(163, 216, 163);
+  padding: 12px 0 12px 0;
+  margin: 8px 0 8px 0 ;
+}
+.body__teacher{
+    display: flex;
+    background-color: rgb(216, 163, 163);
+  padding: 12px 0 12px 0;
+  margin: 8px 0 8px 0 ;
+}
+.body__admin{
+    display: flex;
+    background-color: rgb(160, 231, 216);
+  padding: 12px 0 12px 0;
+  margin: 8px 0 8px 0 ;
+}
+.userSummary__Header__textBody{
+    display: flex;
+    flex: 0.4;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 12px ;
+    font-size: large;
+    font-weight: bold;
+}
+.userSummary__Header__jsBody{
+    display: flex;
+    flex: 0.4;
+    align-items: center;
+    justify-content: flex-end;
+    padding-left: 12px ;
+    font-size: large;
+    font-weight: 500;
+}

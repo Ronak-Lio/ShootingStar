@@ -9,13 +9,16 @@ import AddIcon from "@material-ui/icons/Add";
 import { v4 as uuidv4 } from "uuid";
 import db from '../../../../firebase';
 import AdminField from "../Main/AdminField";
-import Head from './Head'
+import Head from './Head';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
-
-function AddCourse() {
+function EditCourse() {
   const [courseName, setCourseName] = useState("");
-  const [alreadyCourse,setAlreadyCourse]=useState(false);
-  const [courses,setCourses]=useState([]);
+  const [courseNameID, setCourseNameID] = useState('');
+  const [courseNameInfo, setCourseNameInfo] = useState([]);
+  const [loading,setLoading]=useState();
   const [inputFields, setInputFields] = useState([
     { id: uuidv4(), firstName: ""},
   ]);
@@ -25,31 +28,23 @@ function AddCourse() {
     array[i] = inputFields[i].firstName;
   }
 
-  // console.log(array)
-  useEffect(()=>{
-    setAlreadyCourse(false)
+  //   search course name data
+  const searchCourseId=()=>{
+    setLoading(true)
     db.collection('CoursesName').where('name',"==",courseName)
     .get()
     .then((querySnapshot)=>{
       querySnapshot.forEach((doc)=>{
-        setAlreadyCourse(true)
+        setCourseNameID(doc.id);
+        setCourseNameInfo(doc.data())
       })
+      setLoading(false)
     })
-  },[courseName]);
-
-  useEffect(()=>{
-    db.collection('CoursesName').onSnapshot((snapshot)=>(
-      setCourses( snapshot.docs.map((doc) => ({ 
-        data: doc.data(),
-        id: doc.id,
-      })))
-    ))
-  },[]) 
+  } 
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(!alreadyCourse ){
-  if(array[0] != '' && courseName ){ db.collection('CoursesName').add({
+  if(array[0] != '' && courseName && courseNameID!=""){ db.collection('CoursesName').doc(courseNameID).update({
   name:courseName,
   subjects:array,
    })
@@ -59,10 +54,7 @@ function AddCourse() {
     alert('Also fill name of subject');
     setCourseName('')
   }
-}else{
-  alert('Course already exist')
 }
-  };
 
   const handleChangeInput = (id, event) => {
     const newInputFields = inputFields.map((i) => {
@@ -95,9 +87,11 @@ function AddCourse() {
   return (
     <>
       <div className="addCourse">
-        <h1>Add Course</h1>
+        <h1>Edit Course</h1>
         <div className="addCourseName">
-          <span>
+        <form >
+          <div className="addCourseName__lite">
+            <div>
             <TextField 
               label="Enter course name"
               variant="filled"
@@ -105,9 +99,23 @@ function AddCourse() {
               onChange={(event) => setCourseName(event.target.value)}
               id="textfield"
             />
-          </span>
-          <form >
-            {inputFields.map((inputField) => (
+            {courseNameInfo && courseName }
+            </div>
+          <div>
+          <IconButton onClick={searchCourseId}>
+          <ArrowForwardIcon/>
+          </IconButton>
+          </div>
+          </div>
+          <div>
+          </div>
+            {loading ? 
+              <div className="inputField">
+            <Box sx={{ display: 'flex' }}>
+                <CircularProgress fontSize="large" />
+              </Box>
+              </div>
+              : inputFields.map((inputField) => (
               <div key={inputField.id} className="inputField">
                 <TextField
                   name="firstName"
@@ -141,16 +149,10 @@ function AddCourse() {
                 Add
               </Button>
             </div>
-          </form>
-          <div className="allCourses">
-               {courses.map((course,Serial)=>(
-                //  <>{course.data.name}</>
-                <Head course={course}/>
-               ))}
-          </div>
+          </form> 
         </div>
       </div>
     </>
   );
 }
-export default AddCourse;
+export default EditCourse;

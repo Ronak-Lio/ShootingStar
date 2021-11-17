@@ -11,8 +11,7 @@ import db from '../../../../firebase';
 import AdminField from "../Main/AdminField";
 import Head from './Head'
 
-
-function AddCourse() {
+function AddCourseSubject() {
   const [courseName, setCourseName] = useState("");
   const [alreadyCourse,setAlreadyCourse]=useState(false);
   const [courses,setCourses]=useState([]);
@@ -144,7 +143,6 @@ function AddCourse() {
           </form>
           <div className="allCourses">
                {courses.map((course,Serial)=>(
-                //  <>{course.data.name}</>
                 <Head course={course}/>
                ))}
           </div>
@@ -153,4 +151,4 @@ function AddCourse() {
     </>
   );
 }
-export default AddCourse;
+export default AddCourseSubject;

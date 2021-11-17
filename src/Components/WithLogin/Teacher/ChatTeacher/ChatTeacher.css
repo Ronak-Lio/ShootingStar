@@ -481,7 +481,17 @@
   align-items: center;
   justify-content: space-between;
 }
-
+.submit_button_div{
+  display: flex;
+  z-index: 100;
+}
+.PdfLoading{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
 @media (max-width: 1085px) {
   .chatTeacher {
     flex: 1;
@@ -501,6 +511,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 12px;
+    position: sticky;
+    top: 0;
   }
   .chatTeacher__body {
     display: flex;

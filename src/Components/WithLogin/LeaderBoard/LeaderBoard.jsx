@@ -26,29 +26,13 @@ function LeaderBoard() {
     const [showdate,setShowdate]=useState(false);
     const [date,setDate]=useState(today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate())
     var dateC=today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    // var date= today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    // const UpdateClass=(e)=>{
-    //   e.preventDefault();
-    //     if(teacherCourseId && teacherSubjectId){
-    //      if(noticesHeader[0]?.data?.topic){
-    //        db.collection('Courses').doc(teacherCourseId).collection("Subjects").doc(teacherSubjectId).collection('noticesHeader').doc(noticesHeader[0]?.id).update({
-    //          upcomingclass:updateclass,
-    //          topic:updatetopic,
-    //         })
-    //       }else{
-    //        db.collection('Courses').doc(teacherCourseId).collection("Subjects").doc(teacherSubjectId).collection('noticesHeader').add({
-    //          upcomingclass:updateclass,
-    //          topic:updatetopic,
-    //        })
-    //      }
-    //     }
-    //     setUpdateclass('');
-    //     setUpdatetopic('');
-    //     setUpdatedivshow(false);
-    // }
+
     useEffect(()=>{
-      if(teacherCourseId && teacherSubjectId){
-        db.collection('Course').doc(teacherCourseId).collection('Subjects').doc(teacherSubjectId).collection("LeaderBoard").onSnapshot((snapshot)=>(
+      if(signInAs?.currentCourseID && signInAs?.currentSubjectID){
+        console.log("object///////s");
+        db.collection('Courses').doc(signInAs?.currentCourseID).collection('Subjects').doc(signInAs?.currentSubjectID).collection('students')
+        // .orderBy('marks','asc')
+        .onSnapshot((snapshot)=>(
           setLeaders(
             snapshot.docs.map((doc) => ({
               data: doc.data(),
@@ -57,7 +41,8 @@ function LeaderBoard() {
           )
         ))
       }
-    },[teacherCourseId,teacherSubjectId]);
+    },[signInAs?.currentSubjectID]);
+
 const addInLeaderBoard=()=>{
   if(teacherCourseId && teacherSubjectId ){
     db.collection('Course').doc(teacherCourseId).collection('Subjects').doc(teacherSubjectId).collection("LeaderBoard").add({
@@ -68,7 +53,7 @@ const addInLeaderBoard=()=>{
     alert("try again")
   }
 }
-    console.log(leaders)
+console.log(leaders);
 
   return (
     <div className="LeaderBoard">
@@ -123,15 +108,15 @@ const addInLeaderBoard=()=>{
             {/* <input type="date" id="start" name="trip-start"
        value={date} onChange={e=>setDate(e.target.value)}
        min="2021-10-08" max={dateC} /> */}
-       Today
+       Latest
           </div>
           <LeaderSecHead />
           <Divider />
           <div className="leaderboard__body__In__Body">
-            <div className="Add_In_Leaderboard" >
-              <AddRoundedIcon onClick={()=>setAddName(!addName)}/>
-            </div>
-          <LeaderBoardNumber name={"Nishant Mainwal"} />
+             
+          {leaders.map((leader,serial) => (
+          <LeaderBoardNumber leader={leader} serial={serial}/>
+              ))}
           </div>
          <div className="scroll">
          Scroll down to see more

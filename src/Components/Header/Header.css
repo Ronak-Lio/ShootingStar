@@ -89,6 +89,7 @@
     .mobile_logo{
         display: flex;
         height: 40px;
+        max-height: 10vh;
     }
 
     .sidebar_icon{

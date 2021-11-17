@@ -6,7 +6,7 @@ import db from "../../../../firebase";
 import { useStateValue } from "../../../../StateProvider";
 import { useHistory } from "react-router-dom";
 
-function AddTeacher() {
+function AddStudent() {
   const history=useHistory();
   const[{newteachercourse,newteachercoursesubject,user}] = useStateValue();
   const [email, setEmail] = useState("");
@@ -29,7 +29,7 @@ function AddTeacher() {
     e.preventDefault();
     if(!already && !loading){
       db.collection('addByAdmin').add({
-      value:'teacher',
+      value:'student',
       email:email,
     })
     history.push('/admin')
@@ -51,12 +51,12 @@ function AddTeacher() {
           />
         </div>
         <div className="addTeacherBody">
-          <Button variant="contained" onClick={AddTeacher}>Send</Button>
+          <Button variant="contained" onClick={AddTeacher}>Add</Button>
         </div>
       </div>
     </div>
   );
 }
 
-export default AddTeacher;
+export default AddStudent;
 

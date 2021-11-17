@@ -2,6 +2,8 @@ export const initialState = {
   openSignInPopup: false,
   user: null,
   signInAs: null,
+  signInAsId: null,
+  signInAsCourses: null,
   openAsignmentPopup: false,
   openNoticesPopup: false,
   openDoubtReplies: false,
@@ -43,6 +45,11 @@ export const initialState = {
 };
 
 export const actionTypes = {
+  // signInAsId: null,
+  SET_SIGN_IN_AS_ID:'SET_SIGN_IN_AS_ID',
+  // signInAsCourses: null,
+  SET_SIGN_IN_AS_COURSES:'SET_SIGN_IN_AS_COURSES',
+  
   // image chat acion
   SET_CHAT_SELECT_IMAGE:'SET_CHAT_SELECT_IMAGE',
 
@@ -90,9 +97,26 @@ export const actionTypes = {
 };
 
 const reducer = (state, action) => {
-  console.log(action);
-  // teacherSubject
+   // signInAsId: null,
+  // SET_SIGN_IN_AS_ID:'SET_SIGN_IN_AS_ID',
+  // signInAsCourses: null,
+  // SET_SIGN_IN_AS_COURSES:'SET_SIGN_IN_AS_COURSES',
+
   switch (action.type) {
+
+    case actionTypes.SET_SIGN_IN_AS_ID:
+      return {
+        ...state,
+        signInAsId: action.signInAsId,
+      };
+
+    case actionTypes.SET_SIGN_IN_AS_COURSES:
+      return {
+        ...state,
+        signInAsCourses: action.signInAsCourses,
+      };
+
+  // teacherSubject
     case actionTypes.SET_COURSES_ARRAY:
       return {
         ...state,

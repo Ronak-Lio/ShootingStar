@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './Head.css'
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
+import AdminField from "../Main/AdminField";
 
 function Head({ course }) {
   const [showSubject, setShowSubject] = useState(false);
@@ -13,10 +14,8 @@ function Head({ course }) {
       </div>
       {showSubject && (
         <div className="head_second">
-          {course.data.subjects.map((sub) => (
-            <ul>
-              <li>{sub}</li>
-            </ul>
+          {course.data.subjects.map((sub,Serial) => (
+            <AdminField course={course} sub={sub} Serial={Serial}/>
           ))}
         </div>
       )}

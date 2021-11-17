@@ -6,17 +6,18 @@ import HeaderTeacher from "../Teacher/HeaderTeacher/HeaderTeacher";
 import { useStateValue } from "../../../StateProvider";
 import { auth } from "../../../firebase";
 import { useHistory } from "react-router-dom";
+import Head from "../Admin/AddCourse/Head";
 
 function Profile() {
-  const history=useHistory();
-  const [{ signInAs, user, coursesArray }, dispatch] = useStateValue();
+  const history = useHistory();
+  const [{ signInAs, user, signInAsCourses }, dispatch] = useStateValue();
   const UpdateProfile = (e) => {
     e.preventDefault();
     history.push('/update');
   };
-  const LogOut=(e)=>{
+  const LogOut = (e) => {
     e.preventDefault();
-    if(user){
+    if (user) {
       auth.signOut();
       history.push("/signIn")
     }
@@ -24,14 +25,16 @@ function Profile() {
 
   return (
     <div className="profile">
-      {!signInAs?.value === "teacher" ? <HeaderMain /> : <HeaderTeacher />}
+      {signInAs?.value != "teacher" ? <HeaderMain /> : <HeaderTeacher />}
       <div className="profile__body">
         <div className="profile__bodyIn">
           <div className="profile__Fotu">
             <div className="profile__Fotu_1">
-              <AccountCircleRoundedIcon
-                style={{ fontSize: 110, color: "grey" }}
-              />
+              {signInAs?.imageURL ?
+                <img src={signInAs?.imageURL} className="profile__Photo" alt="image" />
+                :
+                <AccountCircleRoundedIcon style={{ fontSize: 100, color: "lightgray" }} />
+              }
               <div className="update__profile__Name">
                 <h6>{signInAs?.name}</h6>
                 <h6>{user?.email}</h6>
@@ -46,11 +49,10 @@ function Profile() {
             <div className="profile__Name__In">
               <h6>{signInAs?.contact}</h6>
               <h6>{signInAs?.address}</h6>
-              <h5 className="Courses__div">
-                Courses
-                <ul>
-                  <li>{coursesArray[0]?.data?.name}</li>
-                </ul>
+              <h5 className="Courses__div"> 
+               {signInAsCourses && signInAsCourses.map((course,Serial)=>(
+                <Head course={course}/>
+               ))}
               </h5>
             </div>
           </div>
