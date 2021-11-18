@@ -45,6 +45,9 @@ import UpdatePage from "./Components/WithLogin/Profile/UpdatePage";
 import CheckDocument from "./Components/WithLogin/Teacher/ChatTeacher/CheckDocument";
 import ViewPdf from "./Components/WithLogin/ViewPdf/ViewPdf";
 import Loading from "./Components/WithLogin/Loading/Loading";
+import NotificationPage from "./Components/WithLogin/Notifications/NotificationPage";
+import NotificationsPageForTeacher from "./Components/WithLogin/Teacher/Notifications/NotificationsPageForTeacher";
+import CreateProfile from "./Components/WithLogin/CreateProfile/CreateProfile";
 
 function App() {
   const [{ signInAs, user }, dispatch] = useStateValue();
@@ -223,8 +226,20 @@ function App() {
         <Route path="/viewPdf">
           {signInAs?(<ViewPdf />):(<Home/>)}
         </Route>
+        <Route path="/Notifications">
+          {signInAs?(<>
+          {signInAs && signInAs.value === "teacher" ? (
+            <NotificationsPageForTeacher />
+          ) : (
+            <NotificationPage/>
+          )}
+          </>):(<Home/>)}
+        </Route>
         <Route path="/loading">
           <Loading />
+        </Route>
+        <Route path="/createProfile">
+          <CreateProfile/>
         </Route>
         <Route path="/">
           {!signInAs ? (

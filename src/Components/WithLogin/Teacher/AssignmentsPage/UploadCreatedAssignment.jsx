@@ -45,14 +45,18 @@ function UploadCorrectedAssignment() {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        let reader = new FileReader();
+        if(selectedFile.size < 1000*1024){
+          let reader = new FileReader();
         reader.readAsDataURL(selectedFile);
-        reader.onloadend = (e) => {
-          setPdfFile(e.target.result);
-          setFileName(selectedFile.name);
-          setFile(selectedFile);
-          setPdfFileError("");
-        };
+          reader.onloadend = (e) => {
+            setPdfFile(e.target.result);
+            setFileName(selectedFile.name);
+            setFile(selectedFile);
+            setPdfFileError("");
+          };
+        }else{
+          setPdfFileError("Please enter a file below 1 MB");
+        }
       } else {
         setPdfFile(null);
         setPdfFileError("Please select valid pdf file");
