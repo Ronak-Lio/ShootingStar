@@ -24,7 +24,6 @@ import AssignmentsPageForTeacher from "./Components/WithLogin/Teacher/Assignment
 import DoubtsPageForTeacher from "./Components/WithLogin/Teacher/DoubtsPage/DoubtsPageForTeacher";
 import MessagesSectionForMobile from "./Components/WithLogin/Teacher/DoubtsPage/MessagesSectionForMobile";
 import MainTeacher from "./Components/WithLogin/Teacher/Main/MainTeacher";
-import Notification from "./Components/WithLogin/Notification/Notification";
 import { actionTypes } from "./reducer";
 import db, { auth } from "./firebase";
 import { useEffect } from "react";
@@ -172,12 +171,6 @@ function App() {
         </Route>
         <Route path="/editcourses">
           <EditCourse />
-        </Route>
-
-        <Route path="/notification">
-          {signInAs?(<Notification />):(
-            <Home/>
-          )}
         </Route>
         <Route path="/update">
           {signInAs?(<UpdatePage />):(<Home/>)}
