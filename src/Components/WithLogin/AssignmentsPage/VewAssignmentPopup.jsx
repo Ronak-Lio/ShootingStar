@@ -11,8 +11,7 @@ function VewAssignmentPopup() {
     {
       openViewAssignmentPopup,
       assignmentStudentDetails,
-      userSubjectId,
-      userCourseId,
+      signInAs,
       user,
     },
     dispatch,
@@ -26,16 +25,16 @@ function VewAssignmentPopup() {
   useEffect(() => {
     if (
       user &&
-      userCourseId &&
-      userSubjectId &&
+      signInAs?.usercurrentCourseID &&
+      signInAs?.usercurrentSubjectID &&
       assignmentStudentDetails?.name
     ) {
       db.collection("students")
         .doc(user.uid)
         .collection("courses")
-        .doc(userCourseId)
+        .doc(signInAs?.usercurrentCourseID)
         .collection("subjects")
-        .doc(userSubjectId)
+        .doc(signInAs?.usercurrentSubjectID)
         .collection("assignments")
         .where("name", "==", assignmentStudentDetails?.name)
         .get()
@@ -52,8 +51,8 @@ function VewAssignmentPopup() {
     }
   }, [
     user,
-    userCourseId,
-    userSubjectId,
+    signInAs?.usercurrentCourseID,
+    signInAs?.usercurrentSubjectID,
     assignmentStudentDetails,
     submittedAssignmentDetails.length,
   ]);

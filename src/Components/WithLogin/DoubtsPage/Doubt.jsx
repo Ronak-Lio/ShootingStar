@@ -6,10 +6,13 @@ import { useHistory } from "react-router-dom";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import ReactPlayer from "react-player";
 import { Player } from "video-react";
+import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
+import DeleteIcon from "@mui/icons-material/Delete";
+import db from "../../../firebase";
 
-function Doubt({ message }) {
+function Doubt({ message, roomId }) {
   const history = useHistory();
-  const [{}, dispatch] = useStateValue();
+  const [{ signInAs, user }, dispatch] = useStateValue();
   const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
   const view_pdf = (e) => {
     history.push("/viewPdf");
@@ -21,6 +24,43 @@ function Doubt({ message }) {
       type: actionTypes.SET_PDF_URL,
       pdfUrl: message?.data?.fileUrl,
     });
+  };
+
+  const delete_doubt = (e) => {
+    e.preventDefault();
+    if (signInAs?.value === "student") {
+      db.collection("students")
+        .doc(user?.uid)
+        .collection("courses")
+        .doc(signInAs?.usercurrentCourseID)
+        .collection("subjects")
+        .doc(signInAs?.usercurrentSubjectID)
+        .collection("messagesToTeacher")
+        .doc(message?.id)
+        .delete()
+        .then(() => {
+          console.log("Document successfully deleted!");
+        })
+        .catch((error) => {
+          console.error("Error removing document: ", error);
+        });
+    } else if (signInAs?.value === "teacher" && roomId) {
+      db.collection("Courses")
+        .doc(signInAs?.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
+        .collection("doubtRooms")
+        .doc(roomId)
+        .collection("messages")
+        .doc(message?.id)
+        .delete()
+        .then(() => {
+          console.log("Document successfully deleted!");
+        })
+        .catch((error) => {
+          console.error("Error removing document: ", error);
+        });
+    }
   };
   return (
     <>
@@ -45,52 +85,75 @@ function Doubt({ message }) {
         </div>
       )}
       <Container>
-        <div className="doubt">
+        <div
+          className={
+            message?.data?.name === signInAs?.name ? `doubt` : `doubt_receiver`
+          }
+        >
           <div className="doubt_name">
             <p>{message?.data?.name}</p>
           </div>
           <div className="doubt_message">
-            {message?.data?.type === "text" && <p>{message?.data?.message}</p>}
-            {message?.data?.type === "pdf" && (
-              <p className="pdf_link" onClick={view_pdf}>
-                {message?.data?.fileName}
-              </p>
-            )}
-            {message?.data?.type === "image" && (
-              <>
-                {message?.data?.message ? (
-                  <img
-                    className="image_with_message"
-                    src={message?.data?.imageURL}
-                    onClick={() => {
-                      setPopupshowImageFUll(!popupshowImageFUll);
-                    }}
-                    alt=""
-                  />
-                ) : (
-                  <img
-                    src={message?.data?.imageURL}
-                    className="image_without_message"
-                    alt=""
-                    onClick={() => {
-                      setPopupshowImageFUll(!popupshowImageFUll);
-                    }}
-                  />
-                )}
-                {message?.data?.message && <p>{message?.data?.message}</p>}
-              </>
-            )}
-            {message.data?.type === "video" && (
-              <>
-              <h5 className={"videoMessage"}>
-                <Player
-                  playsInline
-                  poster="/assets/poster.png"
-                  src={message.data?.videoURL}
-                />
-              </h5>
-              {message?.data?.message && <p>{message?.data?.message}</p>}
-              </>
+            <div>
+              {message?.data?.type === "text" && (
+                <p>{message?.data?.message}</p>
+              )}
+              {message?.data?.type === "pdf" && (
+                <p className="pdf_link" onClick={view_pdf}>
+                  {message?.data?.fileName}
+                </p>
+              )}
+              {(message?.data?.type === "image" || message?.data?.type === "video") && (
+                <div className = "delete_div_for_image">
+                <DeleteIcon className="delete_icon" onClick={delete_doubt} />
+                </div>
+              )}
+              {message?.data?.type === "image" && (
+                <>
+                  {message?.data?.message ? (
+                    <img
+                      className="image_with_message"
+                      src={message?.data?.imageURL}
+                      onClick={() => {
+                        setPopupshowImageFUll(!popupshowImageFUll);
+                      }}
+                      alt=""
+                    />
+                  ) : (
+                    <img
+                      src={message?.data?.imageURL}
+                      className="image_without_message"
+                      alt=""
+                      onClick={() => {
+                        setPopupshowImageFUll(!popupshowImageFUll);
+                      }}
+                    />
+                  )}
+                  <p>{message.data?.imageOriginalName}</p>
+                  {message?.data?.message && <p>{message?.data?.message}</p>}
+                </>
+              )}
+              {message.data?.type === "video" && (
+                <>
+                  <div className={"videoMessage"}>
+                    <Player
+                      playsInline
+                      poster="/assets/poster.png"
+                      src={message.data?.videoURL}
+                    />
+                    <div className="Name_Download">
+                      <p>{message.data?.videoOriginalName}</p>
+                      <a href={message.data?.videoURL}>
+                        <ArrowCircleDownRoundedIcon fontSize="large" />
+                      </a>
+                    </div>
+                  </div>
+                  {message?.data?.message && <p>{message?.data?.message}</p>}
+                </>
+              )}
+            </div>
+            {(message?.data?.type === "text" || message?.data?.type === "pdf") && (
+              <DeleteIcon className="delete_icon" onClick={delete_doubt} />
             )}
           </div>
         </div>
@@ -107,8 +170,29 @@ const Container = styled.div`
     margin-left: auto;
     margin-top: 10px;
     margin-bottom: 4px;
-    max-width: 60%;
+    max-width: 50%;
     width: fit-content;
+  }
+
+  .doubt_receiver {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    max-width: 50%;
+    width: fit-content;
+  }
+
+  .delete_icon {
+    margin-top: 11px;
+    font-size: 18px;
+    color: #444343;
+    &:hover {
+      color: #838181;
+      cursor: pointer;
+    }
   }
 
   .doubt_message {
@@ -116,15 +200,28 @@ const Container = styled.div`
     width: 100%;
     background-color: #fff;
     border-radius: 10px;
+    display: flex;
+
+    .delete_icon {
+      display: none;
+    }
+
+    &:hover {
+      .delete_icon {
+        display: flex;
+      }
+    }
+
     p {
       font-size: 14px;
       padding: 10px;
+      padding-right: 5px;
       margin-bottom: 0px;
       padding-bottom: 4px !important;
     }
 
     .image_with_message {
-      height: 200px;
+      width : 100%;
       object-fit: contain;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
@@ -132,15 +229,26 @@ const Container = styled.div`
         cursor: pointer;
       }
 
-      @media (max-width: 820px) {
-        width : 100%;
+      @media (max-width: 1200px) {
+        width: 100%;
         object-fit: contain;
-        height : auto;
+        height: auto;
+      }
+    }
+
+    .delete_div_for_image{
+      justify-content: flex-end;
+      display: flex;
+      /* margin-bottom: 7px; */
+
+      .delete_icon{
+        margin-bottom : 10px;
+        margin-right : 5px;
       }
     }
 
     .image_without_message {
-      height: 200px;
+      width : 100%;
       object-fit: contain;
       border-radius: 10px;
 
@@ -149,9 +257,9 @@ const Container = styled.div`
       }
 
       @media (max-width: 820px) {
-        width : 100%;
+        width: 100%;
         object-fit: contain;
-        height : auto;
+        height: auto;
       }
     }
 

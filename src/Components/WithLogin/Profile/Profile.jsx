@@ -19,8 +19,11 @@ function Profile() {
     e.preventDefault();
     if (user) {
       auth.signOut();
-      history.push("/signIn")
+      history.push("/")
     }
+    setInterval(()=>
+    window.location.reload(),1000
+    )
   }
 
   return (

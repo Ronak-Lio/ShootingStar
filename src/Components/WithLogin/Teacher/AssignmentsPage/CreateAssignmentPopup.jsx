@@ -10,16 +10,7 @@ import { useHistory } from "react-router-dom";
 
 function CreateAssignmentPopup() {
   const [
-    {
-      openCreateAssignmentPopup,
-      user,
-      teacherCourseId,
-      teacherSubjectId,
-      signInAs,
-      createAssignmentDetails,
-      teacherCourse,
-      teacherSubject
-    },
+    { openCreateAssignmentPopup, user, signInAs, createAssignmentDetails },
     dispatch,
   ] = useStateValue();
   const [input1, setInput1] = useState("");
@@ -29,9 +20,11 @@ function CreateAssignmentPopup() {
   const [assignments, setAssignments] = useState([]);
   const history = useHistory();
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId) {
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
         .collection("students")
         .onSnapshot((snapshot) => {
           setStudents(
@@ -42,14 +35,14 @@ function CreateAssignmentPopup() {
         });
 
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("assignments")
         .onSnapshot((snapshot) =>
           setAssignments(
             snapshot.docs.map((doc) => ({
-              data : doc.data(),
+              data: doc.data(),
             }))
           )
         );
@@ -58,10 +51,15 @@ function CreateAssignmentPopup() {
     setInput2("");
     setInput3();
     console.log(assignments);
-    console.log(signInAs)
-  }, [students.length, user, teacherCourseId, openCreateAssignmentPopup , teacherSubjectId]);
+    console.log(signInAs);
+  }, [
+    students.length,
+    user,
+    signInAs?.currentCourseID,
+    openCreateAssignmentPopup,
+    signInAs?.currentSubjectID,
+  ]);
 
-  
   const close_popup = (e) => {
     e.preventDefault();
     dispatch({
@@ -74,26 +72,55 @@ function CreateAssignmentPopup() {
     e.preventDefault();
     console.log(students);
     let x = 0;
-    for(let i = 0 ; i < assignments.length ; i++) {
-      if(input1 === assignments[i].data.name){
-         x = 1;
+    for (let i = 0; i < assignments.length; i++) {
+      if (input1 === assignments[i].data.name) {
+        x = 1;
       }
     }
     if (
       input1 !== "" &&
       input2 !== "" &&
-      input3  &&
+      input3 &&
       user &&
-      teacherCourseId &&
-      teacherSubjectId &&
-      students
-      && x === 0
+      signInAs?.currentCourseID &&
+      signInAs?.currentSubjectID &&
+      students &&
+      x === 0
     ) {
       if (createAssignmentDetails?.name) {
+        for (let i = 0; i < students.length; i++) {
+          db.collection("Courses")
+            .doc(signInAs?.currentCourseID)
+            .collection("Subjects")
+            .doc(signInAs?.currentSubjectID)
+            .collection("students")
+            .where("name", "==", students[i].data.name)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+
+                db.collection("Courses")
+                  .doc(signInAs?.currentCourseID)
+                  .collection("Subjects")
+                  .doc(signInAs?.currentSubjectID)
+                  .collection("students")
+                  .doc(doc.id)
+                  .update({
+                    marks: -1,
+                  });
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+        }
+
         db.collection("Courses")
-          .doc(teacherCourseId)
+          .doc(signInAs?.currentCourseID)
           .collection("Subjects")
-          .doc(teacherSubjectId)
+          .doc(signInAs?.currentSubjectID)
           .collection("assignments")
           .add({
             name: input1,
@@ -114,7 +141,7 @@ function CreateAssignmentPopup() {
                 db.collection("students")
                   .doc(doc.id)
                   .collection("courses")
-                  .where("name", "==", teacherCourse)
+                  .where("name", "==", signInAs?.currentCourse)
                   .get()
                   .then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
@@ -126,7 +153,7 @@ function CreateAssignmentPopup() {
                         .collection("courses")
                         .doc(doc1.id)
                         .collection("subjects")
-                        .where("name", "==", teacherSubject)
+                        .where("name", "==", signInAs?.currentSubject)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc2) => {
@@ -162,9 +189,9 @@ function CreateAssignmentPopup() {
         }
       } else {
         db.collection("Courses")
-          .doc(teacherCourseId)
+          .doc(signInAs?.currentCourseID)
           .collection("Subjects")
-          .doc(teacherSubjectId)
+          .doc(signInAs?.currentSubjectID)
           .collection("assignments")
           .add({
             name: input1,
@@ -183,7 +210,7 @@ function CreateAssignmentPopup() {
                 db.collection("students")
                   .doc(doc.id)
                   .collection("courses")
-                  .where("name", "==", teacherCourse)
+                  .where("name", "==", signInAs?.currentCourse)
                   .get()
                   .then((querySnapshot) => {
                     querySnapshot.forEach((doc1) => {
@@ -195,7 +222,7 @@ function CreateAssignmentPopup() {
                         .collection("courses")
                         .doc(doc1.id)
                         .collection("subjects")
-                        .where("name", "==", teacherSubject)
+                        .where("name", "==", signInAs?.currentSubject)
                         .get()
                         .then((querySnapshot) => {
                           querySnapshot.forEach((doc2) => {
@@ -232,11 +259,10 @@ function CreateAssignmentPopup() {
         type: actionTypes.OPEN_CREATE_ASSIGNMENT_POPUP,
         openCreateAssignmentPopup: false,
       });
-    } else if(x === 1){
+    } else if (x === 1) {
       alert("Please choose a different name for assignment");
-    }
-    else{
-      alert("Please fill all the details")
+    } else {
+      alert("Please fill all the details");
     }
   };
   return (
@@ -322,6 +348,13 @@ const Container = styled.div`
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 10px;
     padding-left: 15px;
+
+    @media (max-width: 400px) {
+      width: 350px;
+    }
+    /* @media(max-width: 500px){
+      width : 450px;
+    } */
 
     .popup_close {
       display: flex;
@@ -429,13 +462,13 @@ const Container = styled.div`
       }
     }
 
-    .assignment_attatched{
+    .assignment_attatched {
       max-width: 90%;
 
-      a{
+      a {
         max-width: 90%;
         overflow: hidden;
-        display : flex;
+        display: flex;
         flex-wrap: wrap;
       }
     }

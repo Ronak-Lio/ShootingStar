@@ -211,12 +211,16 @@ function HeaderMain() {
             <ChatIcon />
           </IconButton>
         </div>
-        <div className="headerMain__assignment">
+        <div className="headerMain__assignment"
+         onClick={() => history.push("/AssignmentsPage")}
+        >
           <IconButton>
             <AssignmentIcon />
           </IconButton>
         </div>
-        <div className="headerMain__doubt">
+        <div className="headerMain__doubt"
+          onClick={() => history.push("/DoubtsPage")}
+        >
           <IconButton>
             <QuestionAnswerIcon />
           </IconButton>

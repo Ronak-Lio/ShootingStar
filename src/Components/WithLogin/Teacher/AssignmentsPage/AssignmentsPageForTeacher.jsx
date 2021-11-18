@@ -16,8 +16,6 @@ function AssignmentsPageForTeacher() {
     {
       openCreateAssignmentPopup,
       user,
-      teacherCourseId,
-      teacherSubjectId,
       signInAs,
       assignmentTeacherDetails
     },
@@ -25,12 +23,12 @@ function AssignmentsPageForTeacher() {
   ] = useStateValue();
   const[assignments , setAssignments] = useState([]);
   useEffect(() => {
-    if (user && teacherCourseId && teacherSubjectId) {
-      console.log("Teacer Course Id is ", teacherCourseId);
+    if (user && signInAs?.currentCourseID && signInAs?.currentSubjectID) {
+      console.log("Teacer Course Id is ", signInAs?.currentCourseID);
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("assignments")
         .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
@@ -42,7 +40,7 @@ function AssignmentsPageForTeacher() {
           );
         });
     }
-  }, [user , teacherCourseId , teacherSubjectId , assignments.length , assignmentTeacherDetails]);
+  }, [user , signInAs?.currentCourseID , signInAs?.currentSubjectID , assignments.length , assignmentTeacherDetails]);
   const open_create_assignment_popup = (e) => {
     e.preventDefault();
     dispatch({
@@ -52,7 +50,8 @@ function AssignmentsPageForTeacher() {
     dispatch({
       type : actionTypes.CREATE_ASSIGNMENT_DETAILS,
       createAssignmentDetails : []
-    })
+    });
+    
   };
   return (
     <div className="assignmentsPageforTeacher">

@@ -12,7 +12,7 @@ import HeaderMain from "../Header/HeaderMain";
 import db from "../../../firebase";
 import VewAssignmentPopup from "./VewAssignmentPopup";
 function AssignmentsPage() {
-  const [{ openAsignmentPopup, user, userCourseId, userSubjectId }, dispatch] =
+  const [{ openAsignmentPopup, user, signInAs}, dispatch] =
     useStateValue();
   const history = useHistory();
   const [assignments, setAssignments] = useState([]);
@@ -21,14 +21,14 @@ function AssignmentsPage() {
 
   useEffect(() => {
     console.log(user);
-    console.log(userCourseId, "&&&", userSubjectId);
-    if (user && userCourseId && userSubjectId) {
+    console.log(signInAs?.usercurrentCourseID, "&&&",);
+    if (user && signInAs?.usercurrentCourseID && signInAs?.usercurrentSubjectID){
       db.collection("students")
         .doc(user.uid)
         .collection("courses")
-        .doc(userCourseId)
+        .doc(signInAs?.usercurrentCourseID)
         .collection("subjects")
-        .doc(userSubjectId)
+        .doc(signInAs?.usercurrentSubjectID)
         .collection("assignments")
         .onSnapshot((snapshot) => {
           setAssignments(
@@ -39,36 +39,28 @@ function AssignmentsPage() {
         });
     };
     console.log("Assignments are" , assignments)
-  }, [user, userCourseId, userSubjectId, assignments.length]);
+  }, [user, signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID, assignments.length]);
 
-  const open_noticesPopup = (e) => {
-    e.preventDefault();
-    dispatch({
-      type: actionTypes.OPEN_NOTICES_POPUP,
-      openNoticesPopup: true,
-    });
-  };
+  useEffect(() =>{
+     if(assignments.length > 0) {
+         for(let i = 0; i < assignments.length; i++) {
+           if(assignments[i].data.status === "submitted"){
+             submittedAssignments.push(assignments[i])
+           }
+         }
+     }
+  } ,[assignments.length , signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID,]);
 
-  const open_noticePage_for_mobile = (e) => {
-    e.preventDefault();
-    history.push("/noticesPage");
-  };
+  useEffect(() =>{
+        setSubmittedAssignments([]);
+  } , [ user , signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID]);
   return (
     <div className="assignmentsPage">
-      <HeaderMain />
+      <div className="assignmentsPage_header">
+        <HeaderMain/>
+      </div>
       <div className="upcoming_class_div">
         <p>Upcoming Class at 14:33 on Monday</p>
-        <div className="upcoming_class_div_button">
-          <button className="notices_for_ipad" onClick={open_noticesPopup}>
-            Notices
-          </button>
-          <button
-            className="notices_for_mobile"
-            onClick={open_noticePage_for_mobile}
-          >
-            Notices
-          </button>
-        </div>
       </div>
       <Container>
         <Assignments>
@@ -92,6 +84,7 @@ function AssignmentsPage() {
               </>
             ))}
           </div>
+       {submittedAssignments.length > 0 && (   <>
           <p className="submitted_assignments">Submitted Assignments</p>
           <div className="submitted_assignments_div">
             {console.log(assignments)}
@@ -112,6 +105,7 @@ function AssignmentsPage() {
               </>
             ))}
           </div>
+          </>)}
         </Assignments>
         <div className="notices">
           <Notices />
@@ -127,11 +121,10 @@ function AssignmentsPage() {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  height: fit-content;
+  height: 88vh;
   padding-top: 10px;
   background-color: #7db3ff;
-  
-  
+  overflow-y : scroll;
 
   .notices {
     flex: 0.3;
@@ -152,6 +145,8 @@ const Assignments = styled.div`
   flex: 0.7;
   display: flex;
   flex-direction: column;
+  height : fit-content;
+  overflow-y : scroll;
 
   .due_assignments {
     text-align: center;
