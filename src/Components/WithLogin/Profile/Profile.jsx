@@ -18,12 +18,11 @@ function Profile() {
   const LogOut = (e) => {
     e.preventDefault();
     if (user) {
-      auth.signOut();
+      auth.signOut().then(()=>{
+        window.location.reload()
+      });
       history.push("/")
     }
-    setInterval(()=>
-    window.location.reload(),1000
-    )
   }
 
   return (
