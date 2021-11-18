@@ -12,21 +12,17 @@ import HeaderCourse from "./HeaderCourse";
 import db from "../../../firebase";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
 function HeaderMain() {
-  const [
-    {
-      signInAs,
-      signInAsCourses,
-      showDiv,
-      user, 
-      coursesArray,
-    },
-    dispatch,
-  ] = useStateValue();
+  const [{ signInAs, signInAsCourses, showDiv, user, coursesArray }, dispatch] =
+    useStateValue();
   const history = useHistory();
-  
+  const [notifications, setNotifications] = useState([]);
+  const [newNotifications, setNewNotifications] = useState(0);
+  const [lastVisitedNotificationsPage, setLastVisitedNotificationsPage] =
+    useState();
+
   useEffect(() => {
     if (!signInAs?.currentCourse) {
       if (coursesArray[0]?.data?.name) {
@@ -34,7 +30,7 @@ function HeaderMain() {
           .where("name", "==", coursesArray[0]?.data?.name)
           .get()
           .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => { 
+            querySnapshot.forEach((doc) => {
               db.collection("Courses")
                 .doc(doc.id)
                 .collection("Subjects")
@@ -43,14 +39,14 @@ function HeaderMain() {
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc1) => {
                     if (!signInAs?.currentCourse) {
-                      db.collection('users').doc(user.uid).set({
+                      db.collection("users").doc(user.uid).set({
                         currentCourse: coursesArray[0]?.data?.name,
                         currentSubject: coursesArray[0]?.data?.subjects[0],
                         currentCourseID: doc?.id,
                         currentSubjectID: doc1.id,
                         name: signInAs.name,
                         value: signInAs.value,
-                      })
+                      });
                     }
                   });
                 })
@@ -62,7 +58,6 @@ function HeaderMain() {
           .catch((error) => {
             console.log("Error getting documents: ", error);
           });
-
       }
     }
   }, [coursesArray]);
@@ -75,7 +70,7 @@ function HeaderMain() {
         .where("name", "==", signInAs?.currentCourse)
         .get()
         .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => { 
+          querySnapshot.forEach((doc) => {
             db.collection("students")
               .doc(user.uid)
               .collection("courses")
@@ -84,11 +79,11 @@ function HeaderMain() {
               .where("name", "==", signInAs?.currentSubject)
               .get()
               .then((querySnapshot) => {
-                querySnapshot.forEach((doc1) => { 
-                    db.collection('users').doc(user?.uid).update({
-                      usercurrentCourseID:doc?.id,
-                      usercurrentSubjectID:doc1?.id,
-                    }) 
+                querySnapshot.forEach((doc1) => {
+                  db.collection("users").doc(user?.uid).update({
+                    usercurrentCourseID: doc?.id,
+                    usercurrentSubjectID: doc1?.id,
+                  });
                 });
               })
               .catch((error) => {
@@ -102,6 +97,44 @@ function HeaderMain() {
     }
   }, [signInAs?.currentSubject, user]);
 
+  useEffect(() => {
+    if (user && signInAs) {
+      db.collection("students")
+        .doc(user?.uid)
+        .collection("notifications")
+        .orderBy("timestamp", "desc")
+        .onSnapshot((snapshot) =>
+          setNotifications(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            }))
+          )
+        );
+
+      db.collection("students")
+        .doc(user?.uid)
+        .onSnapshot((snapshot) => {
+          setLastVisitedNotificationsPage(
+            snapshot.data().lastVisitedNotificationsPage
+          );
+        });
+    }
+  }, [user, signInAs]);
+
+  useEffect(() => {
+    if (notifications?.length > 0 && lastVisitedNotificationsPage) {
+      for (let i = 0; i < notifications.length; i++) {
+        if (notifications[i].data?.timestamp > lastVisitedNotificationsPage) {
+          setNewNotifications(newNotifications + 1);
+        }
+      }
+    }
+  }, [notifications.length, lastVisitedNotificationsPage]);
+
+  useEffect(() => {
+    console.log("New Notifications are", newNotifications);
+  }, [newNotifications]);
 
   return (
     <>
@@ -146,14 +179,17 @@ function HeaderMain() {
             </div>
             <div
               className="headerMain__assignment"
-              onClick={() => history.push("/")}
+              onClick={() => history.push("/notifications")}
             >
               <IconButton>
                 <NotificationsActiveIcon />
               </IconButton>
-              <div className="header__notifications__length">
-                9
-              </div>
+              {newNotifications >
+                0 && (
+                  <div className="header__notifications__length">
+                    {newNotifications}
+                  </div>
+                )}
               <div className="headerMain__chat__text">Notifications</div>
             </div>
           </div>
@@ -183,9 +219,8 @@ function HeaderMain() {
                 showDiv ? "HeaderMain__HiddenDiv" : "HeaderMain__HiddenDiv_hide"
               }
             >
-              {coursesArray && coursesArray.map((course) => (
-                <HeaderCourse course={course} />
-              ))}
+              {coursesArray &&
+                coursesArray.map((course) => <HeaderCourse course={course} />)}
             </div>
           </div>
           <div
@@ -194,31 +229,36 @@ function HeaderMain() {
               history.push("/profile");
             }}
           >
-            {signInAs?.imageURL ?
-                <img src={signInAs?.imageURL} className="profile__Photo_header" alt="image" />
-                :
-                <AccountCircleRoundedIcon style={{ fontSize: 40, color: "lightgray" }} />
-              }
+            {signInAs?.imageURL ? (
+              <img
+                src={signInAs?.imageURL}
+                className="profile__Photo_header"
+                alt="image"
+              />
+            ) : (
+              <AccountCircleRoundedIcon
+                style={{ fontSize: 40, color: "lightgray" }}
+              />
+            )}
           </div>
         </div>
       </div>
       <div className="HeaderMain__For__Mobile">
-        <div
-          className="headerMain__chat"
-          onClick={() => history.push("/chat")}
-        >
+        <div className="headerMain__chat" onClick={() => history.push("/chat")}>
           <IconButton>
             <ChatIcon />
           </IconButton>
         </div>
-        <div className="headerMain__assignment"
-         onClick={() => history.push("/AssignmentsPage")}
+        <div
+          className="headerMain__assignment"
+          onClick={() => history.push("/AssignmentsPage")}
         >
           <IconButton>
             <AssignmentIcon />
           </IconButton>
         </div>
-        <div className="headerMain__doubt"
+        <div
+          className="headerMain__doubt"
           onClick={() => history.push("/DoubtsPage")}
         >
           <IconButton>
@@ -234,16 +274,18 @@ function HeaderMain() {
           </IconButton>
         </div>
         <div
-              className="headerMain__assignment"
-              onClick={() => history.push("/")}
-            >
-              <IconButton>
-                <NotificationsActiveIcon />
-              </IconButton>
-              <div className="header__notifications__length">
-                9
-              </div>
+          className="headerMain__assignment"
+          onClick={() => history.push("/notifications")}
+        >
+          <IconButton>
+            <NotificationsActiveIcon />
+          </IconButton>
+          {newNotifications > 0 && (
+            <div className="header__notifications__length">
+              {newNotifications}
             </div>
+          )}
+        </div>
       </div>
     </>
   );

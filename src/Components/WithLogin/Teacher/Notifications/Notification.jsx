@@ -8,7 +8,7 @@ import {useHistory} from "react-router-dom"
 function Notification({notification , teacherNameId}) {
     const[{user , signInAs} , dispatch] = useStateValue();
     const history = useHistory();
-
+    
     
 
     const delete_notification = (e) => {
@@ -28,7 +28,7 @@ function Notification({notification , teacherNameId}) {
 
     return (
         <> 
-         <Container onClick = { e => history.push("/DoubtsPage")}>
+         <Container>
           {notification?.data?.message1 && (
                 <p className  = "message1">{notification?.data?.message1}</p>
           )}
