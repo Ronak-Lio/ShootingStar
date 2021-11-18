@@ -4,6 +4,12 @@
   overflow-y: scroll;
 }
 
+@media(max-width: 500px){
+  .doubtsPage{
+    height: 100vh;
+  }
+}
+
 .upcoming_class {
   display: none;
 }

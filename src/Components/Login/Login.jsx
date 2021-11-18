@@ -61,19 +61,35 @@ function Login() {
   }, [signInAs, user]);
   const create_new_account = (e) => {
     e.preventDefault();
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((auth) => {
-        if (auth) {
-          console.log(auth);
-          db.collection("students").doc(auth.user?.uid).set({
-            email: auth.user?.email,
-            name: "Ronak",
-          });
-          history.push("/main");
-        }
-      })
-      .catch((error) => alert(error.message));
+    db.collection("addByAdmin")
+    .where("email", "==", email)
+    .get()
+    .then((querySnapshot) => {
+      if(querySnapshot.empty === false) {
+        auth
+        .createUserWithEmailAndPassword(email, password)
+        .then((auth) => {
+          if (auth) {
+            dispatch({
+              type: actionTypes.SET_USER,
+              user: auth.user,
+            })
+            history.push("/createProfile");
+          }
+        })
+        .catch((error) => alert(error.message));
+      }else{
+        alert("Invalid Email and Password")
+      }
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      });
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+    });
+  
   };
 
   return (

@@ -50,7 +50,8 @@ function AssignmentsPageForTeacher() {
     dispatch({
       type : actionTypes.CREATE_ASSIGNMENT_DETAILS,
       createAssignmentDetails : []
-    })
+    });
+    
   };
   return (
     <div className="assignmentsPageforTeacher">
