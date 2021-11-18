@@ -12,7 +12,7 @@ import { useStateValue } from "../../../../StateProvider";
 import db from "../../../../firebase";
 
 function UpdateNoticeTeacher() {
-  const [{ signInAs, user,teacherSubjectId,teacherCourseId}, dispatch] =useStateValue();
+  const [{ signInAs}, dispatch] =useStateValue();
   const [updatedivshow, setUpdatedivshow] = useState(false);
   const [addNotice, setAddNotice] = useState(false);
   const [updateclass, setUpdateclass] = useState("");
@@ -21,8 +21,8 @@ function UpdateNoticeTeacher() {
   const [noticesHeader,setNoticesHeader]=useState([]);
   
   useEffect(()=>{
-    if(teacherCourseId && teacherSubjectId){
-      db.collection('Courses').doc(teacherCourseId).collection("Subjects").doc(teacherSubjectId).collection('noticesHeader').onSnapshot((snapshot)=>(
+    if(signInAs?.currentCourseID && signInAs?.currentSubjectID){
+      db.collection('Courses').doc(signInAs?.currentCourseID).collection("Subjects").doc(signInAs?.currentSubjectID).collection('noticesHeader').onSnapshot((snapshot)=>(
         setNoticesHeader(
           snapshot.docs.map((doc) => ({
             data: doc.data(),
@@ -31,18 +31,18 @@ function UpdateNoticeTeacher() {
         )
       ))
     }
-  },[teacherCourseId,teacherSubjectId]);
+  },[signInAs?.currentCourseID,signInAs?.currentSubjectID]);
 
   const UpdateClass=(e)=>{
     e.preventDefault();
-      if(teacherCourseId && teacherSubjectId){
+      if(signInAs?.currentCourseID && signInAs?.currentSubjectID){
        if(noticesHeader[0]?.data?.topic){
-         db.collection('Courses').doc(teacherCourseId).collection("Subjects").doc(teacherSubjectId).collection('noticesHeader').doc(noticesHeader[0]?.id).update({
+         db.collection('Courses').doc(signInAs?.currentCourseID).collection("Subjects").doc(signInAs?.currentSubjectID).collection('noticesHeader').doc(noticesHeader[0]?.id).update({
            upcomingclass:updateclass,
            topic:updatetopic,
           })
         }else{
-         db.collection('Courses').doc(teacherCourseId).collection("Subjects").doc(teacherSubjectId).collection('noticesHeader').add({
+         db.collection('Courses').doc(signInAs?.currentCourseID).collection("Subjects").doc(signInAs?.currentSubjectID).collection('noticesHeader').add({
            upcomingclass:updateclass,
            topic:updatetopic,
          })
@@ -54,8 +54,8 @@ function UpdateNoticeTeacher() {
   }
   const AddNotice=(e)=>{
     e.preventDefault();
-    if(teacherCourseId && teacherSubjectId){
-      db.collection('Courses').doc(teacherCourseId).collection("Subjects").doc(teacherSubjectId).collection('notices').add({
+    if(signInAs?.currentCourseID && signInAs?.currentSubjectID){
+      db.collection('Courses').doc(signInAs?.currentCourseID).collection("Subjects").doc(signInAs?.currentSubjectID).collection('notices').add({
         notice:notice,
         teacher:signInAs?.name,
       })

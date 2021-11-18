@@ -19,11 +19,11 @@ function NoticeTeacher({ notice}) {
 
   const deleteNotice = (e) => {
     e.preventDefault();
-    if(teacherCourseId){
+    if(signInAs?.currentCourseID && signInAs?.currentSubjectID){
       db.collection("Courses")
-      .doc(teacherCourseId)
+      .doc(signInAs?.currentCourseID)
       .collection("Subjects")
-      .doc(teacherSubjectId)
+      .doc(signInAs?.currentSubjectID)
       .collection("notices")
       .doc(notice.id)
       .delete()

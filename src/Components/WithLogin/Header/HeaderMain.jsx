@@ -229,6 +229,17 @@ function HeaderMain() {
             <LeaderboardIcon />
           </IconButton>
         </div>
+        <div
+              className="headerMain__assignment"
+              onClick={() => history.push("/")}
+            >
+              <IconButton>
+                <NotificationsActiveIcon />
+              </IconButton>
+              <div className="header__notifications__length">
+                9
+              </div>
+            </div>
       </div>
     </>
   );

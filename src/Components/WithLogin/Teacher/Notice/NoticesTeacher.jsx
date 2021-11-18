@@ -7,15 +7,15 @@ import NoticeTeacher from "./NoticeTeacher";
 import UpdateNoticeTeacher from "./UpdateNoticeTeacher";
 
 function NoticesTeacher() {
-  const [{ signInAs, user, teacherSubjectId, teacherCourseId }, dispatch] =useStateValue();
+  const [{ signInAs }, dispatch] =useStateValue();
   const [notices, setNotices] = useState([]);
 
   useEffect(() => {
-    if (teacherCourseId && teacherSubjectId) {
+    if (signInAs?.currentSubjectID && signInAs?.currentCourseID) {
       db.collection("Courses")
-        .doc(teacherCourseId)
+        .doc(signInAs?.currentCourseID)
         .collection("Subjects")
-        .doc(teacherSubjectId)
+        .doc(signInAs?.currentSubjectID)
         .collection("notices")
         .onSnapshot((snapshot) =>
           setNotices(
@@ -26,7 +26,7 @@ function NoticesTeacher() {
           )
         );
     }
-  }, [teacherCourseId, teacherSubjectId]);
+  }, [signInAs?.currentSubjectID, signInAs?.currentSubjectID]);
 
   console.log(notices);
   return (

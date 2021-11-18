@@ -165,7 +165,11 @@ function HeaderTeacher() {
               history.push("/profile");
             }}
           >
-            <AccountCircleRoundedIcon />
+            {signInAs?.imageURL ?
+                <img src={signInAs?.imageURL} className="profile__Photo_header" alt="image" />
+                :
+                <AccountCircleRoundedIcon style={{ fontSize: 40, color: "lightgray" }} />
+              }
           </div>
         </div>
       </div>
@@ -199,6 +203,17 @@ function HeaderTeacher() {
             <LeaderboardIcon />
           </IconButton>
         </div>
+        <div
+              className="headerMain__assignment"
+              onClick={() => history.push("/")}
+            >
+              <IconButton>
+                <NotificationsActiveIcon />
+              </IconButton>
+              <div className="header__notifications__length">
+                9
+              </div>
+            </div>
       </div>
     </>
   );
