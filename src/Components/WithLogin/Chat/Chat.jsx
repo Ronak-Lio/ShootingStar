@@ -108,14 +108,18 @@ function Chat() {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        let reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = (e) => {
-          setPdfFile(e.target.result);
-          setFileName(selectedFile.name);
-          setFile(selectedFile);
-          setPdfFileError("");
-        };
+        if(selectedFile.size < 1000*1024){
+          let reader = new FileReader();
+          reader.readAsDataURL(selectedFile);
+          reader.onloadend = (e) => {
+            setPdfFile(e.target.result);
+            setFileName(selectedFile.name);
+            setFile(selectedFile);
+            setPdfFileError("");
+          };
+        }else{
+          setPdfFileError("Please select a file of size below 1MB");
+        }
       } else {
         setPdfFile(null);
         setPdfFileError("Please select valid pdf file");
@@ -329,7 +333,8 @@ function Chat() {
       await imagesRef.put(image);
       imagesRef.getDownloadURL().then((url) => {
         if (signInAs?.currentCourseID && signInAs?.currentSubjectID) {
-          db.collection("Courses")
+          if(image.size < 1000*1024){
+            db.collection("Courses")
             .doc(signInAs?.currentCourseID)
             .collection("Subjects")
             .doc(signInAs?.currentSubjectID)
@@ -351,6 +356,9 @@ function Chat() {
               setPopupshowImage(false);
               setLoading(false);
             });
+          }else{
+            alert("Please select a file below 1 MB")
+          }
         }
       })
     }

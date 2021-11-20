@@ -162,7 +162,7 @@ function HeaderTeacher() {
               <IconButton>
                 <NotificationsActiveIcon />
               </IconButton>
-              {newNotifications > 0 && (<div className="header__notifications__length">
+              {newNotifications > 0 &&(<div className="header__notifications__length">
               {newNotifications}
               </div>)}
               <div className="headerMain__chat__text">Notifications</div>
