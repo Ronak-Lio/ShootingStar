@@ -845,11 +845,11 @@ function DoubtsPage() {
                     {messages.map((message) => (
                       <Doubt message={message} />
                     ))}
-                    {length > 20 && (
+                    {/* {length > 20 && (
                       <button className="see_more" onClick={seeMoreMessages}>
                         See More
                       </button>
-                    )}
+                    )} */}
                   </>
                 )}
               </div>
