@@ -1,11 +1,17 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import './AdminField.css';
-import { useHistory } from 'react-router-dom';
+import db from '../../../../firebase';
 
 function AdminFieldforcourses({ totalUser, Serial, sub }) {
-    const history = useHistory();
-
+    
+    const deleteUser=()=>{
+        db.collection('addByAdmin').doc(totalUser?.id).delete().then(()=>{
+            alert('User delete successfully');
+        }).catch((error)=>{
+            alert('Error : ',error.message)
+        })
+    }
     return (
         <div className="adminField">
             <div className="adminField__First">
@@ -17,6 +23,11 @@ function AdminFieldforcourses({ totalUser, Serial, sub }) {
                     {sub && sub}
                     {!totalUser?.data && totalUser}
                 </div>
+            </div>
+            <div className="admin__second">
+                {totalUser?.data && totalUser?.data.email &&
+                    <Button variant="contained" onClick={deleteUser}>Delete User</Button>
+                }
             </div>
         </div>
     )

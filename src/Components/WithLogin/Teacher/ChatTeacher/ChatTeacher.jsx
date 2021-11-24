@@ -23,8 +23,6 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { actionTypes } from "../../../../reducer";
 import Button from '@mui/material/Button';
 
-
-
 function Chat() {
   const [
     {
@@ -43,6 +41,7 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [showTypeFile, setShowTypeFile] = useState(false);
   const history = useHistory();
+
 
   // for onchange event
   const [pdfFile, setPdfFile] = useState(null);
@@ -64,47 +63,46 @@ function Chat() {
   const [iD, setID] = useState(false);
 
   // msg  loading
-  const [r,setR]=useState(0);
+  const [r, setR] = useState(0);
   const [z, setZ] = useState();
-  const[limit , setLimit] = useState(20);
-  const[length , setLength] = useState();
+  const [limit, setLimit] = useState(20);
+  const [length, setLength] = useState();
 
-  useEffect(()=>{
-    if(signInAs?.currentSubjectID){
+  useEffect(() => {
+    if (signInAs?.currentSubjectID) {
       db.collection("Courses")
-      .doc(signInAs.currentCourseID)
-      .collection("Subjects")
-      .doc(signInAs?.currentSubjectID)
-      .onSnapshot((snapshot) =>
-     {
-      snapshot.data()   &&  setLength(snapshot.data().chatMessagesLength)
-     }
-    );
+        .doc(signInAs.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
+        .onSnapshot((snapshot) => {
+          snapshot.data() && setLength(snapshot.data().chatMessagesLength)
+        }
+        );
     }
-  },[signInAs?.currentSubjectID])
-  console.log("ppppp",length);
-  
+  }, [signInAs?.currentSubjectID])
+  console.log("ppppp", length);
+
   const seeMoreMessages = (e) => {
     e.preventDefault();
     console.log(length)
     db.collection("Courses")
-        .doc(signInAs.currentCourseID)
-        .collection("Subjects")
-        .doc(signInAs?.currentSubjectID)
-        .collection("chat")
-        .orderBy("timestamp", "desc")
-        .limit(limit+20)
-    .onSnapshot((snapshot) =>
-      setMessages(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          data: doc.data(),
-        }))
-      )
-    );
+      .doc(signInAs.currentCourseID)
+      .collection("Subjects")
+      .doc(signInAs?.currentSubjectID)
+      .collection("chat")
+      .orderBy("timestamp", "desc")
+      .limit(limit + 20)
+      .onSnapshot((snapshot) =>
+        setMessages(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+        )
+      );
 
-    setLimit(limit+20);
-    setLength(length-20);
+    setLimit(limit + 20);
+    setLength(length - 20);
   }
 
   const handlePdfFileChange = (e) => {
@@ -215,22 +213,22 @@ function Chat() {
   const sendMessage = (e) => {
     e.preventDefault();
     if (signInAs.currentCourseID && signInAs?.currentSubjectID && input) {
-      if(messages.length==0){
+      if (messages.length == 0) {
         db.collection("Courses")
-        .doc(signInAs.currentCourseID)
-        .collection("Subjects")
-        .doc(signInAs?.currentSubjectID)
-        .update({
-          chatMessagesLength : 0,
-        })
-      }else{
+          .doc(signInAs.currentCourseID)
+          .collection("Subjects")
+          .doc(signInAs?.currentSubjectID)
+          .update({
+            chatMessagesLength: 0,
+          })
+      } else {
         db.collection("Courses")
-        .doc(signInAs.currentCourseID)
-        .collection("Subjects")
-        .doc(signInAs?.currentSubjectID)
-        .update({
-          chatMessagesLength : messages.length+1,
-        })
+          .doc(signInAs.currentCourseID)
+          .collection("Subjects")
+          .doc(signInAs?.currentSubjectID)
+          .update({
+            chatMessagesLength: messages.length + 1,
+          })
       }
       db.collection("Courses")
         .doc(signInAs.currentCourseID)
@@ -259,7 +257,7 @@ function Chat() {
         .doc(signInAs?.currentSubjectID)
         .collection("chat")
         .orderBy("timestamp", "desc")
-        .limit(20+r)
+        .limit(20 + r)
         .onSnapshot((snapshot) => {
           setMessages(
             snapshot.docs.map((doc) => ({
@@ -501,12 +499,12 @@ function Chat() {
               )
               )}
               {length > 20 && (
-                      // <button className="see_more" onClick = {seeMoreMessages}>See More</button>
+                // <button className="see_more" onClick = {seeMoreMessages}>See More</button>
 
-                      <Button onClick = {seeMoreMessages}  variant="contained" disableElevation>
-  See More
-</Button>
-                    )}
+                <Button onClick={seeMoreMessages} variant="contained" disableElevation>
+                  See More
+                </Button>
+              )}
             </div>
             <div className="doubtBox_footerForChat">
               <div className="send_Message_box">

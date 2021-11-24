@@ -1,21 +1,32 @@
 import React, { useEffect, useState } from "react";
 import db from "../../../../firebase";
 
-function Showsubject({ course, id, sub }) {
+function Showsubject({ course, id, sub,email }) {
     const [already, setAlready] = useState(false);
     const [alreadyadd, setAlreadyadd] = useState('');
     const [alreadyaddSub, setAlreadyaddSub] = useState([]);
-    const [functionOn, setFunctionOn] = useState(false);
     const [loading, setLoading] = useState(true);
     const [loading1, setLoading1] = useState(false);
     const [onlyOne, setOnlyOne] = useState(false)
+    const [userInfo,setUserInfo]=useState([]);
 
+    useEffect(()=>{
+        setLoading(true);
+       if(email){
+           db.collection('users').where('email', '==',email ).get()
+           .then((querySnapshot) => {
+               querySnapshot.forEach((doc) => {
+                setUserInfo(doc.id);
+                setLoading(false);
+               })
+               setLoading(false);
+           })
+       }
+    },[email]);
 
     useEffect(() => {
         setLoading(true);
         // var subjectsArrs = alreadyaddSub?.subjects && alreadyaddSub?.subjects;
-
-
         if (course && id) {
             db.collection('addByAdmin').doc(id).collection('courses').where('name', '==', course?.data?.name).get()
                 .then((querySnapshot) => {
@@ -92,6 +103,13 @@ function Showsubject({ course, id, sub }) {
                         })
                         setLoading(false);
                     })
+                    if(userInfo){
+                        db.collection('users').doc(userInfo).update({
+                        currentCourse:'',
+                        currentCourseID:'',
+                        currentSubject:'',
+                        currentSubjectID:'',
+                    })}
                 })
         }
     }
