@@ -109,14 +109,18 @@ function Chat() {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        let reader = new FileReader();
+        if(selectedFile.size < 1000*1024){
+          let reader = new FileReader();
         reader.readAsDataURL(selectedFile);
         reader.onloadend = (e) => {
           setPdfFile(e.target.result);
           setFileName(selectedFile.name);
           setFile(selectedFile);
           setPdfFileError("");
-        };
+        }
+      }else{
+          setPdfFileError("PLease select a file of size below 1MB")
+        }
       } else {
         setPdfFile(null);
         setPdfFileError("Please select valid pdf file");
@@ -325,35 +329,39 @@ function Chat() {
       })
     }
     if (image) {
-      const id = uuid();
-      const imagesRef = firebase.storage().ref('chatImages').child(id);
-      await imagesRef.put(image);
-      imagesRef.getDownloadURL().then((url) => {
-        if (signInAs?.currentCourseID && signInAs?.currentSubjectID) {
-          db.collection("Courses")
-            .doc(signInAs?.currentCourseID)
-            .collection("Subjects")
-            .doc(signInAs?.currentSubjectID)
-            .collection("chat")
-            .add({
-              message: input,
-              caption: caption,
-              imageURL: url,
-              name: user?.email,
-              date: datetime,
-              sendby: signInAs?.name,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              imageName: id,
-              imageOriginalName: image.name,
-            })
-            .then(() => {
-              setInput('');
-              setCaption('');
-              setPopupshowImage(false);
-              setLoading(false);
-            });
-        }
-      })
+      if(image.size < 1000*1024){
+        const id = uuid();
+        const imagesRef = firebase.storage().ref('chatImages').child(id);
+        await imagesRef.put(image);
+        imagesRef.getDownloadURL().then((url) => {
+          if (signInAs?.currentCourseID && signInAs?.currentSubjectID) {
+            db.collection("Courses")
+              .doc(signInAs?.currentCourseID)
+              .collection("Subjects")
+              .doc(signInAs?.currentSubjectID)
+              .collection("chat")
+              .add({
+                message: input,
+                caption: caption,
+                imageURL: url,
+                name: user?.email,
+                date: datetime,
+                sendby: signInAs?.name,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                imageName: id,
+                imageOriginalName: image.name,
+              })
+              .then(() => {
+                setInput('');
+                setCaption('');
+                setPopupshowImage(false);
+                setLoading(false);
+              });
+          }
+        })
+      }else{
+        alert("Please select a image of size below 1MB")
+      }
     }
   }
 

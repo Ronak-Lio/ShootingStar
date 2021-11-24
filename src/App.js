@@ -24,7 +24,6 @@ import AssignmentsPageForTeacher from "./Components/WithLogin/Teacher/Assignment
 import DoubtsPageForTeacher from "./Components/WithLogin/Teacher/DoubtsPage/DoubtsPageForTeacher";
 import MessagesSectionForMobile from "./Components/WithLogin/Teacher/DoubtsPage/MessagesSectionForMobile";
 import MainTeacher from "./Components/WithLogin/Teacher/Main/MainTeacher";
-import Notification from "./Components/WithLogin/Notification/Notification";
 import { actionTypes } from "./reducer";
 import db, { auth } from "./firebase";
 import { useEffect } from "react";

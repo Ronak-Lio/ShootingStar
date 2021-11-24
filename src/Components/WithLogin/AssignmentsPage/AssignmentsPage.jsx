@@ -48,6 +48,11 @@ function AssignmentsPage() {
              submittedAssignments.push(assignments[i])
            }
          }
+         for(let i = 0; i < assignments.length; i++) {
+          if(assignments[i].data.status === "pending"){
+            dueAssignments.push(assignments[i])
+          }
+        }
      }
   } ,[assignments.length , signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID,]);
 
@@ -64,6 +69,7 @@ function AssignmentsPage() {
       </div>
       <Container>
         <Assignments>
+          {dueAssignments.length > 0 && (<>
           <p className="due_assignments">Due Assignments</p>
           <div className="due_assignments_div">
             {console.log("Assignments are" , assignments)}
@@ -84,6 +90,7 @@ function AssignmentsPage() {
               </>
             ))}
           </div>
+          </>)}
        {submittedAssignments.length > 0 && (   <>
           <p className="submitted_assignments">Submitted Assignments</p>
           <div className="submitted_assignments_div">

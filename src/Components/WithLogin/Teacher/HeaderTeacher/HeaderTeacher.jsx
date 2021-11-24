@@ -14,10 +14,14 @@ import { actionTypes } from "../../../../reducer";
 import HeaderCourse from "../../Header/HeaderCourse";
 import HeaderCourseTeacher from "./HeaderCourseTeacher";
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import firebase from "firebase"
 
 function HeaderTeacher() {
   const [{ user,signInAs, showDiv,coursesArray}, dispatch] = useStateValue();
   const history = useHistory();
+  const[notifications , setNotifications] = useState([]);
+  const[newNotifications , setNewNotifications] = useState(0);
+  const[lastVisitedNotificationsPage , setLastVisitedNotificationsPage] = useState();
 
  
   useEffect(() => {
@@ -60,7 +64,54 @@ function HeaderTeacher() {
       }
     }
   }, [coursesArray]);
- 
+
+  useEffect(() => {
+    if (user && signInAs) {
+        db.collection("notificationsForTeachers")
+        .where("name", "==", signInAs?.name)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+
+            setLastVisitedNotificationsPage(doc.data().lastVisitedNotificationsPage)
+
+            db.collection("notificationsForTeachers")
+              .doc(doc.id)
+              .collection("notifications")
+              .orderBy("timestamp" , "desc")
+              .onSnapshot((snapshot) => 
+                setNotifications(
+                    snapshot.docs.map((doc) => ({
+                        id : doc.id,
+                        data : doc.data(),
+                    }))
+                )
+              )
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    }
+  }, [user, signInAs]);
+   
+  useEffect(() => {
+     if(notifications?.length > 0 && lastVisitedNotificationsPage){
+        for(let i = 0; i < notifications.length; i++) {
+          if(notifications[i].data?.timestamp > lastVisitedNotificationsPage){
+            setNewNotifications(newNotifications + 1)
+          }
+        }
+     }
+  } , [notifications?.length , lastVisitedNotificationsPage]);
+
+  useEffect(() => {
+      console.log("New Notifications are"  ,newNotifications)
+  } , [newNotifications]);
+
+
   return (
     <>
       <div className="headerMain">
@@ -106,14 +157,14 @@ function HeaderTeacher() {
             {/* import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'; */}
             <div
               className="headerMain__assignment"
-              onClick={() => history.push("/")}
+              onClick={() => history.push("/notifications")}
             >
               <IconButton>
                 <NotificationsActiveIcon />
               </IconButton>
-              <div className="header__notifications__length">
-                9
-              </div>
+              {newNotifications > 0 &&(<div className="header__notifications__length">
+              {newNotifications}
+              </div>)}
               <div className="headerMain__chat__text">Notifications</div>
             </div>
           </div>
@@ -205,14 +256,14 @@ function HeaderTeacher() {
         </div>
         <div
               className="headerMain__assignment"
-              onClick={() => history.push("/")}
+              onClick={() => history.push("/notifications")}
             >
               <IconButton>
                 <NotificationsActiveIcon />
               </IconButton>
-              <div className="header__notifications__length">
-                9
-              </div>
+            {newNotifications > 0 && (  <div className="header__notifications__length">
+              {newNotifications}
+              </div>)}
             </div>
       </div>
     </>
