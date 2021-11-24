@@ -154,6 +154,7 @@ function CreateProfile() {
                     value: doc.data().value,
                     imageURL : "",
                     imageID : "",
+                    email : user?.email
                   });
 
                   db.collection("addByAdmin")
