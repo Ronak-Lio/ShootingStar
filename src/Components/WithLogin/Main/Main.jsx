@@ -24,7 +24,7 @@ function Main() {
               data: doc.data(),
               id: doc.id,
             }))
-          )
+          )  
         );
 
       db.collection("students")

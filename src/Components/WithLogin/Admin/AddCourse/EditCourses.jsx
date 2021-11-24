@@ -52,7 +52,7 @@ function EditCourse() {
    setInputFields([{ id: uuidv4(), firstName: ""},])
   }else{
     alert('Also fill name of subject');
-    setCourseName('')
+    setCourseName('');
   }
 }
 

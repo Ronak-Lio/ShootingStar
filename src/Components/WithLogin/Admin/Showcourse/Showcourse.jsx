@@ -42,7 +42,7 @@ function Showcourse({ course, id,email }) {
           {showSubject && (
             <div className="head_second">
               {course.data.subjects.map((sub) => (
-                <Showsubject course={course} sub={sub} id={id} />
+                <Showsubject course={course} sub={sub} id={id} email={email} />
               ))} 
             </div>
           )}
