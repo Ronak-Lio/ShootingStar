@@ -149,12 +149,6 @@ function App() {
         {/* <Route path="/editcourses">
           <EditCourse />
         </Route> */}
-
-        <Route path="/notification">
-          {signInAs ? (<Notification />) : (
-            <Home />
-          )}
-        </Route>
         <Route path="/update">
           {signInAs ? (<UpdatePage />) : (<Home />)}
         </Route>
