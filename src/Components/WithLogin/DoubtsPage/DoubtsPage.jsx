@@ -1004,6 +1004,10 @@ const DoubtBox = styled.div`
     padding: 5px;
     display: flex;
     flex-direction: row;
+    @media (max-width: 500px){
+    position: fixed;
+    bottom: 0;
+    }
   }
 
   .doutBox_footer_icons {
