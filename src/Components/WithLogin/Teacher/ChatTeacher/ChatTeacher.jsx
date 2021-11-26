@@ -23,8 +23,6 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { actionTypes } from "../../../../reducer";
 import Button from '@mui/material/Button';
 
-
-
 function Chat() {
   const [
     {
