@@ -24,9 +24,11 @@ function Login() {
           type: actionTypes.SET_USER,
           user: auth.user,
         });
-        setLoading(false);
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => {
+        alert(error.message);
+        setLoading(false);
+      });
   };
   useEffect(() => {
     if (user?.uid) {
@@ -45,6 +47,7 @@ function Login() {
   useEffect(() => {
     if (signInAs?.value === "teacher") {
       history.push("/main");
+      setLoading(false);
     } else if (signInAs?.value === "student") {
       db.collection("students")
         .doc(user?.uid)
@@ -55,42 +58,61 @@ function Login() {
           });
         });
       history.push("/main");
-    }else if(signInAs?.value  === "admin"){
+      setLoading(false);
+    } else if (signInAs?.value === "admin") {
       history.push('/admin');
+      setLoading(false);
     }
   }, [signInAs, user]);
   const create_new_account = (e) => {
     e.preventDefault();
     db.collection("addByAdmin")
-    .where("email", "==", email)
-    .get()
-    .then((querySnapshot) => {
-      if(querySnapshot.empty === false) {
-        auth
-        .createUserWithEmailAndPassword(email, password)
-        .then((auth) => {
-          if (auth) {
-            dispatch({
-              type: actionTypes.SET_USER,
-              user: auth.user,
+      .where("email", "==", email)
+      .get()
+      .then((querySnapshot) => {
+        if (querySnapshot.empty === false) {
+          auth
+            .createUserWithEmailAndPassword(email, password)
+            .then((auth) => {
+              if (auth) {
+                dispatch({
+                  type: actionTypes.SET_USER,
+                  user: auth.user,
+                })
+                history.push("/createProfile");
+              }
             })
-            history.push("/createProfile");
-          }
-        })
-        .catch((error) => alert(error.message));
-      }else{
-        alert("Invalid Email and Password")
-      }
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+            .catch((error) => alert(error.message));
+        } else {
+          alert("Invalid Email and Password")
+        }
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
       });
-    })
-    .catch((error) => {
-      console.log("Error getting documents: ", error);
-    });
-  
+
   };
+  const ResetPassword = () => {
+    if (email) {
+      auth.
+        sendPasswordResetEmail(email)
+        .then(() => {
+          // Password reset email sent!
+          alert('Password reset email sent!')
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          console.log(errorCode);
+          const errorMessage = error.message;
+          alert(errorMessage)
+          // ..
+        });
+    }
+  }
 
   return (
     <div className="login">
@@ -125,7 +147,7 @@ function Login() {
                   </div>
                 </div>
               </form>
-              <a className="forgot_password">Forgot Password?</a>
+              <a className="forgot_password" onClick={ResetPassword}>Forgot Password?</a>
             </div>
           </div>
         ) : (

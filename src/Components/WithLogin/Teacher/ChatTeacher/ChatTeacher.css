@@ -379,7 +379,16 @@
   font-size: small;
 }
 /* icons */
-
+.deleteIcon{
+  position: relative;
+  display: none;
+  color: gray;
+}
+.chatTeacher__message__my:hover
+.deleteIcon { 
+display: flex;
+  color: black;
+}
 /* video */
 .videoName{
     display: flex;

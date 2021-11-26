@@ -42,6 +42,8 @@ function Chat() {
   const [showTypeFile, setShowTypeFile] = useState(false);
   const history = useHistory();
 
+  
+
   // for onchange event
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfFileError, setPdfFileError] = useState("");

@@ -5,11 +5,58 @@ import { Player } from 'video-react';
 import { Worker } from "@react-pdf-viewer/core";
 import { Viewer } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import firebase from 'firebase';
+import db from '../../../firebase';
+import { useStateValue } from '../../../StateProvider';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function Chatmsg({ message }) {
+    const [
+        {
+            signInAs,
+            user,
+        }
+    ] = useStateValue();
+
     const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
     const [popupshowPdfFUll, setPopupshowPdfFUll] = useState(false);
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
+   
+    const deleteMessage = () => {
+        
+        
+        if(message?.data.videoName){
+            const imagesRefforVideo = firebase.storage().ref('chatVideo').child(message?.data?.videoName);
+            imagesRefforVideo.delete().then(()=>{
+                db.collection("Courses")
+                .doc(signInAs.currentCourseID)
+                .collection("Subjects")
+                .doc(signInAs?.currentSubjectID)
+                .collection("chat")
+                .doc(message?.id)
+                .delete()
+            })
+        }else if(message?.data.imageName){
+            const imagesRefforImage = firebase.storage().ref('chatImages').child(message?.data?.imageName);
+            imagesRefforImage.delete().then(()=>{
+                db.collection("Courses")
+                .doc(signInAs.currentCourseID)
+                .collection("Subjects")
+                .doc(signInAs?.currentSubjectID)
+                .collection("chat")
+                .doc(message?.id)
+                .delete()
+             })
+        }else{
+            db.collection("Courses")
+            .doc(signInAs.currentCourseID)
+            .collection("Subjects")
+            .doc(signInAs?.currentSubjectID)
+            .collection("chat")
+            .doc(message?.id)
+            .delete()
+        }
+    }
 
     return (
         <>
@@ -73,6 +120,7 @@ function Chatmsg({ message }) {
                     <h5>
                         {message.data?.message}
                     </h5>
+                    <h5 className="deleteIcon" onClick={deleteMessage}>< DeleteIcon/></h5>
                     {message.data?.fileUrl && <h5 onClick={() => {
                         setPopupshowPdfFUll(true)
 

@@ -9,7 +9,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { v4 as uuidv4 } from "uuid";
 import db from '../../../../firebase';
 import AdminField from "../Main/AdminField";
-import Head from './Head'
+import Head from './Head';
 
 function AddCourseSubject() {
   const [courseName, setCourseName] = useState("");
@@ -48,7 +48,8 @@ function AddCourseSubject() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if(!alreadyCourse ){
-  if(array[0] != '' && courseName ){ db.collection('CoursesName').add({
+  if(array[0] != '' && courseName ){ 
+    db.collection('CoursesName').add({
   name:courseName,
   subjects:array,
    })

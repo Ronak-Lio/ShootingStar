@@ -22,9 +22,9 @@ function Showcourseforadd({ course }) {
             <div className="head_button" onClick={() => {
               history.push('/editcourses')
             }}>
-            <Button variant="contained" color="success">
+            {/* <Button variant="contained" color="success">
            Edit Course
-          </Button>
+          </Button> */}
             </div>
             <div className="head_dropDown" onClick={() => setShowSubject(!showSubject)}>
             <ArrowDropDownRoundedIcon />
