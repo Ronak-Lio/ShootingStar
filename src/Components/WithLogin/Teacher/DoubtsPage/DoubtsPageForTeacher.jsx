@@ -22,6 +22,7 @@ import { Player } from "video-react";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { storage } from "../../../../firebase";
+import Button from '@mui/material/Button';
 
 function DoubtsPageForTeacher() {
   const [
@@ -738,7 +739,7 @@ function DoubtsPageForTeacher() {
                       <Doubt message={message} roomId = {roomId}/>
                     ))}
                     {length > 20 && (
-                      <button className="see_more" onClick = {seeMoreMessages}>See More</button>
+                      <Button className="see_more" onClick = {seeMoreMessages}>See More</Button>
                     )}
                   </>
                 )}
