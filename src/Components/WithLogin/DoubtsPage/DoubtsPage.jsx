@@ -23,6 +23,7 @@ import { Player } from "video-react";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { storage } from "../../../firebase";
+import Button from '@mui/material/Button';
 
 function DoubtsPage() {
   const [{ openDoubtReplies, user, signInAs, sendPdf }, dispatch] =
@@ -845,11 +846,11 @@ function DoubtsPage() {
                     {messages.map((message) => (
                       <Doubt message={message} />
                     ))}
-                    {/* {length > 20 && (
-                      <button className="see_more" onClick={seeMoreMessages}>
+                    {length > 20 && (
+                      <Button  onClick={seeMoreMessages}>
                         See More
-                      </button>
-                    )} */}
+                      </Button>
+                    )}
                   </>
                 )}
               </div>
@@ -1004,6 +1005,10 @@ const DoubtBox = styled.div`
     padding: 5px;
     display: flex;
     flex-direction: row;
+    @media (max-width: 500px){
+    position: fixed;
+    bottom: 0;
+    }
   }
 
   .doutBox_footer_icons {

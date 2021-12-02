@@ -520,19 +520,25 @@ function Chat() {
                     <div className="showtypeFile">
                       <div className="show_typeImage">
                         <label htmlFor="image">
-                          <ImageRoundedIcon />
+                          <ImageRoundedIcon className = "footer_icon"
+                           fontSize="small"
+                          />
                         </label>
                         <input type="file" id={'image'} style={{ display: 'none' }} onChange={selectImage} accept="image/git , image/jpeg , image/png" />
                       </div>
                       <div className="show_typeVideo">
                         <label htmlFor="video">
-                          <VideoLibraryRoundedIcon />
+                          <VideoLibraryRoundedIcon className = "footer_icon"
+                           fontSize="small"
+                          />
                         </label>
                         <input type="file" id={'video'} style={{ display: 'none' }} onChange={selectVideo} />
                       </div>
                       <div className="show_typeDocument" >
                         <label>
-                          <InsertDriveFileRoundedIcon onClick={() => {
+                          <InsertDriveFileRoundedIcon
+                           fontSize="small"
+                          onClick={() => {
                             setID(true)
                             setPopupshowImage(true);
                           }} />
@@ -649,6 +655,7 @@ const Container = styled.div`
       }
     }
   }
+ 
   @media (max-width: 420px) {
     .upload_pdf {
       display: flex;

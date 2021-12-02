@@ -18,6 +18,8 @@ function AskDoubtPopup() {
     dispatch,
   ] = useStateValue();
   const [rooms, setRooms] = useState([]);
+  const[z , setZ] = useState();
+  const[teacher , setTeacher] = useState();
 
   useEffect(() => {
     if (
@@ -39,8 +41,48 @@ function AskDoubtPopup() {
             }))
           )
         );
+
+        db.collection("Courses")
+        .doc(signInAs?.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
+        .onSnapshot((snapshot) => {
+          setTeacher(snapshot.data().teacher);
+        });
     }
   }, [user, signInAs?.usercurrentCourseID, signInAs?.usercurrentSubjectID, signInAs?.currentCourseID, signInAs?.currentSubjectID]);
+
+
+  useEffect(() => {
+    if (
+      user &&
+      signInAs?.usercurrentCourseID &&
+      signInAs?.usercurrentSubjectID &&
+      signInAs?.currentCourseID &&
+      signInAs?.currentSubjectID
+    ) {
+      db.collection("students")
+        .doc(user?.uid)
+        .collection("courses")
+        .doc(signInAs?.usercurrentCourseID)
+        .collection("subjects")
+        .doc(signInAs?.usercurrentSubjectID)
+        .onSnapshot((snapshot) => {
+          setZ(snapshot.data().doubtMessageslength + 1);
+        });
+
+    }
+  }, [
+    user,
+    signInAs?.usercurrentCourseID,
+    signInAs?.usercurrentSubjectID,
+    signInAs?.currentCourseID,
+    signInAs?.currentSubjectID,
+  ]);
+
+  useEffect(() => {
+    
+  } , [z , teacher])
 
   const close_askDoubt_popup = () => {
     dispatch({
@@ -53,6 +95,31 @@ function AskDoubtPopup() {
     e.preventDefault();
 
     if (signInAs.name && signInAs?.usercurrentCourseID && signInAs?.usercurrentSubjectID && input) {
+      
+      db.collection("notificationsForTeachers")
+      .where("name", "==", teacher)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+
+          db.collection("notificationsForTeachers")
+            .doc(doc.id)
+            .collection("notifications")
+            .add({
+              message1 : input,
+              message2: `Message from ${signInAs?.name}`,
+              timestamp:
+                firebase.firestore.FieldValue.serverTimestamp(),
+            });
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+
+
       db.collection("students")
         .doc(user?.uid)
         .collection("courses")
@@ -64,6 +131,7 @@ function AskDoubtPopup() {
           name: signInAs.name,
           message: input,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          type: "text",
         });
       let x = 0;
       for (let i = 0; i < rooms.length; i++) {
@@ -72,6 +140,16 @@ function AskDoubtPopup() {
         }
       }
       if (x === 0) {
+        db.collection("students")
+          .doc(user?.uid)
+          .collection("courses")
+          .doc(signInAs?.usercurrentCourseID)
+          .collection("subjects")
+          .doc(signInAs?.usercurrentSubjectID)
+          .update({
+            doubtMessageslength: 0,
+          });
+
         db.collection("Courses")
           .doc(signInAs?.currentCourseID)
           .collection("Subjects")
@@ -79,6 +157,7 @@ function AskDoubtPopup() {
           .collection("doubtRooms")
           .add({
             name: signInAs.name,
+            messagesLength: 1,
           })
           .then(() => {
             db.collection("Courses")
@@ -105,6 +184,7 @@ function AskDoubtPopup() {
                       message: input,
                       timestamp:
                         firebase.firestore.FieldValue.serverTimestamp(),
+                      type: "text",
                     });
                 });
               })
@@ -113,6 +193,15 @@ function AskDoubtPopup() {
               });
           });
       } else {
+        db.collection("students")
+          .doc(user?.uid)
+          .collection("courses")
+          .doc(signInAs?.usercurrentCourseID)
+          .collection("subjects")
+          .doc(signInAs?.usercurrentSubjectID)
+          .update({
+            doubtMessageslength: z,
+          });
         db.collection("Courses")
           .doc(signInAs?.currentCourseID)
           .collection("Subjects")
@@ -125,6 +214,19 @@ function AskDoubtPopup() {
               // doc.data() is never undefined for query doc snapshots
               console.log(doc.id, " => ", doc.data());
 
+              let y = doc.data().messagesLength;
+              y++;
+
+              db.collection("Courses")
+                .doc(signInAs?.currentCourseID)
+                .collection("Subjects")
+                .doc(signInAs?.currentSubjectID)
+                .collection("doubtRooms")
+                .doc(doc.id)
+                .update({
+                  messagesLength: y,
+                });
+
               db.collection("Courses")
                 .doc(signInAs?.currentCourseID)
                 .collection("Subjects")
@@ -136,6 +238,7 @@ function AskDoubtPopup() {
                   name: signInAs.name,
                   message: input,
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  type: "text",
                 });
             });
           })
