@@ -12,8 +12,21 @@ function Login() {
   const [password, setPassword] = useState();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
+  const[users , setUsers] = useState([]);
+  const[x , setX] = useState(0);
   console.log(user);
 
+
+  useEffect(() => {
+    db.collection("users").onSnapshot((snapshot) => 
+      setUsers(
+        snapshot.docs.map((doc) => ({
+          id : doc.id,
+          data : doc.data(),
+        }))
+      )
+    )
+  } , [])
   const sign_in = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -29,6 +42,20 @@ function Login() {
         alert(error.message);
         setLoading(false);
       });
+       
+      if(users.length > 0) {
+        for(let i = 0; i < users.length; i++) {
+          if(email === users[i]?.data?.email) {
+            setX(1)
+            console.log("X is 1")
+            history.push("/")  
+          }
+        }
+        // if( x === 0){
+        //   history.push("/createProfile")
+        // }
+      }
+      
   };
   useEffect(() => {
     if (user?.uid) {
@@ -46,7 +73,6 @@ function Login() {
   console.log(user?.uid, signInAs);
   useEffect(() => {
     if (signInAs?.value === "teacher") {
-      history.push("/main");
       setLoading(false);
     } else if (signInAs?.value === "student") {
       db.collection("students")
@@ -57,7 +83,6 @@ function Login() {
             userInfo: snapshot.data(),
           });
         });
-      history.push("/main");
       setLoading(false);
     } else if (signInAs?.value === "admin") {
       history.push('/admin');
