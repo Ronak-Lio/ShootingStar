@@ -9,6 +9,17 @@
     font-size: large;
     justify-content: space-between!important;
 }
+.adminField_For_Delete{
+    display: flex;
+    align-items:center;
+    width: 96%;
+    background-color: rgb(227, 240, 241);
+    margin: 2%;
+    padding: 12px;
+    font-weight: 500;
+    font-size: large;
+    justify-content: space-around!important;
+}
 .nodata{
     display: flex;
     width: 100%;
@@ -20,6 +31,7 @@
 }
 .adminField__First{
     display: flex;
+    width: 50%;
 }
 .adminField__Sec{
     display: flex;
@@ -65,4 +77,16 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+.adminField__Name{
+  width: 50%;
+  overflow-x: scroll;
+}
+.popup__delete{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: lightblue;
 }

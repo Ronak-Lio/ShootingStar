@@ -127,7 +127,7 @@
   font-size: 12px;
 }
 .chatTeacher__message__my{
-
+  padding: 0;
   max-width: 60%;
   max-height: 60%;
 }
@@ -146,14 +146,14 @@
   word-break: break-all;
   color: black;
   margin: 0;
-  padding-top: 12px;
+  padding-top: 10px;
   font-weight: 400;
   font-size: 16px;
 }
 .chatTeacher__msgBox {
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  padding: 12px 12px 0 12px;
   align-items: flex-end;
 }
 .chatTeacher__msgBoxNot {
@@ -368,7 +368,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 12px;
+  /* padding: 12px; */
 }
 .Backicon{
   cursor: pointer;
@@ -383,11 +383,16 @@
   position: relative;
   display: none;
   color: gray;
+  font-size: x-small;
+  padding: 4px 0 4px 0;
 }
 .chatTeacher__message__my:hover
 .deleteIcon { 
 display: flex;
   color: black;
+}
+.chatTeacher__message__my>h5{
+  margin: 0;
 }
 /* video */
 .videoName{

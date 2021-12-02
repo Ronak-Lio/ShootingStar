@@ -124,9 +124,9 @@ function ChatmsgTeacher({ message }) {
                     <h5>
                         {message.data?.message && message.data?.message}
                     </h5>
-                    <h5 className="deleteIcon" onClick={deleteMessage}>
-                        < DeleteIcon/>
-                        </h5>
+                    <div className="deleteIcon" onClick={deleteMessage}>
+                        < DeleteIcon fontSize='small'/>
+                        </div>
                     
                     {message.data?.fileUrl && <h5 onClick={() => {
                         setPopupshowPdfFUll(true)
