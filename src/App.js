@@ -47,6 +47,7 @@ import NotificationPage from "./Components/WithLogin/Notifications/NotificationP
 import NotificationsPageForTeacher from "./Components/WithLogin/Teacher/Notifications/NotificationsPageForTeacher";
 import CreateProfile from "./Components/WithLogin/CreateProfile/CreateProfile";
 import ResetPassword from "./Components/Login/ResetPassword";
+import Notification from "./Components/WithLogin/Notifications/Notification";
 
 function App() {
   const [{ signInAs, signInAsId, user, signInAsCourses }, dispatch] = useStateValue();

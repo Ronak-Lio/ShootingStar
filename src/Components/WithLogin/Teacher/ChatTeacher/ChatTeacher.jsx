@@ -519,22 +519,22 @@ function Chat() {
                     <div className="showtypeFile">
                       <div className="show_typeImage">
                         <label htmlFor="image">
-                          <ImageRoundedIcon />
+                          <ImageRoundedIcon fontSize="small"/>
                         </label>
                         <input type="file" id={'image'} style={{ display: 'none' }} onChange={selectImage} accept="image/git , image/jpeg , image/png" />
                       </div>
                       <div className="show_typeVideo">
                         <label htmlFor="video">
-                          <VideoLibraryRoundedIcon />
+                          <VideoLibraryRoundedIcon fontSize="small" />
                         </label>
                         <input type="file" id={'video'} style={{ display: 'none' }} onChange={selectVideo} />
                       </div>
-                      <div className="show_typeDocument" >
-                        <label>
-                          <InsertDriveFileRoundedIcon onClick={() => {
+                      <div className="show_typeDocument" onClick={() => {
                             setID(true)
                             setPopupshowImage(true);
-                          }} />
+                          }}  >
+                        <label>
+                          <InsertDriveFileRoundedIcon fontSize="small"/>
                         </label>
                       </div>
                     </div>

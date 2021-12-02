@@ -7,6 +7,7 @@ function AdminField({ totalUser, Serial,sub }) {
     const history=useHistory();
 
     return (
+        <>
         <div className="adminField">
             <div className="adminField__First">
                 <div className="adminField__serial">
@@ -17,10 +18,7 @@ function AdminField({ totalUser, Serial,sub }) {
                     {sub && sub}
                     {!totalUser?.data && totalUser}
                 </div>
-                {/* <div className="adminField__Value">
-                    {totalUser?.data.value && totalUser?.data.value}
-                </div> */}
-                    </div>
+                </div>
                 {totalUser?.data.value!='admin' &&  <div className="adminField__Sec">
                {totalUser?.data &&
                <Button variant="contained" color="success"
@@ -32,6 +30,7 @@ function AdminField({ totalUser, Serial,sub }) {
                 </Button>}
                 </div>}
         </div>
+        </>
     )
 }
 
