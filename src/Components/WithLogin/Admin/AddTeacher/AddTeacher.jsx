@@ -34,7 +34,7 @@ function AddTeacher() {
     })
     history.push('/admin')
   }else{
-      alert("This user is already exists or try again")
+      alert("This user  already exists or try again")
     }
   };
 
