@@ -201,6 +201,7 @@ const Container = styled.div`
     background-color: #fff;
     border-radius: 10px;
     display: flex;
+    z-index: 0;
 
     .delete_icon {
       display: none;
