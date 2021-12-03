@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 function AdminField({ totalUser, Serial,sub }) {
     const history=useHistory();
-
+  console.log(totalUser)
     return (
         <>
         <div className="adminField">
@@ -14,13 +14,12 @@ function AdminField({ totalUser, Serial,sub }) {
                     {Serial + 1}.
                 </div>
                 <div className="adminField__Name">
-                    {totalUser?.data && totalUser?.data.email}
+                    {totalUser && totalUser?.data && totalUser?.data?.email}
                     {sub && sub}
-                    {!totalUser?.data && totalUser}
                 </div>
                 </div>
-                {totalUser?.data.value!='admin' &&  <div className="adminField__Sec">
-               {totalUser?.data &&
+                {totalUser && totalUser?.data && totalUser?.data?.value!='admin' &&  <div className="adminField__Sec">
+               {totalUser && totalUser?.data &&
                <Button variant="contained" color="success"
                  onClick={()=>{
                     history.push('/addteacherinfo')

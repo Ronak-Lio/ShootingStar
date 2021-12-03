@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 function Showcourseforadd({ course }) {
   const history = useHistory();
   const [showSubject, setShowSubject] = useState(false);
+  
 
   return (
     <>
@@ -36,7 +37,7 @@ function Showcourseforadd({ course }) {
               {course.data.subjects.map((sub, Serial) => (
                 // <Showsubject course={course} sub={sub} id={id} />
                 // <h6>{sub}</h6>
-                <AdminField totalUser={sub} Serial={Serial} />
+                <AdminField totalUser={sub} Serial={Serial} sub={sub} />
               ))}
             </div>
           )}
