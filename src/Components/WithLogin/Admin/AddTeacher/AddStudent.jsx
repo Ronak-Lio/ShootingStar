@@ -41,7 +41,7 @@ function AddStudent() {
   return (
     <div className="addTeacher">
       <div className="addTeacherIn">
-        <div className="addTeacher__logo">ADD TEACHER INFO</div>
+        <div className="addTeacher__logo">ADD STUDENT INFO</div>
         <div className="addTeacherHeader">
           <input
             placeholder="Email "

@@ -13,7 +13,7 @@ function Login() {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const[users , setUsers] = useState([]);
-  const[x , setX] = useState(0);
+  let x = 0;
   console.log(user);
 
 
@@ -45,15 +45,13 @@ function Login() {
       if(users.length > 0) {
         for(let i = 0; i < users.length; i++) {
           if(email === users[i]?.data?.email) {
-            setX(1)
-            console.log("X is 1")
+            x = 1;
             history.push("/") 
             setLoading(false); 
+          }else if( (i === users.length - 1) && (x === 0)){
+            setLoading(false);
+            history.push("/createProfile")
           }
-        }
-        if( x === 0){
-          history.push("/createProfile")
-          setLoading(false);
         }
       }
       
