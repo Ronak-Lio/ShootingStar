@@ -29,6 +29,9 @@ function AddAdminInfo() {
             setEmail('')
           }
       })
+      .catch((error)=>{
+        alert('Error',error?.message)
+      })
   };
 
   return (
