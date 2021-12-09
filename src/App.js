@@ -65,6 +65,8 @@ function App() {
     });
   }, []);
 
+  console.log("In App user is " , user?.email);
+
   useEffect(() => {
     if (user?.uid) {
       db.collection("users")
@@ -255,37 +257,37 @@ function App() {
         <Route path="/loading">
           <Loading />
         </Route>
-        <Route path="/createProfile">
+       { user && ( <Route path="/createProfile">
           <CreateProfile />
-        </Route>
+        </Route>)}
         {/* admin */}
-        <Route path="/addteacherinfo">
+        {  user?.email === 'admin1@gmail.com' &&(<Route path="/addteacherinfo">
           <Admin />
-        </Route>
-        <Route path="/addstudentinfo">
+        </Route>)}
+       { user?.email === 'admin1@gmail.com' && <Route path="/addstudentinfo">
           <Admin />
-        </Route>
-        <Route path="/addcourses">
+        </Route>}
+        { user?.email === 'admin1@gmail.com' && <Route path="/addcourses">
           <Admin />
-        </Route>
-        <Route path="/admin">
+        </Route>}
+        { user?.email === 'admin1@gmail.com' &&<Route path="/admin">
           <Admin />
-        </Route>
-        <Route path="/addcourse">
+        </Route>}
+        { user?.email === 'admin1@gmail.com' &&<Route path="/addcourse">
           <Admin />
-        </Route>
-        <Route path="/addcoursebyadmin">
+        </Route>}
+        { user?.email === 'admin1@gmail.com' &&<Route path="/addcoursebyadmin">
           <AddCourse />
-        </Route>
-        <Route path="/addteacher">
+        </Route>}
+       {  user?.email === 'admin1@gmail.com' &&<Route path="/addteacher">
           <Admin />
-        </Route>
-        <Route path="/addstudent">
+        </Route>}
+        { user?.email === 'admin1@gmail.com' &&<Route path="/addstudent">
           <Admin />
-        </Route>
-        <Route path="/addadmin">
+        </Route>}
+        { user?.email === 'admin1@gmail.com' &&<Route path="/addadmin">
           <Admin />
-        </Route>
+        </Route>}
         {/* '/ */}
         <Route path="/">
           {!signInAs ? (

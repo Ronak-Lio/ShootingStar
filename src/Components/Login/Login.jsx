@@ -32,11 +32,10 @@ function Login() {
     setLoading(true);
     auth
       .signInWithEmailAndPassword(email, password)
-      .then((auth) => {
-        dispatch({
-          type: actionTypes.SET_USER,
-          user: auth.user,
-        });
+      .then((auth) => {   
+        if(email === "admin1@gmail.com"){
+          history.push("/admin")
+        }   
       })
       .catch((error) => {
         alert(error.message);
@@ -48,12 +47,14 @@ function Login() {
           if(email === users[i]?.data?.email) {
             setX(1)
             console.log("X is 1")
-            history.push("/")  
+            history.push("/") 
+            setLoading(false); 
           }
         }
-        // if( x === 0){
-        //   history.push("/createProfile")
-        // }
+        if( x === 0){
+          history.push("/createProfile")
+          setLoading(false);
+        }
       }
       
   };
@@ -100,12 +101,9 @@ function Login() {
             .createUserWithEmailAndPassword(email, password)
             .then((auth) => {
               if (auth) {
-                dispatch({
-                  type: actionTypes.SET_USER,
-                  user: auth.user,
-                })
-                history.push("/createProfile");
               }
+            }).then(() => {
+              history.push("/createProfile")
             })
             .catch((error) => alert(error.message));
         } else {

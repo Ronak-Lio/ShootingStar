@@ -5,6 +5,7 @@ import db, { auth } from "../../../firebase";
 import { Link, useHistory } from "react-router-dom";
 import { actionTypes } from "../../../reducer";
 import Loading from "../Loading/Loading";
+import firebase from "firebase";
 
 function CreateProfile() {
   const [{ user }, dispatch] = useStateValue();
@@ -15,129 +16,140 @@ function CreateProfile() {
   const [value, setValue] = useState();
   const history = useHistory();
 
+
   useEffect(() => {
-    console.log(courses);
-
-    if (courses.length > 0 && value === "student") {
-      db.collection("students").doc(user?.uid).set({
-        name: name,
-        address: address,
-        contact: mobileNumber,
-        email: user?.email,
-      });
-
-      for (let i = 0; i < courses.length; i++) {
-        db.collection("students")
-          .doc(user?.uid)
-          .collection("courses")
-          .add({
-            name: courses[i]?.data?.name,
-          })
-          .then(() => {
-            db.collection("students")
-              .doc(user?.uid)
-              .collection("courses")
+      console.log("User is "  , user)
+      if (courses.length > 0 && value === "student" && name && address && mobileNumber) {
+        db.collection("students").doc(user?.uid).set({
+          name: name,
+          address: address,
+          contact: mobileNumber,
+          email: user?.email,
+          lastVisitedNotificationsPage: 
+            firebase.firestore.FieldValue.serverTimestamp(),
+        });
+  
+        for (let i = 0; i < courses.length; i++) {
+          db.collection("students")
+            .doc(user?.uid)
+            .collection("courses")
+            .add({
+              name: courses[i]?.data?.name,
+            })
+            .then(() => {
+              db.collection("students")
+                .doc(user?.uid)
+                .collection("courses")
+                .where("name", "==", courses[i]?.data?.name)
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    console.log(doc.id, " => ", doc.data());
+  
+                    for (let j = 0; j < courses[i].data?.subjects.length; j++) {
+                      db.collection("students")
+                        .doc(user?.uid)
+                        .collection("courses")
+                        .doc(doc.id)
+                        .collection("subjects")
+                        .add({
+                          name: courses[i]?.data?.subjects[j],
+                        });
+  
+                      db.collection("Courses")
+                        .where("name", "==", courses[i]?.data?.name)
+                        .get()
+                        .then((querySnapshot) => {
+                          querySnapshot.forEach((doc1) => {
+                            db.collection("Courses")
+                              .doc(doc1.id)
+                              .collection("Subjects")
+                              .where("name", "==", courses[i]?.data?.subjects[j])
+                              .get()
+                              .then((querySnapshot) => {
+                                querySnapshot.forEach((doc2) => {
+                                  db.collection("Courses")
+                                    .doc(doc1.id)
+                                    .collection("Subjects")
+                                    .doc(doc2.id)
+                                    .collection("students")
+                                    .add({
+                                      name: name,
+                                    });
+                                });
+                              })
+                              .catch((error) => {
+                                console.log("Error getting documents: ", error);
+                              });
+                          });
+                        })
+                        .catch((error) => {
+                          console.log("Error getting documents: ", error);
+                        });
+                    }
+                  });
+                })
+                .catch((error) => {
+                  console.log("Error getting documents: ", error);
+                });
+            });
+        }
+        history.push("/")
+      } else if (courses.length > 0 && value === "teacher") {
+        db.collection("notificationsForTeachers").add({
+          name: name,
+          lastVisitedNotificationsPage:
+            firebase.firestore.FieldValue.serverTimestamp(),
+        });
+        for (let i = 0; i < courses.length; i++) {
+          for (let j = 0; j < courses[i].data?.subjects.length; j++) {
+            db.collection("Courses")
               .where("name", "==", courses[i]?.data?.name)
               .get()
               .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                  console.log(doc.id, " => ", doc.data());
-
-                  for (let j = 0; j < courses[i].data?.subjects.length; j++) {
-                    db.collection("students")
-                      .doc(user?.uid)
-                      .collection("courses")
-                      .doc(doc.id)
-                      .collection("subjects")
-                      .add({
-                        name: courses[i]?.data?.subjects[j],
+                querySnapshot.forEach((doc1) => {
+                  db.collection("Courses")
+                    .doc(doc1.id)
+                    .collection("Subjects")
+                    .where("name", "==", courses[i]?.data?.subjects[j])
+                    .get()
+                    .then((querySnapshot) => {
+                      querySnapshot.forEach((doc2) => {
+                        db.collection("Courses")
+                          .doc(doc1.id)
+                          .collection("Subjects")
+                          .doc(doc2.id)
+                          .update({
+                            teacher: name,
+                          });
                       });
-
-                    db.collection("Courses")
-                      .where("name", "==", courses[i]?.data?.name)
-                      .get()
-                      .then((querySnapshot) => {
-                        querySnapshot.forEach((doc1) => {
-                          db.collection("Courses")
-                            .doc(doc1.id)
-                            .collection("Subjects")
-                            .where("name", "==", courses[i]?.data?.subjects[j])
-                            .get()
-                            .then((querySnapshot) => {
-                              querySnapshot.forEach((doc2) => {
-                                db.collection("Courses")
-                                  .doc(doc1.id)
-                                  .collection("Subjects")
-                                  .doc(doc2.id)
-                                  .collection("students")
-                                  .add({
-                                    name: name,
-                                  });
-                              });
-                            })
-                            .catch((error) => {
-                              console.log("Error getting documents: ", error);
-                            });
-                        });
-                      })
-                      .catch((error) => {
-                        console.log("Error getting documents: ", error);
-                      });
-                  }
+                    })
+                    .catch((error) => {
+                      console.log("Error getting documents: ", error);
+                    });
                 });
+              }).then(() => {
+                   
               })
               .catch((error) => {
                 console.log("Error getting documents: ", error);
               });
-          });
-      }
-      history.push("/")
-    } else if (courses.length > 0 && value === "teacher") {
-      for (let i = 0; i < courses.length; i++) {
-        for (let j = 0; j < courses[i].data?.subjects.length; j++) {
-          db.collection("Courses")
-            .where("name", "==", courses[i]?.data?.name)
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc1) => {
-                db.collection("Courses")
-                  .doc(doc1.id)
-                  .collection("Subjects")
-                  .where("name", "==", courses[i]?.data?.subjects[j])
-                  .get()
-                  .then((querySnapshot) => {
-                    querySnapshot.forEach((doc2) => {
-                      db.collection("Courses")
-                        .doc(doc1.id)
-                        .collection("Subjects")
-                        .doc(doc2.id)
-                        .update({
-                          teacher: name,
-                        });
-                    });
-                  })
-                  .catch((error) => {
-                    console.log("Error getting documents: ", error);
-                  });
-              });
-            })
-            .catch((error) => {
-              console.log("Error getting documents: ", error);
-            });
+          }
         }
+        history.push("/")
       }
-      history.push("/")
-    }
-  }, [courses?.length, value]);
+     
+  } , [courses.length , value])
 
   const create_account = (e) => {
     e.preventDefault();
-    if (name && address && mobileNumber) {
+    if (name && address && mobileNumber && user) {
       db.collection("users")
         .where("name", "==", name)
         .get()
         .then((querySnapshot) => {
-          if (querySnapshot.empty === true) {
+          if (querySnapshot.empty === true && user) {
+            
             db.collection("addByAdmin")
               .where("email", "==", user?.email)
               .get()
@@ -151,11 +163,13 @@ function CreateProfile() {
                     name: name,
                     address: address,
                     contact: mobileNumber,
-                    value: doc.data().value,
-                    imageURL : "",
-                    imageID : "",
-                    email : user?.email
+                    imageURL: "",
+                    imageID: "",
+                    email: user?.email,
+                    value : doc.data().value
                   });
+            
+
 
                   db.collection("addByAdmin")
                     .doc(doc.id)
@@ -182,6 +196,8 @@ function CreateProfile() {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
           });
+        }).then(() => {
+          
         })
         .catch((error) => {
           console.log("Error getting documents: ", error);

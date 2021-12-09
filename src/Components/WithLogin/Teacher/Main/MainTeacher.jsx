@@ -22,7 +22,6 @@ function MainTeacher() {
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
-            setLastVisitedNotificationsPage(doc.data().lastVisitedNotificationsPage)
             db.collection("notificationsForTeachers")
               .doc(doc.id)
               .collection("notifications")

@@ -27,13 +27,7 @@ function Main() {
           )  
         );
 
-      db.collection("students")
-        .doc(user?.uid)
-        .onSnapshot((snapshot) => {
-          setLastVisitedNotificationsPage(
-            snapshot.data().lastVisitedNotificationsPage
-          );
-        });
+      
     }
   }, [user]);
 

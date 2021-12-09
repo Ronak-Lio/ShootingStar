@@ -74,8 +74,10 @@ function HeaderTeacher() {
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
-
-            setLastVisitedNotificationsPage(doc.data().lastVisitedNotificationsPage)
+             
+            if(doc?.data()?.lastVisitedNotificationsPage){
+              setLastVisitedNotificationsPage(doc?.data()?.lastVisitedNotificationsPage)
+            }
 
             db.collection("notificationsForTeachers")
               .doc(doc.id)

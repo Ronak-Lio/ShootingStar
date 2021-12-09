@@ -782,7 +782,7 @@ function DoubtsPage() {
       </div>
       <div className="doubtsPage">
         <div className="upcoming_class">
-          <p>Upcoming class at 14:33 on Monday</p>
+          {/* <p>Upcoming class at 14:33 on Monday</p> */}
           <div className="header_buttons">
           </div>
         </div>

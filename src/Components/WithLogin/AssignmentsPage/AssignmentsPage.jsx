@@ -64,9 +64,9 @@ function AssignmentsPage() {
       <div className="assignmentsPage_header">
         <HeaderMain/>
       </div>
-      <div className="upcoming_class_div">
+      {/* <div className="upcoming_class_div">
         <p>Upcoming Class at 14:33 on Monday</p>
-      </div>
+      </div> */}
       <Container>
         <Assignments>
           {dueAssignments.length > 0 && (<>
