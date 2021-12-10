@@ -38,10 +38,6 @@ function Login() {
       db.collection("users")
         .doc(user?.uid)
         .onSnapshot((snapshot) =>
-          //  dispatch({
-          //     type:actionTypes.SIGN_IN_AS,
-          //     signInAs:snapshot.data(),
-          //    });
           console.log(snapshot.data())
         );
     }

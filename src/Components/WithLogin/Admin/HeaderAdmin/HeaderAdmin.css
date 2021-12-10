@@ -37,6 +37,12 @@
 }
 
 @media(max-width:768px){
+    .Admin__home{
+        flex: 0;
+    }
+    .HeaderAdmin{
+        flex: 1;
+    }
     .HeaderAdminFirst{
         font-weight: 500;
         font-size: medium;

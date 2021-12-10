@@ -1,9 +1,14 @@
 import React from "react";
 import { useHistory } from "react-router";
 import './HeaderAdmin.css'
+import Button from '@mui/material/Button';
+import { auth } from "../../../../firebase";
+import { useStateValue } from "../../../../StateProvider";
 
 function HeaderAdmin() {
   const history = useHistory();
+  const [{ user }] = useStateValue();
+
   return (
     <div className="headerAdmin__out">
       <div className="Admin__home">
@@ -12,7 +17,6 @@ function HeaderAdmin() {
             onClick={() => history.push("/admin")}
           >
             <img src={"/img/lolo.svg"} alt="logo" className="logo" />
-            <img src={"/img/Star_logo.png"} alt="logo" className="logo_m" />
           </div>
       </div>
       <div className="HeaderAdmin">
@@ -36,7 +40,17 @@ function HeaderAdmin() {
           Admin
           {window.location.pathname === "/addadmin" && <div className="add_teacher"></div>
           }
-        </div> 
+        </div>
+      </div>
+      <div className="HeaderAdminSecond" >
+      <Button variant="outlined" onClick={()=>{
+        if (user) {
+          auth.signOut().then(()=>{
+            window.location.reload()
+          });
+          history.push("/")
+        }
+      }}>Logout</Button>
       </div>
     </div>
   );
