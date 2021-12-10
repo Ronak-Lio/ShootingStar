@@ -13,49 +13,26 @@ function Login() {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const[users , setUsers] = useState([]);
-  let x = 0;
-  console.log(user);
+
+  // console.log(user);
 
 
-  useEffect(() => {
-    db.collection("users").onSnapshot((snapshot) => 
-      setUsers(
-        snapshot.docs.map((doc) => ({
-          id : doc.id,
-          data : doc.data(),
-        }))
-      )
-    )
-  } , [])
-  const sign_in = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then((auth) => {   
-        if(email === "admin1@gmail.com"){
-          history.push("/admin")
-        }   
-      })
-      .catch((error) => {
-        alert(error.message);
-        setLoading(false);
-      });
-       
-      if(users.length > 0) {
-        for(let i = 0; i < users.length; i++) {
-          if(email === users[i]?.data?.email) {
-            x = 1;
-            history.push("/") 
-            setLoading(false); 
-          }else if( (i === users.length - 1) && (x === 0)){
-            setLoading(false);
-            history.push("/createProfile")
-          }
-        }
-      }
-      
-  };
+  // useEffect(() => {
+  //   setLoading(true);
+  //   db.collection("users").onSnapshot((snapshot) => 
+  //     setUsers(
+  //       snapshot.docs.map((doc) => ({
+  //         id : doc.id,
+  //         data : doc.data(),
+  //       },
+  //       console.log("Users are " , doc.data())
+  //       ))
+  //     ),
+  //     console.log("Users are " , users),
+  //     setLoading(false)
+  //   )
+  // } , []);
+
   useEffect(() => {
     if (user?.uid) {
       db.collection("users")
@@ -69,7 +46,8 @@ function Login() {
         );
     }
   }, [user?.uid]);
-  console.log(user?.uid, signInAs);
+  // console.log(user?.uid, signInAs);
+
   useEffect(() => {
     if (signInAs?.value === "teacher") {
       setLoading(false);
@@ -88,6 +66,58 @@ function Login() {
       setLoading(false);
     }
   }, [signInAs, user]);
+
+
+  const sign_in = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((auth) => {   
+        if(email === "admin1@gmail.com"){
+          history.push("/admin")
+           }
+        console.log("Users are" , users);
+        // let x = 0;
+        // if(users.length > 0){
+        //   for(let i = 0; i < users.length; i++) {
+        //     if(email === users[i]?.data?.email) {
+        //       x = 1;
+        //       console.log("X is " , x);
+        //       history.push("/") 
+        //       setLoading(false); 
+        //     }else if( (i === users.length - 1) && (x === 0)){
+        //       setLoading(false);
+        //       console.log("X is " , x);
+        //       history.push("/createProfile")
+        //     }
+        //   }
+        // }
+
+        db.collection("users")
+        .where("email", "==", email)
+        .get()
+        .then((querySnapshot) => {
+          if(querySnapshot.empty === true){
+            history.push("/createProfile")
+          }else{
+            history.push("/") 
+          }
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());            
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+      })
+      .catch((error) => {
+        alert(error.message);
+        setLoading(false);
+      });
+      
+  };
   const create_new_account = (e) => {
     e.preventDefault();
     db.collection("addByAdmin")

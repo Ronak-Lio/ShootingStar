@@ -41,13 +41,11 @@ function HeaderTeacher() {
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc1) => {
                     if (!signInAs?.currentCourse) {
-                      db.collection('users').doc(user.uid).set({
+                      db.collection('users').doc(user.uid).update({
                         currentCourse: coursesArray[0]?.data?.name,
                         currentSubject: coursesArray[0]?.data?.subjects[0],
                         currentCourseID: doc?.id,
                         currentSubjectID: doc1.id,
-                        name: signInAs.name,
-                        value: signInAs.value,
                       })
                     }
                   });
