@@ -13,6 +13,7 @@ function Login() {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const[users , setUsers] = useState([]);
+  const[x , setX] = useState();
 
   // console.log(user);
 
@@ -41,7 +42,7 @@ function Login() {
           console.log(snapshot.data())
         );
     }
-  }, [user?.uid]);
+  }, [user?.uid , x]);
   // console.log(user?.uid, signInAs);
 
   useEffect(() => {
@@ -61,7 +62,45 @@ function Login() {
       history.push('/admin');
       setLoading(false);
     }
-  }, [signInAs, user]);
+  }, [signInAs, user , x]);
+
+  useEffect(() => {
+    setX(0);
+     if(email) {
+      db.collection("addByAdmin")
+      .where("email", "==", email)
+      .get()
+      .then((querySnapshot) => {
+        if(querySnapshot.empty === false && email!=="admin1@gmail.com"){
+           setX(1);
+        }
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());            
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+       
+      db.collection("users")
+      .where("email", "==", email)
+      .get()
+      .then((querySnapshot) => {
+        if(querySnapshot.empty === false && email!=="admin1@gmail.com"){
+           setX(0);
+        }
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());            
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+
+     }
+  }, [email]);
 
 
   const sign_in = (e) => {
@@ -94,10 +133,12 @@ function Login() {
         .where("email", "==", email)
         .get()
         .then((querySnapshot) => {
-          if(querySnapshot.empty === true){
+          if(querySnapshot.empty === true && email!== "admin1@gmail.com"){
             history.push("/createProfile")
           }else{
-            history.push("/") 
+            if(email!== "admin1@gmail.com"){
+              history.push("/") 
+            }
           }
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
@@ -189,7 +230,9 @@ function Login() {
                     />
                   </div>
                   <div className="sign_In_button">
-                    <button onClick={create_new_account}>Create</button>
+                   {(x === 1) && (
+                      <button onClick={create_new_account}>Create</button>
+                   )}
                     <button onClick={sign_in}>Sign In</button>
                   </div>
                 </div>
