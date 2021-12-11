@@ -1,39 +1,34 @@
 import Chatmsg from "./Chatmsg";
 import styled from "styled-components";
 import "../Teacher/ChatTeacher/ChatTeacher.css";
-import firebase from 'firebase';
+import firebase from "firebase";
 import React, { useState, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useHistory } from "react-router";
-import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
-import VideoLibraryRoundedIcon from '@mui/icons-material/VideoLibraryRounded';
-import ImageRoundedIcon from '@mui/icons-material/ImageRounded';
-import { v4 as uuid } from 'uuid';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
-import { Player } from 'video-react';
+import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
+import VideoLibraryRoundedIcon from "@mui/icons-material/VideoLibraryRounded";
+import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
+import { v4 as uuid } from "uuid";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import { Player } from "video-react";
 import { useStateValue } from "../../../StateProvider";
 import db, { storage } from "../../../firebase";
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { actionTypes } from "../../../reducer";
 import { Viewer } from "@react-pdf-viewer/core";
 import { Worker } from "@react-pdf-viewer/core";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 
 function Chat() {
-  const [
-    {
-      signInAs,
-      user,
-    }, dispatch
-  ] = useStateValue();
+  const [{ signInAs, user }, dispatch] = useStateValue();
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [caption, setCaption] = useState('');
+  const [caption, setCaption] = useState("");
   const [popupshowImage, setPopupshowImage] = useState(false);
   const [input, setInput] = useState("");
   const [image, setImage] = useState(null);
@@ -41,8 +36,6 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [showTypeFile, setShowTypeFile] = useState(false);
   const history = useHistory();
-
-  
 
   // for onchange event
   const [pdfFile, setPdfFile] = useState(null);
@@ -59,7 +52,6 @@ function Chat() {
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-
   const [rooms, setRooms] = useState([]);
   const [iD, setID] = useState(false);
 
@@ -68,6 +60,8 @@ function Chat() {
   const [z, setZ] = useState();
   const [limit, setLimit] = useState(20);
   const [length, setLength] = useState();
+  const [students, setStudents] = useState([]);
+  const [teacher, setTeacher] = useState();
 
   useEffect(() => {
     if (signInAs?.currentSubjectID) {
@@ -76,16 +70,30 @@ function Chat() {
         .collection("Subjects")
         .doc(signInAs?.currentSubjectID)
         .onSnapshot((snapshot) => {
-          snapshot.data() && setLength(snapshot.data().chatMessagesLength)
-        }
+          snapshot.data() && setLength(snapshot.data().chatMessagesLength);
+          setTeacher(snapshot.data().teacher);
+        });
+
+      db.collection("Courses")
+        .doc(signInAs.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
+        .collection("students")
+        .onSnapshot((snapshot) =>
+          setStudents(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              data: doc.data(),
+            }))
+          )
         );
     }
-  }, [signInAs?.currentSubjectID])
+  }, [signInAs?.currentSubjectID]);
   console.log("ppppp", length);
 
   const seeMoreMessages = (e) => {
     e.preventDefault();
-    console.log(length)
+    console.log(length);
     db.collection("Courses")
       .doc(signInAs.currentCourseID)
       .collection("Subjects")
@@ -102,15 +110,16 @@ function Chat() {
         )
       );
 
+
     setLimit(limit + 20);
     setLength(length - 20);
-  }
+  };
 
   const handlePdfFileChange = (e) => {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        if(selectedFile.size < 1000*1024){
+        if (selectedFile.size < 1000 * 1024) {
           let reader = new FileReader();
           reader.readAsDataURL(selectedFile);
           reader.onloadend = (e) => {
@@ -119,7 +128,7 @@ function Chat() {
             setFile(selectedFile);
             setPdfFileError("");
           };
-        }else{
+        } else {
           setPdfFileError("Please select a file of size below 1MB");
         }
       } else {
@@ -145,13 +154,13 @@ function Chat() {
       type: actionTypes.SET_SEND_PDF,
       sendPdf: false,
     });
-    setID(false)
-    setPopupshowImage(false)
+    setID(false);
+    setPopupshowImage(false);
     setPdfFile(null);
-    setFileName('');
+    setFileName("");
     setFile();
     setPdfFileError("");
-    setViewPdf(null)
+    setViewPdf(null);
   };
 
   const back_to_previous_page = () => {
@@ -180,6 +189,56 @@ function Chat() {
           const downloadURL = await upload.snapshot.ref.getDownloadURL();
           setLoading1(false);
           if (downloadURL && fileName) {
+
+            db.collection("notificationsForTeachers")
+            .where("name", "==", teacher)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+      
+                db.collection("notificationsForTeachers")
+                  .doc(doc.id)
+                  .collection("notifications")
+                  .add({
+                    message1: input,
+                    message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+      
+          for (let i = 0; i < students.length; i++) {
+            db.collection("students")
+              .where("name", "==", students[i].data.name)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+      
+                  if (students[i].data.name !== signInAs?.name) {
+                    db.collection("students")
+                      .doc(doc.id)
+                      .collection("notifications")
+                      .add({
+                        message1: input,
+                        message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      });
+                  }
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+          }
+
+          
             db.collection("Courses")
               .doc(signInAs?.currentCourseID)
               .collection("Subjects")
@@ -199,18 +258,18 @@ function Chat() {
             setPopupshowImage(false);
           }
         }
-      )
+      );
     } else {
-      alert('Select Image First')
+      alert("Select Image First");
     }
-  }
+  };
   // scorll work going here
 
   // date
   var today = new Date();
   var datetime = today.toLocaleString();
 
-  // send message 
+  // send message
   const sendMessage = (e) => {
     e.preventDefault();
     if (signInAs.currentCourseID && signInAs?.currentSubjectID && input) {
@@ -221,7 +280,7 @@ function Chat() {
           .doc(signInAs?.currentSubjectID)
           .update({
             chatMessagesLength: 0,
-          })
+          });
       } else {
         db.collection("Courses")
           .doc(signInAs.currentCourseID)
@@ -229,8 +288,59 @@ function Chat() {
           .doc(signInAs?.currentSubjectID)
           .update({
             chatMessagesLength: messages.length + 1,
-          })
+          });
       }
+
+      db.collection("notificationsForTeachers")
+      .where("name", "==", teacher)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+
+          db.collection("notificationsForTeachers")
+            .doc(doc.id)
+            .collection("notifications")
+            .add({
+              message1: input,
+              message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+
+    for (let i = 0; i < students.length; i++) {
+      db.collection("students")
+        .where("name", "==", students[i].data.name)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+
+            if (students[i].data.name !== signInAs?.name) {
+              db.collection("students")
+                .doc(doc.id)
+                .collection("notifications")
+                .add({
+                  message1: input,
+                  message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            }
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    }
+
+
+
       db.collection("Courses")
         .doc(signInAs.currentCourseID)
         .collection("Subjects")
@@ -244,7 +354,7 @@ function Chat() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         })
         .then(() => {
-          setInput('');
+          setInput("");
         });
     }
   };
@@ -275,11 +385,11 @@ function Chat() {
     if (e.target.files[0]) {
       setImage(e.target.files[0]);
       setPopupshowImage(!popupshowImage);
-      setShowTypeFile(!showTypeFile)
+      setShowTypeFile(!showTypeFile);
     }
-  }
+  };
 
-  // select video 
+  // select video
   const selectVideo = (e) => {
     setLoading(true);
     e.preventDefault();
@@ -288,18 +398,68 @@ function Chat() {
       setPopupshowImage(true);
     }
     setLoading(false);
-    setShowTypeFile(!showTypeFile)
-  }
+    setShowTypeFile(!showTypeFile);
+  };
 
   const sendDoc = async (e) => {
     e.preventDefault();
     setLoading(true);
     if (video) {
       const ID = uuid();
-      const imagesRef = firebase.storage().ref('chatVideo').child(ID);
+      const imagesRef = firebase.storage().ref("chatVideo").child(ID);
       await imagesRef.put(video);
       imagesRef.getDownloadURL().then((URL) => {
         if (signInAs?.currentCourseID && signInAs?.currentSubjectID && video) {
+
+          db.collection("notificationsForTeachers")
+          .where("name", "==", teacher)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+              console.log(doc.id, " => ", doc.data());
+    
+              db.collection("notificationsForTeachers")
+                .doc(doc.id)
+                .collection("notifications")
+                .add({
+                  message1: input,
+                  message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+    
+        for (let i = 0; i < students.length; i++) {
+          db.collection("students")
+            .where("name", "==", students[i].data.name)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+    
+                if (students[i].data.name !== signInAs?.name) {
+                  db.collection("students")
+                    .doc(doc.id)
+                    .collection("notifications")
+                    .add({
+                      message1: input,
+                      message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    });
+                }
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+        }
+
+
           db.collection("Courses")
             .doc(signInAs?.currentCourseID)
             .collection("Subjects")
@@ -317,54 +477,104 @@ function Chat() {
               videoOriginalName: video.name,
             })
             .then(() => {
-              setInput('');
-              setCaption('');
+              setInput("");
+              setCaption("");
               setPopupshowImage(false);
               setLoading(false);
-              setVideo('');
+              setVideo("");
               setShowTypeFile(false);
             });
         } else {
-          alert('Something went wrong ! Try again ')
+          alert("Something went wrong ! Try again ");
         }
-      })
+      });
     }
     if (image) {
       const id = uuid();
-      const imagesRef = firebase.storage().ref('chatImages').child(id);
+      const imagesRef = firebase.storage().ref("chatImages").child(id);
       await imagesRef.put(image);
       imagesRef.getDownloadURL().then((url) => {
         if (signInAs?.currentCourseID && signInAs?.currentSubjectID) {
-          if(image.size < 1000*1024){
-            db.collection("Courses")
-            .doc(signInAs?.currentCourseID)
-            .collection("Subjects")
-            .doc(signInAs?.currentSubjectID)
-            .collection("chat")
-            .add({
-              message: input,
-              caption: caption,
-              imageURL: url,
-              name: user?.email,
-              date: datetime,
-              sendby: signInAs?.name,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              imageName: id,
-              imageOriginalName: image.name,
+          if (image.size < 1000 * 1024) {
+
+            db.collection("notificationsForTeachers")
+            .where("name", "==", teacher)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+      
+                db.collection("notificationsForTeachers")
+                  .doc(doc.id)
+                  .collection("notifications")
+                  .add({
+                    message1: input,
+                    message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+              });
             })
-            .then(() => {
-              setInput('');
-              setCaption('');
-              setPopupshowImage(false);
-              setLoading(false);
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
             });
-          }else{
-            alert("Please select a file below 1 MB")
+      
+          for (let i = 0; i < students.length; i++) {
+            db.collection("students")
+              .where("name", "==", students[i].data.name)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+      
+                  if (students[i].data.name !== signInAs?.name) {
+                    db.collection("students")
+                      .doc(doc.id)
+                      .collection("notifications")
+                      .add({
+                        message1: input,
+                        message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      });
+                  }
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+          }
+
+
+            db.collection("Courses")
+              .doc(signInAs?.currentCourseID)
+              .collection("Subjects")
+              .doc(signInAs?.currentSubjectID)
+              .collection("chat")
+              .add({
+                message: input,
+                caption: caption,
+                imageURL: url,
+                name: user?.email,
+                date: datetime,
+                sendby: signInAs?.name,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                imageName: id,
+                imageOriginalName: image.name,
+              })
+              .then(() => {
+                setInput("");
+                setCaption("");
+                setPopupshowImage(false);
+                setLoading(false);
+              });
+          } else {
+            alert("Please select a file below 1 MB");
           }
         }
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -384,107 +594,140 @@ function Chat() {
             </div>
           </div>
         </div>
-        {popupshowImage ? <>
-          {loading ? <div className="chatTeacher__body">
-            <div className="popupbodyImage_Loading">
-              <Box sx={{ display: 'flex' }}>
-                <CircularProgress fontSize="large" />
-              </Box>
-            </div>
-          </div> : <>
-            {image &&
-              <div className="chatTeacher__body_Video">
-                <div className="videoCancelUpload" onClick={() => {
-                  setVideo(null);
-                  setPopupshowImage(false);
-                }}>
-                  <ClearRoundedIcon />
-                </div>
-                <div className="videoMessageOut">
-
-                  <img src={URL.createObjectURL(image)} alt="" className='videoMessage' />
-                  <h6 className="videoName">{image.name}</h6>
-                </div>
-              </div>}
-            {video &&
+        {popupshowImage ? (
+          <>
+            {loading ? (
               <div className="chatTeacher__body">
-                <div className="videoCancelUpload" onClick={() => {
-                  setVideo(null);
-                  setPopupshowImage(false);
-                }}>
-                  <ClearRoundedIcon />
-                </div>
-                <div className="videoMessageOut">
-                  <div className='videoMessage'>
-                    <Player
-                      playsInline
-                      poster="/assets/poster.png"
-                      src={URL.createObjectURL(video)}
-                    />
-                  </div>
-                  <h6 className="videoName">{video.name}</h6>
-                </div>
-              </div>}
-            {!iD && <div className="doubtBox_footerForCaption">
-              <div className="send_Message_box_ForCaption">
-                <input placeholder={'Caption'} value={caption} type="text" onChange={e => setCaption(e.target.value)} />
-                <div className="sendCaption">
-                  <SendIcon className="icon" onClick={sendDoc} />
+                <div className="popupbodyImage_Loading">
+                  <Box sx={{ display: "flex" }}>
+                    <CircularProgress fontSize="large" />
+                  </Box>
                 </div>
               </div>
-            </div>}
-          </>}
-          {iD &&
-            <Container>
-              {loading1 === false ? (
-                <>
-                  <div className="submit_assignment_page_header">
-                    <ArrowBackIcon
-                      onClick={back_to_previous_page}
-                      className="arrow_back_icon"
-                      onClick={close_send_pdf}
-                    />
+            ) : (
+              <>
+                {image && (
+                  <div className="chatTeacher__body_Video">
+                    <div
+                      className="videoCancelUpload"
+                      onClick={() => {
+                        setVideo(null);
+                        setPopupshowImage(false);
+                      }}
+                    >
+                      <ClearRoundedIcon />
+                    </div>
+                    <div className="videoMessageOut">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt=""
+                        className="videoMessage"
+                      />
+                      <h6 className="videoName">{image.name}</h6>
+                    </div>
                   </div>
-                  <div className="upload_pdf">
-                    <input
-                      type="file"
-                      name="file"
-                      onChange={handlePdfFileChange}
-                      required
-                    />
-                    {pdfFileError && <div className="error-msg">{pdfFileError}</div>}
-                    {!viewPdf ? <button type="submit" className="" onClick={handlePdfFileSubmit}>
-                      Select
-                    </button> : <div className="submit_button_div">
-                      <button onClick={send_assignment}>Send</button>
-                    </div>}
+                )}
+                {video && (
+                  <div className="chatTeacher__body">
+                    <div
+                      className="videoCancelUpload"
+                      onClick={() => {
+                        setVideo(null);
+                        setPopupshowImage(false);
+                      }}
+                    >
+                      <ClearRoundedIcon />
+                    </div>
+                    <div className="videoMessageOut">
+                      <div className="videoMessage">
+                        <Player
+                          playsInline
+                          poster="/assets/poster.png"
+                          src={URL.createObjectURL(video)}
+                        />
+                      </div>
+                      <h6 className="videoName">{video.name}</h6>
+                    </div>
                   </div>
-                  <p className="view_pdf">View Pdf</p>
-                  <div className="pdf-container">
-                    {/* show pdf conditionally (if we have one)  */}
-                    {viewPdf && (
-                      <>
-                        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
-                          <Viewer
-                            fileUrl={viewPdf}
-                            plugins={[defaultLayoutPluginInstance]}
-                          />
-                        </Worker>
-                      </>
-                    )}
+                )}
+                {!iD && (
+                  <div className="doubtBox_footerForCaption">
+                    <div className="send_Message_box_ForCaption">
+                      <input
+                        placeholder={"Caption"}
+                        value={caption}
+                        type="text"
+                        onChange={(e) => setCaption(e.target.value)}
+                      />
+                      <div className="sendCaption">
+                        <SendIcon className="icon" onClick={sendDoc} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+            {iD && (
+              <Container>
+                {loading1 === false ? (
+                  <>
+                    <div className="submit_assignment_page_header">
+                      <ArrowBackIcon
+                        onClick={back_to_previous_page}
+                        className="arrow_back_icon"
+                        onClick={close_send_pdf}
+                      />
+                    </div>
+                    <div className="upload_pdf">
+                      <input
+                        type="file"
+                        name="file"
+                        onChange={handlePdfFileChange}
+                        required
+                      />
+                      {pdfFileError && (
+                        <div className="error-msg">{pdfFileError}</div>
+                      )}
+                      {!viewPdf ? (
+                        <button
+                          type="submit"
+                          className=""
+                          onClick={handlePdfFileSubmit}
+                        >
+                          Select
+                        </button>
+                      ) : (
+                        <div className="submit_button_div">
+                          <button onClick={send_assignment}>Send</button>
+                        </div>
+                      )}
+                    </div>
+                    <p className="view_pdf">View Pdf</p>
+                    <div className="pdf-container">
+                      {/* show pdf conditionally (if we have one)  */}
+                      {viewPdf && (
+                        <>
+                          <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+                            <Viewer
+                              fileUrl={viewPdf}
+                              plugins={[defaultLayoutPluginInstance]}
+                            />
+                          </Worker>
+                        </>
+                      )}
 
-                    {/* if we dont have pdf or viewPdf state is null */}
-                    {!viewPdf && <>No pdf file selected</>}
-                  </div>
-                </>
-              ) : (
-                // <Loading />
-                <div className={"PdfLoading"}>Loading</div>
-              )}
-            </Container>}
-        </>
-
-          :
+                      {/* if we dont have pdf or viewPdf state is null */}
+                      {!viewPdf && <>No pdf file selected</>}
+                    </div>
+                  </>
+                ) : (
+                  // <Loading />
+                  <div className={"PdfLoading"}>Loading</div>
+                )}
+              </Container>
+            )}
+          </>
+        ) : (
           <>
             <div className="chatTeacher__body">
               {messages.map((message) => (
@@ -497,12 +740,15 @@ function Chat() {
                 >
                   <Chatmsg message={message} />
                 </div>
-              )
-              )}
+              ))}
               {length > 20 && (
                 // <button className="see_more" onClick = {seeMoreMessages}>See More</button>
 
-                <Button onClick={seeMoreMessages} variant="contained" disableElevation>
+                <Button
+                  onClick={seeMoreMessages}
+                  variant="contained"
+                  disableElevation
+                >
                   See More
                 </Button>
               )}
@@ -520,28 +766,42 @@ function Chat() {
                     <div className="showtypeFile">
                       <div className="show_typeImage">
                         <label htmlFor="image">
-                          <ImageRoundedIcon className = "footer_icon"
-                           fontSize="small"
+                          <ImageRoundedIcon
+                            className="footer_icon"
+                            fontSize="small"
                           />
                         </label>
-                        <input type="file" id={'image'} style={{ display: 'none' }} onChange={selectImage} accept="image/git , image/jpeg , image/png" />
+                        <input
+                          type="file"
+                          id={"image"}
+                          style={{ display: "none" }}
+                          onChange={selectImage}
+                          accept="image/git , image/jpeg , image/png"
+                        />
                       </div>
                       <div className="show_typeVideo">
                         <label htmlFor="video">
-                          <VideoLibraryRoundedIcon className = "footer_icon"
-                           fontSize="small"
+                          <VideoLibraryRoundedIcon
+                            className="footer_icon"
+                            fontSize="small"
                           />
                         </label>
-                        <input type="file" id={'video'} style={{ display: 'none' }} onChange={selectVideo} />
+                        <input
+                          type="file"
+                          id={"video"}
+                          style={{ display: "none" }}
+                          onChange={selectVideo}
+                        />
                       </div>
-                      <div className="show_typeDocument" >
+                      <div className="show_typeDocument">
                         <label>
                           <InsertDriveFileRoundedIcon
-                           fontSize="small"
-                          onClick={() => {
-                            setID(true)
-                            setPopupshowImage(true);
-                          }} />
+                            fontSize="small"
+                            onClick={() => {
+                              setID(true);
+                              setPopupshowImage(true);
+                            }}
+                          />
                         </label>
                       </div>
                     </div>
@@ -552,7 +812,8 @@ function Chat() {
                 </div>
               </div>
             </div>
-          </>}
+          </>
+        )}
       </div>
     </>
   );
@@ -655,7 +916,7 @@ const Container = styled.div`
       }
     }
   }
- 
+
   @media (max-width: 420px) {
     .upload_pdf {
       display: flex;

@@ -11,7 +11,7 @@ import { Worker } from "@react-pdf-viewer/core";
 import db, { storage } from "../../../../firebase";
 import firebase from "firebase";
 import { actionTypes } from "../../../../reducer";
-import Loading from "../../Loading/Loading"
+import Loading from "../../Loading/Loading";
 
 function UploadCorrectedAssignment() {
   const history = useHistory();
@@ -36,16 +36,16 @@ function UploadCorrectedAssignment() {
   // for submit event
   const [viewPdf, setViewPdf] = useState(null);
   const [marks, setMarks] = useState(0);
-  const[loading , setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   // onchange event
   const fileType = ["application/pdf"];
 
   useEffect(() => {
-      if(uploadCorrectedAssignment === false) {
-        history.push("/AssignmentsPage")
-      }
-  }, [assignmentTeacherDetails , uploadCorrectedAssignment]);
+    if (uploadCorrectedAssignment === false) {
+      history.push("/AssignmentsPage");
+    }
+  }, [assignmentTeacherDetails, uploadCorrectedAssignment]);
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -53,7 +53,7 @@ function UploadCorrectedAssignment() {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        if(selectedFile.size < 1000*1024){
+        if (selectedFile.size < 1000 * 1024) {
           let reader = new FileReader();
           reader.readAsDataURL(selectedFile);
           reader.onloadend = (e) => {
@@ -62,7 +62,7 @@ function UploadCorrectedAssignment() {
             setFile(selectedFile);
             setPdfFileError("");
           };
-        }else{
+        } else {
           setPdfFileError("Please enter a file below 1 MB");
         }
       } else {
@@ -85,7 +85,7 @@ function UploadCorrectedAssignment() {
   };
 
   const back_to_previous_page = () => {
-    history.push("/AssignmentsPage")
+    history.push("/AssignmentsPage");
   };
 
   const submit_assignment = async (e) => {
@@ -119,6 +119,17 @@ function UploadCorrectedAssignment() {
                   // doc.data() is never undefined for query doc snapshots
                   console.log(doc.id, " => ", doc.data());
                   console.log(signInAs);
+
+                  db.collection("students")
+                    .doc(doc.id)
+                    .collection("notifications")
+                    .add({
+                      message1: `${signInAs?.name} returned corrected ${assignmentTeacherDetails?.name}`,
+                      timestamp:
+                        firebase.firestore.FieldValue.serverTimestamp(),
+                    });
+                   
+                    
                   db.collection("students")
                     .doc(doc.id)
                     .collection("courses")
@@ -183,9 +194,9 @@ function UploadCorrectedAssignment() {
                 console.log("Error getting documents: ", error);
               });
 
-              //updating marks for leaderboard
-              
-              db.collection("Courses")
+            //updating marks for leaderboard
+
+            db.collection("Courses")
               .doc(signInAs?.currentCourseID)
               .collection("Subjects")
               .doc(signInAs?.currentSubjectID)
@@ -196,21 +207,22 @@ function UploadCorrectedAssignment() {
                 querySnapshot.forEach((doc) => {
                   // doc.data() is never undefined for query doc snapshots
                   console.log(doc.id, " => ", doc.data());
-                  
+
                   db.collection("Courses")
-                  .doc(signInAs?.currentCourseID)
-                  .collection("Subjects")
-                  .doc(signInAs?.currentSubjectID)
-                  .collection("students").doc(doc.id).update({
-                    marks : marks
-                  })
-                   
+                    .doc(signInAs?.currentCourseID)
+                    .collection("Subjects")
+                    .doc(signInAs?.currentSubjectID)
+                    .collection("students")
+                    .doc(doc.id)
+                    .update({
+                      marks: marks,
+                    });
                 });
               })
               .catch((error) => {
                 console.log("Error getting documents: ", error);
               });
-              
+
             db.collection("Courses")
               .doc(signInAs?.currentCourseID)
               .collection("Subjects")
@@ -275,56 +287,58 @@ function UploadCorrectedAssignment() {
   return (
     <>
       <Container>
-        {(loading === false ) ? (<Section>
-          <div className="submit_assignment_page_header">
-            <ArrowBackIcon
-              onClick={back_to_previous_page}
-              className="arrow_back_icon"
-            />
-            <p></p>
-          </div>
-          <div className="upload_pdf">
-            <input
-              type="file"
-              name="file"
-              onChange={handlePdfFileChange}
-              required
-            />
-            {pdfFileError && <div className="error-msg">{pdfFileError}</div>}
-            <button type="submit" className="" onClick={handlePdfFileSubmit}>
-              Upload
-            </button>
-          </div>
-          <p className="view_pdf">View Pdf</p>
-          <div className="pdf-container">
-            {/* show pdf conditionally (if we have one)  */}
-            {viewPdf && (
-              <>
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
-                  <Viewer
-                    fileUrl={viewPdf}
-                    plugins={[defaultLayoutPluginInstance]}
-                  />
-                </Worker>
-              </>
-            )}
+        {loading === false ? (
+          <Section>
+            <div className="submit_assignment_page_header">
+              <ArrowBackIcon
+                onClick={back_to_previous_page}
+                className="arrow_back_icon"
+              />
+              <p></p>
+            </div>
+            <div className="upload_pdf">
+              <input
+                type="file"
+                name="file"
+                onChange={handlePdfFileChange}
+                required
+              />
+              {pdfFileError && <div className="error-msg">{pdfFileError}</div>}
+              <button type="submit" className="" onClick={handlePdfFileSubmit}>
+                Upload
+              </button>
+            </div>
+            <p className="view_pdf">View Pdf</p>
+            <div className="pdf-container">
+              {/* show pdf conditionally (if we have one)  */}
+              {viewPdf && (
+                <>
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+                    <Viewer
+                      fileUrl={viewPdf}
+                      plugins={[defaultLayoutPluginInstance]}
+                    />
+                  </Worker>
+                </>
+              )}
 
-            {/* if we dont have pdf or viewPdf state is null */}
-            {!viewPdf && <>No pdf file selected</>}
-          </div>
-          <div className="marks">
-            <p>Marks:</p>
-            <input
-              type="number"
-              value={marks}
-              onChange={(e) => setMarks(e.target.value)}
-            />
-          </div>
-          <div className="submit_button_div">
-            <button onClick={submit_assignment}>Submit</button>
-          </div>
-        </Section>):(
-          <Loading/>
+              {/* if we dont have pdf or viewPdf state is null */}
+              {!viewPdf && <>No pdf file selected</>}
+            </div>
+            <div className="marks">
+              <p>Marks:</p>
+              <input
+                type="number"
+                value={marks}
+                onChange={(e) => setMarks(e.target.value)}
+              />
+            </div>
+            <div className="submit_button_div">
+              <button onClick={submit_assignment}>Submit</button>
+            </div>
+          </Section>
+        ) : (
+          <Loading />
         )}
       </Container>
     </>

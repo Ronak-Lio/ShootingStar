@@ -41,6 +41,7 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [showTypeFile, setShowTypeFile] = useState(false);
   const history = useHistory();
+  const [students, setStudents] = useState([]);
 
 
   // for onchange event
@@ -68,6 +69,7 @@ function Chat() {
   const [limit, setLimit] = useState(20);
   const [length, setLength] = useState();
 
+
   useEffect(() => {
     if (signInAs?.currentSubjectID) {
       db.collection("Courses")
@@ -77,6 +79,20 @@ function Chat() {
         .onSnapshot((snapshot) => {
           snapshot.data() && setLength(snapshot.data().chatMessagesLength)
         }
+        );
+
+        db.collection("Courses")
+        .doc(signInAs.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
+        .collection("students")
+        .onSnapshot((snapshot) =>
+          setStudents(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              data: doc.data(),
+            }))
+          )
         );
     }
   }, [signInAs?.currentSubjectID])
@@ -179,6 +195,33 @@ function Chat() {
           const downloadURL = await upload.snapshot.ref.getDownloadURL();
           setLoading1(false);
           if (downloadURL && fileName) {
+      
+          for (let i = 0; i < students.length; i++) {
+            db.collection("students")
+              .where("name", "==", students[i].data.name)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+    
+                    db.collection("students")
+                      .doc(doc.id)
+                      .collection("notifications")
+                      .add({
+                        message1: input,
+                        message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      });
+                  
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+          }
+
+
             db.collection("Courses")
               .doc(signInAs?.currentCourseID)
               .collection("Subjects")
@@ -230,6 +273,34 @@ function Chat() {
             chatMessagesLength: messages.length + 1,
           })
       }
+
+      for (let i = 0; i < students.length; i++) {
+        db.collection("students")
+          .where("name", "==", students[i].data.name)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+              console.log(doc.id, " => ", doc.data());
+
+                db.collection("students")
+                  .doc(doc.id)
+                  .collection("notifications")
+                  .add({
+                    message1: input,
+                    message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+              
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+      }
+
+
+
       db.collection("Courses")
         .doc(signInAs.currentCourseID)
         .collection("Subjects")
@@ -299,6 +370,34 @@ function Chat() {
       await imagesRef.put(video);
       imagesRef.getDownloadURL().then((URL) => {
         if (signInAs?.currentCourseID && signInAs?.currentSubjectID && video) {
+
+          for (let i = 0; i < students.length; i++) {
+            db.collection("students")
+              .where("name", "==", students[i].data.name)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+    
+                    db.collection("students")
+                      .doc(doc.id)
+                      .collection("notifications")
+                      .add({
+                        message1: input,
+                        message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      });
+                  
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+          }
+
+
+
           db.collection("Courses")
             .doc(signInAs?.currentCourseID)
             .collection("Subjects")
@@ -335,6 +434,34 @@ function Chat() {
         await imagesRef.put(image);
         imagesRef.getDownloadURL().then((url) => {
           if (signInAs?.currentCourseID && signInAs?.currentSubjectID) {
+
+            for (let i = 0; i < students.length; i++) {
+              db.collection("students")
+                .where("name", "==", students[i].data.name)
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
+      
+                      db.collection("students")
+                        .doc(doc.id)
+                        .collection("notifications")
+                        .add({
+                          message1: input,
+                          message2: `Message from ${signInAs?.name} in ${signInAs?.currentSubject} chat`,
+                          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        });
+                    
+                  });
+                })
+                .catch((error) => {
+                  console.log("Error getting documents: ", error);
+                });
+            }
+
+            
+
             db.collection("Courses")
               .doc(signInAs?.currentCourseID)
               .collection("Subjects")

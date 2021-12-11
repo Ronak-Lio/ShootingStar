@@ -9,20 +9,15 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { Worker } from "@react-pdf-viewer/core";
 import db, { storage } from "../../../firebase";
-import firebase from "firebase"
-import {actionTypes} from "../../../reducer";
-import { CircularProgress } from '@mui/material';
-import Loading from "../Loading/Loading"
+import firebase from "firebase";
+import { actionTypes } from "../../../reducer";
+import { CircularProgress } from "@mui/material";
+import Loading from "../Loading/Loading";
 
 function SubmitAssignment() {
   const history = useHistory();
   const [
-    {
-      openAsignmentPopup,
-      assignmentStudentDetails,
-      user,
-      signInAs,
-    },
+    { openAsignmentPopup, assignmentStudentDetails, user, signInAs },
     dispatch,
   ] = useStateValue();
   // for onchange event
@@ -37,22 +32,32 @@ function SubmitAssignment() {
 
   // onchange event
   const fileType = ["application/pdf"];
-  const[loading , setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  let submitted_date
+  const [teacher, setTeacher] = useState();
+
+  let submitted_date;
 
   useEffect(() => {
     console.log(assignmentStudentDetails);
-  }, [assignmentStudentDetails , loading]);
+    if (signInAs) {
+      db.collection("Courses")
+        .doc(signInAs.currentCourseID)
+        .collection("Subjects")
+        .doc(signInAs?.currentSubjectID)
+        .onSnapshot((snapshot) => {
+          setTeacher(snapshot.data().teacher);
+        });
+    }
+  }, [assignmentStudentDetails, loading, signInAs]);
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
 
   const handlePdfFileChange = (e) => {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
-        if(selectedFile.size < 1000*1024){
+        if (selectedFile.size < 1000 * 1024) {
           let reader = new FileReader();
           reader.readAsDataURL(selectedFile);
           reader.onloadend = (e) => {
@@ -61,7 +66,7 @@ function SubmitAssignment() {
             setFile(selectedFile);
             setPdfFileError("");
           };
-        }else{
+        } else {
           setPdfFileError("Please enter a file below 1 MB");
         }
       } else {
@@ -75,6 +80,8 @@ function SubmitAssignment() {
 
   // form submit
   const handlePdfFileSubmit = (e) => {
+    
+    console.log("Teacher is ", teacher);
     e.preventDefault();
     if (pdfFile !== null) {
       setViewPdf(pdfFile);
@@ -102,13 +109,12 @@ function SubmitAssignment() {
     if (now_month < 10) {
       now_month = "0" + now_month;
     }
-    if(now_date < 10){
-      now_date = "0" + now_date
+    if (now_date < 10) {
+      now_date = "0" + now_date;
     }
     var now_year = parseInt(now.getFullYear());
 
     submitted_date = now_year + "-" + now_month + "-" + now_date;
-
 
     const upload = storage.ref(`files/${fileName}`).put(file);
     upload.on(
@@ -128,121 +134,149 @@ function SubmitAssignment() {
         const fileUrl = downloadURL;
         history.push("/AssignmentsPage");
         setLoading(false);
-        db.collection("students")
-        .doc(user.uid)
-        .collection("courses")
-        .doc(signInAs?.usercurrentCourseID)
-        .collection("subjects")
-        .doc(signInAs?.usercurrentSubjectID)
-        .collection("assignments")
-        .where("name", "==", assignmentStudentDetails.name)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-            db.collection("students")
-              .doc(user.uid)
-              .collection("courses")
-              .doc(signInAs?.usercurrentCourseID)
-              .collection("subjects")
-              .doc(signInAs?.usercurrentSubjectID)
-              .collection("assignments")
-              .doc(doc.id)
-              .update({
-                answerUrl: fileUrl,
-                status : "submitted",
-                answerFileName : fileName,
-              });
-          });
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-       console.log(fileUrl)
-      db.collection("Courses")
-        .doc(signInAs?.currentCourseID)
-        .collection("Subjects")
-        .doc(signInAs?.currentSubjectID)
-        .collection("assignments")
-        .where("name", "==", assignmentStudentDetails?.name)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-            db.collection("Courses")
-              .doc(signInAs?.currentCourseID)
-              .collection("Subjects")
-              .doc(signInAs?.currentSubjectID)
-              .collection("assignments")
-              .doc(doc.id)
-              .collection("answers")
-              .add({
-                name: signInAs.name,
-                answerUrl: fileUrl,
-                fileName : fileName,
-                timestamp : submitted_date
-              });
-          });
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-      }
-    )
 
-      dispatch({
-        type : actionTypes.OPEN_ASSIGNMENT_POPUP,
-        openAsignmentPopup : false,
+        if (fileName && fileUrl) {
+          db.collection("notificationsForTeachers")
+            .where("name", "==", teacher)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+
+                db.collection("notificationsForTeachers")
+                  .doc(doc.id)
+                  .collection("notifications")
+                  .add({
+                    message1: `${signInAs?.name} submitted answer to ${assignmentStudentDetails.name} in ${signInAs?.currentSubject}`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+
+          db.collection("students")
+            .doc(user.uid)
+            .collection("courses")
+            .doc(signInAs?.usercurrentCourseID)
+            .collection("subjects")
+            .doc(signInAs?.usercurrentSubjectID)
+            .collection("assignments")
+            .where("name", "==", assignmentStudentDetails.name)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                db.collection("students")
+                  .doc(user.uid)
+                  .collection("courses")
+                  .doc(signInAs?.usercurrentCourseID)
+                  .collection("subjects")
+                  .doc(signInAs?.usercurrentSubjectID)
+                  .collection("assignments")
+                  .doc(doc.id)
+                  .update({
+                    answerUrl: fileUrl,
+                    status: "submitted",
+                    answerFileName: fileName,
+                  });
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+          console.log(fileUrl);
+          db.collection("Courses")
+            .doc(signInAs?.currentCourseID)
+            .collection("Subjects")
+            .doc(signInAs?.currentSubjectID)
+            .collection("assignments")
+            .where("name", "==", assignmentStudentDetails?.name)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                db.collection("Courses")
+                  .doc(signInAs?.currentCourseID)
+                  .collection("Subjects")
+                  .doc(signInAs?.currentSubjectID)
+                  .collection("assignments")
+                  .doc(doc.id)
+                  .collection("answers")
+                  .add({
+                    name: signInAs.name,
+                    answerUrl: fileUrl,
+                    fileName: fileName,
+                    timestamp: submitted_date,
+                  });
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+        }
+      }
+    );
+
+    dispatch({
+      type: actionTypes.OPEN_ASSIGNMENT_POPUP,
+      openAsignmentPopup: false,
     });
   };
 
   return (
     <>
       <Container>
-     {(loading === false)?(   <Section>
-          <div className="submit_assignment_page_header">
-            <ArrowBackIcon
-              onClick={back_to_previous_page}
-              className="arrow_back_icon"
-            />
-            <p>{assignmentStudentDetails?.name}</p>
-          </div>
-          <div className="upload_pdf">
-            <input
-              type="file"
-              name="file"
-              onChange={handlePdfFileChange}
-              required
-            />
-            {pdfFileError && <div className="error-msg">{pdfFileError}</div>}
-            <button type="submit" className="" onClick={handlePdfFileSubmit}>
-              Upload
-            </button>
-          </div>
-          <p className="view_pdf">View Pdf</p>
-          <div className="pdf-container">
-            {/* show pdf conditionally (if we have one)  */}
-            {viewPdf && (
-              <>
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
-                  <Viewer
-                    fileUrl={viewPdf}
-                    plugins={[defaultLayoutPluginInstance]}
-                  />
-                </Worker>
-              </>
-            )}
+        {loading === false ? (
+          <Section>
+            <div className="submit_assignment_page_header">
+              <ArrowBackIcon
+                onClick={back_to_previous_page}
+                className="arrow_back_icon"
+              />
+              <p>{assignmentStudentDetails?.name}</p>
+            </div>
+            <div className="upload_pdf">
+              <input
+                type="file"
+                name="file"
+                onChange={handlePdfFileChange}
+                required
+              />
+              {pdfFileError && <div className="error-msg">{pdfFileError}</div>}
+              <button type="submit" className="" onClick={handlePdfFileSubmit}>
+                Upload
+              </button>
+            </div>
+            <p className="view_pdf">View Pdf</p>
+            <div className="pdf-container">
+              {/* show pdf conditionally (if we have one)  */}
+              {viewPdf && (
+                <>
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+                    <Viewer
+                      fileUrl={viewPdf}
+                      plugins={[defaultLayoutPluginInstance]}
+                    />
+                  </Worker>
+                </>
+              )}
 
-            {/* if we dont have pdf or viewPdf state is null */}
-            {!viewPdf && <>No pdf file selected</>}
-          </div>
-          <div className="submit_button_div">
-            <button onClick={submit_assignment} disabled = {!viewPdf}>Submit</button>
-          </div>
-        </Section>):(
-          <Loading/>
+              {/* if we dont have pdf or viewPdf state is null */}
+              {!viewPdf && <>No pdf file selected</>}
+            </div>
+            <div className="submit_button_div">
+              <button onClick={submit_assignment} disabled={!viewPdf}>
+                Submit
+              </button>
+            </div>
+          </Section>
+        ) : (
+          <Loading />
         )}
       </Container>
     </>

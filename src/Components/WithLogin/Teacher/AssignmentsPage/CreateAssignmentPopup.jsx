@@ -77,6 +77,8 @@ function CreateAssignmentPopup() {
         x = 1;
       }
     }
+    console.log("X is " , x) ;
+
     if (
       input1 !== "" &&
       input2 !== "" &&
@@ -88,6 +90,9 @@ function CreateAssignmentPopup() {
       x === 0
     ) {
       if (createAssignmentDetails?.name) {
+
+      console.log("Running Properly")
+
         for (let i = 0; i < students.length; i++) {
           db.collection("Courses")
             .doc(signInAs?.currentCourseID)
@@ -137,6 +142,17 @@ function CreateAssignmentPopup() {
             .then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
+
+                db.collection("students")
+                .doc(doc.id)
+                .collection("notifications")
+                .add({
+                  message1: `New Assignment uploaded in ${signInAs?.currentCourse} , ${signInAs?.currentSubject}`,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            
+
+                
                 console.log(doc.id, " => ", doc.data());
                 db.collection("students")
                   .doc(doc.id)
@@ -207,6 +223,18 @@ function CreateAssignmentPopup() {
               querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
+
+                
+                db.collection("students")
+                  .doc(doc.id)
+                  .collection("notifications")
+                  .add({
+                    message1: `New Assignment uploaded in ${signInAs?.currentCourse} , ${signInAs?.currentSubject}`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+              
+
+      
                 db.collection("students")
                   .doc(doc.id)
                   .collection("courses")
@@ -254,6 +282,7 @@ function CreateAssignmentPopup() {
             });
         }
       }
+
 
       dispatch({
         type: actionTypes.OPEN_CREATE_ASSIGNMENT_POPUP,
