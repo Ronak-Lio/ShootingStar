@@ -23,7 +23,7 @@ import { Player } from "video-react";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { storage } from "../../../firebase";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 
 function DoubtsPage() {
   const [{ openDoubtReplies, user, signInAs, sendPdf }, dispatch] =
@@ -191,18 +191,18 @@ function DoubtsPage() {
       console.log("User Course Id is", signInAs?.usercurrentCourseID);
       console.log("User Subject Id is", signInAs?.usercurrentSubjectID);
       if (image) {
-        if(image.size < 1000*1024){
+        if (image.size < 1000 * 1024) {
           setLoading(true);
           const id = uuid();
           const upload = storage.ref(`doubtImages/${id}`).put(image);
-  
-          console.log("Image size is " , image.size)
+
+          console.log("Image size is ", image.size);
           upload.on(
             "state_changed",
             (snapshot) => {
               const progress =
                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  
+
               console.log(`Progress : ${progress}%`);
               if (snapshot.state === "RUNNING") {
                 console.log(`Progress : ${progress}%`);
@@ -219,7 +219,7 @@ function DoubtsPage() {
                     querySnapshot.forEach((doc) => {
                       // doc.data() is never undefined for query doc snapshots
                       console.log(doc.id, " => ", doc.data());
-  
+
                       db.collection("notificationsForTeachers")
                         .doc(doc.id)
                         .collection("notifications")
@@ -233,7 +233,7 @@ function DoubtsPage() {
                   .catch((error) => {
                     console.log("Error getting documents: ", error);
                   });
-  
+
                 db.collection("students")
                   .doc(user?.uid)
                   .collection("courses")
@@ -266,7 +266,7 @@ function DoubtsPage() {
                     .update({
                       doubtMessageslength: 0,
                     });
-  
+
                   db.collection("Courses")
                     .doc(signInAs?.currentCourseID)
                     .collection("Subjects")
@@ -288,7 +288,7 @@ function DoubtsPage() {
                           querySnapshot.forEach((doc) => {
                             // doc.data() is never undefined for query doc snapshots
                             console.log(doc.id, " => ", doc.data());
-  
+
                             db.collection("Courses")
                               .doc(signInAs?.currentCourseID)
                               .collection("Subjects")
@@ -333,10 +333,10 @@ function DoubtsPage() {
                       querySnapshot.forEach((doc) => {
                         // doc.data() is never undefined for query doc snapshots
                         console.log(doc.id, " => ", doc.data());
-  
+
                         let y = doc.data().messagesLength;
                         y++;
-  
+
                         db.collection("Courses")
                           .doc(signInAs?.currentCourseID)
                           .collection("Subjects")
@@ -346,7 +346,7 @@ function DoubtsPage() {
                           .update({
                             messagesLength: y,
                           });
-  
+
                         db.collection("Courses")
                           .doc(signInAs?.currentCourseID)
                           .collection("Subjects")
@@ -375,8 +375,8 @@ function DoubtsPage() {
               }
             }
           );
-        }else{
-          alert("Please select a file below 1 MB")
+        } else {
+          alert("Please select a file below 1 MB");
         }
       } else if (video) {
         setLoading(true);
@@ -397,30 +397,27 @@ function DoubtsPage() {
           async () => {
             const url = await upload.snapshot.ref.getDownloadURL();
             if (url) {
-
               db.collection("notificationsForTeachers")
-              .where("name", "==", teacher)
-              .get()
-              .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                  // doc.data() is never undefined for query doc snapshots
-                  console.log(doc.id, " => ", doc.data());
+                .where("name", "==", teacher)
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
 
-                  db.collection("notificationsForTeachers")
-                    .doc(doc.id)
-                    .collection("notifications")
-                    .add({
-                      message2: `Message from ${signInAs?.name}`,
-                      timestamp:
-                        firebase.firestore.FieldValue.serverTimestamp(),
-                    });
+                    db.collection("notificationsForTeachers")
+                      .doc(doc.id)
+                      .collection("notifications")
+                      .add({
+                        message2: `Message from ${signInAs?.name}`,
+                        timestamp:
+                          firebase.firestore.FieldValue.serverTimestamp(),
+                      });
+                  });
+                })
+                .catch((error) => {
+                  console.log("Error getting documents: ", error);
                 });
-              })
-              .catch((error) => {
-                console.log("Error getting documents: ", error);
-              });
-
-
 
               db.collection("students")
                 .doc(user?.uid)
@@ -567,30 +564,27 @@ function DoubtsPage() {
           }
         );
       } else {
-
         db.collection("notificationsForTeachers")
-        .where("name", "==", teacher)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
+          .where("name", "==", teacher)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+              console.log(doc.id, " => ", doc.data());
 
-            db.collection("notificationsForTeachers")
-              .doc(doc.id)
-              .collection("notifications")
-              .add({
-                message1 : input,
-                message2: `Message from ${signInAs?.name}`,
-                timestamp:
-                  firebase.firestore.FieldValue.serverTimestamp(),
-              });
+              db.collection("notificationsForTeachers")
+                .doc(doc.id)
+                .collection("notifications")
+                .add({
+                  message1: input,
+                  message2: `Message from ${signInAs?.name}`,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
           });
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-
 
         db.collection("students")
           .doc(user?.uid)
@@ -783,8 +777,7 @@ function DoubtsPage() {
       <div className="doubtsPage">
         <div className="upcoming_class">
           {/* <p>Upcoming class at 14:33 on Monday</p> */}
-          <div className="header_buttons">
-          </div>
+          <div className="header_buttons"></div>
         </div>
         <Container>
           <DoubtBox>
@@ -846,10 +839,8 @@ function DoubtsPage() {
                     {messages.map((message) => (
                       <Doubt message={message} />
                     ))}
-                    {length > 20 && (
-                      <Button  onClick={seeMoreMessages}>
-                        See More
-                      </Button>
+                     {length > 20 && (
+                      <button onClick={seeMoreMessages}>See More</button>
                     )}
                   </>
                 )}
@@ -983,8 +974,8 @@ const DoubtBox = styled.div`
   .arrowBack_icon {
     display: none;
 
-    @media(max-width : 500px){
-        display : flex;
+    @media (max-width: 500px) {
+      display: flex;
     }
   }
 
@@ -992,7 +983,7 @@ const DoubtBox = styled.div`
     /* background-color: #eeeded; */
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow-y: scroll;
     background-color: #5094ee;
     /* padding-bottom : 10px; */
@@ -1005,9 +996,9 @@ const DoubtBox = styled.div`
     padding: 5px;
     display: flex;
     flex-direction: row;
-    @media (max-width: 500px){
-    position: fixed;
-    bottom: 0;
+    @media (max-width: 500px) {
+      position: fixed;
+      bottom: 0;
     }
   }
 
