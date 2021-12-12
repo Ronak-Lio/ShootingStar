@@ -59,7 +59,7 @@ function Login() {
         });
       setLoading(false);
     } else if (signInAs?.value === "admin") {
-      history.push('/admin');
+      history.push('/home');
       setLoading(false);
     }
   }, [signInAs, user , x]);
@@ -110,24 +110,9 @@ function Login() {
       .signInWithEmailAndPassword(email, password)
       .then((auth) => {   
         if(email === "admin1@gmail.com"){
-          history.push("/admin")
+          history.push("/home")
            }
         console.log("Users are" , users);
-        // let x = 0;
-        // if(users.length > 0){
-        //   for(let i = 0; i < users.length; i++) {
-        //     if(email === users[i]?.data?.email) {
-        //       x = 1;
-        //       console.log("X is " , x);
-        //       history.push("/") 
-        //       setLoading(false); 
-        //     }else if( (i === users.length - 1) && (x === 0)){
-        //       setLoading(false);
-        //       console.log("X is " , x);
-        //       history.push("/createProfile")
-        //     }
-        //   }
-        // }
 
         db.collection("users")
         .where("email", "==", email)
@@ -137,7 +122,7 @@ function Login() {
             history.push("/createProfile")
           }else{
             if(email!== "admin1@gmail.com"){
-              history.push("/") 
+              history.push("/home") 
             }
           }
           querySnapshot.forEach((doc) => {
