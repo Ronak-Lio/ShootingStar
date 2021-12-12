@@ -947,7 +947,7 @@ const DoubtBox = styled.div`
   .doubt_section_doubts_messages {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow-y: scroll;
     background-color: #5094ee;
   }
