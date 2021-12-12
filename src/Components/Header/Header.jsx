@@ -11,7 +11,8 @@ import { auth } from "../../firebase";
 
 function Header() {
   const history = useHistory();
-  const [{ openSignInPopup }, dispatch] = useStateValue();
+  const [{ signInAs, signInAsId, user, openSignInPopup }, dispatch] = useStateValue();
+
   const openSidebar = () => {
     history.push("/headerSidebar");
   };
@@ -20,6 +21,9 @@ function Header() {
     e.preventDefault();
     history.push("/signIn");
   };
+  const handleLoginUser=()=>{
+    history.push('/home')
+  }
   return (
     <div className="header">
       <div className="icons">
@@ -79,7 +83,7 @@ function Header() {
           <p className="link_para">Contact</p>
         </Link>
       </div>
-      <button onClick={OpenSignInPopup}>Sign In</button>
+      <button onClick={user ? handleLoginUser:OpenSignInPopup}>{user ? "Logged In":"Sign In"}</button>
     </div>
   );
 }

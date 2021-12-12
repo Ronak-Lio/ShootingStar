@@ -16,13 +16,12 @@ function Main() {
             <HeaderAdmin />
             <div className="mainAdminBody">
                 {window.location.pathname == '/addcourses' && <Courses />}
-                {window.location.pathname == '/admin' && <User/>}
                 {window.location.pathname == '/addteacher' && <AddTeacher/>}
                 {window.location.pathname == '/addstudent' && <AddStudent/>}
                 {window.location.pathname == '/addteacherinfo' && <AddTeacherInfo/>}
                 {window.location.pathname == '/addcourse' && <AddCourse/>}
-                {window.location.pathname == '/addadmin' && <AddAdmin
-                />}
+                {window.location.pathname == '/addadmin' && <AddAdmin/>}
+            {window.location.pathname == '/home' && <User/>}
             </div>
         </div>
     )

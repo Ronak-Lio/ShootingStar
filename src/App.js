@@ -114,6 +114,7 @@ function App() {
       <Switch>
         <Route path="/chat">
           {signInAs ? (<>
+           
             <div className="chat_Show">
               {signInAs && signInAs.value === "teacher" ? (
                 <ChatTeacher />
@@ -121,6 +122,7 @@ function App() {
                 <Chat />
               )}
             </div>
+
             <div className="chat_Show_Not">
               {signInAs && signInAs.value === "teacher" ? (
                 <MainTeacher />
@@ -128,6 +130,7 @@ function App() {
                 <Main />
               )}
             </div>
+            
           </>) :
             (
               <Home />
@@ -270,9 +273,6 @@ function App() {
         { user?.email === 'admin1@gmail.com' && <Route path="/addcourses">
           <Admin />
         </Route>}
-        { user?.email === 'admin1@gmail.com' &&<Route path="/admin">
-          <Admin />
-        </Route>}
         { user?.email === 'admin1@gmail.com' &&<Route path="/addcourse">
           <Admin />
         </Route>}
@@ -288,15 +288,23 @@ function App() {
         { user?.email === 'admin1@gmail.com' &&<Route path="/addadmin">
           <Admin />
         </Route>}
-        {/* '/ */}
-        <Route path="/">
+        { user?.email === 'admin1@gmail.com' &&<Route path="/home">
+          <Admin />
+        </Route>}
+        <Route path="/home">
           {!signInAs ? (
             <Home />
           ) : signInAs && signInAs.value === "teacher" ? (
             <MainTeacher />
           ) : (
-            <Main />
+           signInAs?.value==='student' && <Main />
           )}
+        </Route>
+       {signInAs && signInAs?.value==='admin' && <Route path="/home">
+            <Admin />
+        </Route>}
+        <Route path="/">
+            <Home />
         </Route>
       </Switch>
     </Router>
