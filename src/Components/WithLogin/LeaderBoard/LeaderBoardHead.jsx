@@ -4,25 +4,24 @@ import './LeaderBoardNumber.css';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import { useStateValue } from '../../../StateProvider';
 
-function LeaderBoardNumber({leader,serial}) {
-    const[{signInAs} , dispatch] = useStateValue();
+function LeaderBoardNumber() {
      
     return (
         <>
         <div className="LeaderBoardNumber">
             <div className="LeadearBoardNumber__First">
                 <div className="Serial__Num">
-                  {serial+1}.
+                  {"Sn. "}
                 </div>
-                <div className="leader__Fotu">
-                   {leader && leader?.data?.name[0]}
+                <div className="leader__Num">
+                   {" Names"}
                 </div> 
-                <div className="editLeaderboard" >
+                {/* <div className="editLeaderboard" >
               {leader?.data?.name}
-            </div> 
+            </div>  */}
             </div>
             <div className="LeaderBoardNumber__Sec"> 
-           {leader?.data && leader?.data?.marks=='-1' ? '--':leader?.data?.marks}
+           {"Marks"}
             </div>
         </div>
     <Divider/>

@@ -146,6 +146,13 @@
     justify-content: center;
     height: fit-content;
 }
+.headerMain__chat__text_Active{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    border-bottom: 2px solid rgb(9, 11, 12);
+}
 .headerMain__assignment{
     display: flex;
     flex-direction: column;

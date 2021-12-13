@@ -29,9 +29,7 @@
    color: seashell;
 }
 .leadeaboard__body__Header__back{
-    display: flex;
-    justify-content: center;
-    padding-left: 12px;
+    display: none;
 }
 .leaderboard__body__Header__text{
     display: flex;
@@ -165,12 +163,21 @@
     align-items: center;
     justify-content: flex-end;
   }
+  .leader__Num{
+    display: flex;
+    padding-left: 8px;
+  }
   @media (max-width: 768px) {
     .popupDeleteIn {
       width: 95vw;
     }
   }
 @media(max-width:1085px){
+  .leadeaboard__body__Header__back{
+    display: flex;
+    justify-content: center;
+    padding-left: 12px;
+  }
     .LeaderBoard{
         width: 100vw;
         height: 100vh;

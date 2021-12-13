@@ -120,7 +120,8 @@ function Chatmsg({ message }) {
                     <h5>
                         {message.data?.message}
                     </h5>
-                   {message?.data?.name===user?.email && <div className="deleteIcon" onClick={deleteMessage}>< DeleteIcon/></div>}
+                   {message?.data?.name===user?.email && <div className="deleteIcon" onClick={deleteMessage}>
+                       < DeleteIcon style={{fontSize:20}}/></div>}
                     {message.data?.fileUrl && <h5 onClick={() => {
                         setPopupshowPdfFUll(true)
 
@@ -128,7 +129,7 @@ function Chatmsg({ message }) {
                     {message.data?.caption && <h5>
                         {message.data?.caption}
                     </h5>}
-                    <p className="dateChat">{message.data?.date}</p>
+                    <div className="dateChat">{message.data?.date}</div>
                 </div>
             </div>
         </>

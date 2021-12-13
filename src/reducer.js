@@ -1,4 +1,5 @@
 export const initialState = {
+  courseDiv:false,
   openSignInPopup: false,
   user: null,
   signInAs: null,
@@ -45,6 +46,9 @@ export const initialState = {
 };
 
 export const actionTypes = {
+  // courseDiv:false,
+  SET_COURSEDIV:"SET_COURSEDIV",
+
   // signInAsId: null,
   SET_SIGN_IN_AS_ID:'SET_SIGN_IN_AS_ID',
   // signInAsCourses: null,
@@ -103,6 +107,12 @@ const reducer = (state, action) => {
   // SET_SIGN_IN_AS_COURSES:'SET_SIGN_IN_AS_COURSES',
 
   switch (action.type) {
+// SET_COURSEDIV:"SET_COURSEDIV",
+    case actionTypes.SET_COURSEDIV:
+      return {
+        ...state,
+        courseDiv: action.courseDiv,
+      };
 
     case actionTypes.SET_SIGN_IN_AS_ID:
       return {

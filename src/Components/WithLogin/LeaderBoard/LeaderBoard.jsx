@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import HeaderMain from "../Header/HeaderMain";
 import "./LeaderBoard.css";
 import LeaderBoardNumber from "./LeaderBoardNumber";
+import LeaderBoardHead from "./LeaderBoardHead";
 import LeaderSecHead from "./LeaderSecHead";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -104,23 +105,19 @@ console.log(leaders);
               LeaderBoard
               </div>
           </div>
-          <div className="leaderboard__body__In__head_head">
-            {/* <input type="date" id="start" name="trip-start"
-       value={date} onChange={e=>setDate(e.target.value)}
-       min="2021-10-08" max={dateC} /> */}
+          {/* <div className="leaderboard__body__In__head_head">
        Latest
-          </div>
-          <LeaderSecHead />
+          </div> */}
+          {/* <LeaderSecHead  />
+          <LeaderSecHead /> */}
           <Divider />
           <div className="leaderboard__body__In__Body">
              
+            <LeaderBoardHead/>
           {leaders.map((leader,serial) => (
           <LeaderBoardNumber leader={leader} serial={serial}/>
               ))}
           </div>
-         <div className="scroll">
-         Scroll down to see more
-         </div>
         </div>
       </div>
     </div>

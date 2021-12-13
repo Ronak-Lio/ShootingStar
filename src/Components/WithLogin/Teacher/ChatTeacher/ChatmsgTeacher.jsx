@@ -125,7 +125,7 @@ function ChatmsgTeacher({ message }) {
                         {message.data?.message && message.data?.message}
                     </h5>
                    {message?.data?.name===user?.email &&  <div className="deleteIcon" onClick={deleteMessage}>
-                        < DeleteIcon fontSize='small'/>
+                        < DeleteIcon style={{fontSize:20}}/>
                         </div>}
                     
                     {message.data?.fileUrl && <h5 onClick={() => {

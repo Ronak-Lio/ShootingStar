@@ -14,10 +14,11 @@ import { actionTypes } from "../../../../reducer";
 import HeaderCourse from "../../Header/HeaderCourse";
 import HeaderCourseTeacher from "./HeaderCourseTeacher";
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import firebase from "firebase"
+import firebase from "firebase";
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
 function HeaderTeacher() {
-  const [{ user,signInAs, showDiv,coursesArray}, dispatch] = useStateValue();
+  const [{ user,signInAs,showDiv, courseDiv,coursesArray}, dispatch] = useStateValue();
   const history = useHistory();
   const[notifications , setNotifications] = useState([]);
   const[newNotifications , setNewNotifications] = useState(0);
@@ -126,6 +127,15 @@ function HeaderTeacher() {
         </div>
         <div className="headerMain__Middle">
           <div className="headerMain__Middle">
+          <div
+              className="headerMain__assignment"
+              onClick={() => history.push("/main")}
+            >
+              <IconButton>
+                <HomeRoundedIcon />
+              </IconButton>
+              <div className={window.location.pathname=="/main" || window.location.pathname=="/home" || window.location.pathname=="/chat"  ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Home</div>
+            </div>
             <div
               className="headerMain__assignment"
               onClick={() => history.push("/AssignmentsPage")}
@@ -133,7 +143,7 @@ function HeaderTeacher() {
               <IconButton>
                 <AssignmentIcon />
               </IconButton>
-              <div className="headerMain__chat__text">Assignment</div>
+              <div className={window.location.pathname=='/AssignmentsPage' ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Assignment</div>
             </div>
             <div
               className="headerMain__assignment"
@@ -142,7 +152,7 @@ function HeaderTeacher() {
               <IconButton>
                 <QuestionAnswerIcon />
               </IconButton>
-              <div className="headerMain__chat__text">Doubt</div>
+              <div className={window.location.pathname=="/DoubtsPage" ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Doubt</div>
             </div>
             <div
               className="headerMain__assignment"
@@ -151,10 +161,8 @@ function HeaderTeacher() {
               <IconButton>
                 <LeaderboardIcon />
               </IconButton>
-              <div className="headerMain__chat__text">LeaderBoard</div>
+              <div className={window.location.pathname=='/leaderboard' ? "headerMain__chat__text_Active":"headerMain__chat__text"}>LeaderBoard</div>
             </div>
-             
-            {/* import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'; */}
             <div
               className="headerMain__assignment"
               onClick={() => history.push("/notifications")}
@@ -162,10 +170,13 @@ function HeaderTeacher() {
               <IconButton>
                 <NotificationsActiveIcon />
               </IconButton>
-              {newNotifications > 0 &&(<div className="header__notifications__length">
-              {newNotifications}
-              </div>)}
-              <div className="headerMain__chat__text">Notifications</div>
+              {newNotifications >
+                0 && (
+                  <div className="header__notifications__length">
+                    {newNotifications}
+                  </div>
+                )}
+              <div className={window.location.pathname=='/notifications' ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Notifications</div>
             </div>
           </div>
         </div>
@@ -191,8 +202,8 @@ function HeaderTeacher() {
                 className="HeaderMain__SelectCourse_icon"
                 onClick={() => {
                   dispatch({
-                    type: actionTypes.SET_SHOW_DIV,
-                    showDiv: !showDiv,
+                    type: actionTypes.SET_COURSEDIV,
+                    courseDiv: true,
                   });
                 }}
               >
@@ -202,7 +213,7 @@ function HeaderTeacher() {
             {/* for course select drop down */}
             <div
               className={
-                showDiv ? "HeaderMain__HiddenDiv" : "HeaderMain__HiddenDiv_hide"
+                courseDiv || showDiv ? "HeaderMain__HiddenDiv" : "HeaderMain__HiddenDiv_hide"
               }
             >
               {coursesArray.map((course) => (
@@ -210,6 +221,7 @@ function HeaderTeacher() {
               ))}
             </div>
           </div>
+          <div className={window.location.pathname=="/profile" ? "profile_outline_active":"profile_outline"}>
           <div
             className="HeaderMain__Profile"
             onClick={() => {
@@ -219,8 +231,9 @@ function HeaderTeacher() {
             {signInAs?.imageURL ?
                 <img src={signInAs?.imageURL} className="profile__Photo_header" alt="image" />
                 :
-                <AccountCircleRoundedIcon style={{ fontSize: 40, color: "lightgray" }} />
+                <AccountCircleRoundedIcon style={{fontSize: 40, color: "lightgray" }}/>
               }
+          </div>
           </div>
         </div>
       </div>
