@@ -43,7 +43,7 @@ border-bottom: 1px solid lightgray;
  .name_for_mobile{
      display: none ;
  }
- @media(max-width:500px){
+ @media(max-width:1085px){
     .name{
         display : none;
     }

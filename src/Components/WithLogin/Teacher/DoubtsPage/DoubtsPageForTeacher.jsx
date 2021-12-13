@@ -827,7 +827,7 @@ const DoubtBox = styled.div`
     border-right: 1px solid lightgray;
     display: flex;
     flex-direction: column;
-    @media (max-width: 500px) {
+    @media (max-width: 1085px) {
       flex: 1;
     }
   }
@@ -916,7 +916,7 @@ const DoubtBox = styled.div`
     flex: 0.7;
     display: flex;
     flex-direction: column;
-    @media (max-width: 500px) {
+    @media (max-width: 1085px) {
       display: none;
     }
   }
