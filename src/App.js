@@ -50,7 +50,7 @@ import ResetPassword from "./Components/Login/ResetPassword";
 import Notification from "./Components/WithLogin/Notifications/Notification";
 
 function App() {
-  const [{ signInAs, signInAsId, user, signInAsCourses }, dispatch] = useStateValue();
+  const [{ signInAs, signInAsId, user,showDiv, signInAsCourses, courseDiv }, dispatch] = useStateValue();
 
   useEffect(() => {
     // will only run once when the app component loads...
@@ -65,7 +65,7 @@ function App() {
     });
   }, []);
 
-  console.log("In App user is " , user?.email);
+  console.log("In App user is ", user?.email);
 
   useEffect(() => {
     if (user?.uid) {
@@ -109,205 +109,222 @@ function App() {
       ))
   }, [signInAsId]);
 
-  return (
-    <Router>
-      <Switch>
-        <Route path="/chat">
-          {signInAs ? (<>
-           
-            <div className="chat_Show">
-              {signInAs && signInAs.value === "teacher" ? (
-                <ChatTeacher />
-              ) : (
-                <Chat />
-              )}
-            </div>
+  const handleCourseDiv = () => {
+    if (courseDiv) {
+      dispatch({
+        type: actionTypes.SET_COURSEDIV,
+        courseDiv: false,
+      })
+    }
+    if(showDiv){
+      dispatch({
+        type: actionTypes.SET_SHOW_DIV,
+        showDiv: false,
+      })
 
-            <div className="chat_Show_Not">
+    }
+  }
+  return (
+    <div onClick={handleCourseDiv}>
+      <Router>
+        <Switch>
+          <Route path="/chat">
+            {signInAs ? (<>
+
+              <div className="chat_Show">
+                {signInAs && signInAs.value === "teacher" ? (
+                  <ChatTeacher />
+                ) : (
+                  <Chat />
+                )}
+              </div>
+
+              <div className="chat_Show_Not">
+                {signInAs && signInAs.value === "teacher" ? (
+                  <MainTeacher />
+                ) : (
+                  <Main />
+                )}
+              </div>
+
+            </>) :
+              (
+                <Home />
+              )}
+          </Route>
+          {/* for reset password*/}
+
+          <Route path="/resetpassword">
+            <ResetPassword />
+          </Route>
+          <Route path="/addcoursesubject">
+            <AddCourseSubject />
+          </Route>
+          <Route path="/checkdocument">
+            {signInAs ? (<CheckDocument />) : (
+              <Home />
+            )}
+          </Route>
+          <Route path="/adduserinfo">
+            <AddCourse />
+          </Route>
+          {/* <Route path="/editcourses">
+          <EditCourse />
+        </Route> */}
+          <Route path="/update">
+            {signInAs ? (<UpdatePage />) : (<Home />)}
+          </Route>
+          <Route path="/leaderboard">
+            {signInAs ? (<LeaderBoard />) : (<Home />)}
+          </Route>
+          <Route path="/main">
+            {signInAs ? (<>
               {signInAs && signInAs.value === "teacher" ? (
                 <MainTeacher />
               ) : (
                 <Main />
               )}
-            </div>
-            
-          </>) :
-            (
+            </>) : (<Home />)}
+          </Route>
+          <Route path="/AssignmentsPage">
+            {signInAs ? (<>
+              {signInAs && signInAs.value === "teacher" ? (
+                <AssignmentsPageForTeacher />
+              ) : (
+                <AssignmentsPage />
+              )}
+            </>) : (<Home />)}
+          </Route>
+          <Route path="/profile">
+            {signInAs ? (<Profile />) : (<Home />)}
+          </Route>
+          <Route path="/contact">
+            <Contact />
+          </Route>
+          <Route path="/test preparation sat">
+            <Test_Prepsat />
+          </Route>
+          <Route path="/test preparation neet">
+            <Test_Prepneet />
+          </Route>
+          <Route path="/test preparation jee">
+            <Test_PrepJee />
+          </Route>
+          <Route path="/test preparation ielts">
+            <Test_Prepielts />
+          </Route>
+          <Route path="/headerSidebar">
+            <HeaderSidebar />
+          </Route>
+          <Route path="/courseArchieve">
+            <CourseArchieve />
+          </Route>
+          <Route path="/primaryEducation">
+            <PrimaryEducation />
+          </Route>
+          <Route path="/secondaryEducation">
+            <SecondaryEducation />
+          </Route>
+          <Route path="/higherSecondaryEducation">
+            <HigherSecondaryEducation />
+          </Route>
+          <Route path="/languages">
+            <Languages />
+          </Route>
+          <Route path="/signIn">
+            <Login />
+          </Route>
+          <Route path="/NoticesPage">
+            {signInAs ? (<NoticesPage />) : (<Home />)}
+          </Route>
+          <Route path="/DoubtsPage">
+            {signInAs ? (<>
+              {signInAs && signInAs.value === "teacher" ? (
+                <DoubtsPageForTeacher />
+              ) : (
+                <DoubtsPage />
+              )}
+            </>) : (<Home />)}
+          </Route>
+          <Route path="/doubtsMessagesPageForTeachers">
+            {signInAs ? (<MessagesSectionForMobile />) : (<Home />)}
+          </Route>
+          <Route path="/submitAssignment">
+            {signInAs ? (<SubmitAssignment />) : (<Home />)}
+          </Route>
+          <Route path="/uploadCorrectedAssignmentPage">
+            {signInAs ? (<UploadCorrectedAssignment />) : (<Home />)}
+          </Route>
+          <Route path="/uploadCreatedAssignment">
+            {signInAs ? (<UploadCreatedAssignment />) : (<Home />)}
+          </Route>
+          <Route path="/ViewAssignment/:assignmentId">
+            {signInAs ? (<ViewAssignmentPage />) : (<Home />)}
+          </Route>
+          <Route path="/viewPdf">
+            {signInAs ? (<ViewPdf />) : (<Home />)}
+          </Route>
+          <Route path="/Notifications">
+            {signInAs ? (<>
+              {signInAs && signInAs.value === "teacher" ? (
+                <NotificationsPageForTeacher />
+              ) : (
+                <NotificationPage />
+              )}
+            </>) : (<Home />)}
+          </Route>
+          <Route path="/loading">
+            <Loading />
+          </Route>
+          {user && (<Route path="/createProfile">
+            <CreateProfile />
+          </Route>)}
+          {/* admin */}
+          {user?.email === 'admin1@gmail.com' && (<Route path="/addteacherinfo">
+            <Admin />
+          </Route>)}
+          {user?.email === 'admin1@gmail.com' && <Route path="/addstudentinfo">
+            <Admin />
+          </Route>}
+          {user?.email === 'admin1@gmail.com' && <Route path="/addcourses">
+            <Admin />
+          </Route>}
+          {user?.email === 'admin1@gmail.com' && <Route path="/addcourse">
+            <Admin />
+          </Route>}
+          {user?.email === 'admin1@gmail.com' && <Route path="/addcoursebyadmin">
+            <AddCourse />
+          </Route>}
+          {user?.email === 'admin1@gmail.com' && <Route path="/addteacher">
+            <Admin />
+          </Route>}
+          {user?.email === 'admin1@gmail.com' && <Route path="/addstudent">
+            <Admin />
+          </Route>}
+          {user?.email === 'admin1@gmail.com' && <Route path="/addadmin">
+            <Admin />
+          </Route>}
+          {user?.email === 'admin1@gmail.com' && <Route path="/home">
+            <Admin />
+          </Route>}
+          <Route path="/home">
+            {!signInAs ? (
               <Home />
-            )}
-        </Route>
-        {/* for reset password*/}
-        
-        <Route path="/resetpassword">
-          <ResetPassword />
-        </Route>
-        <Route path="/addcoursesubject">
-          <AddCourseSubject />
-        </Route>
-        <Route path="/checkdocument">
-          {signInAs ? (<CheckDocument />) : (
-            <Home />
-          )}
-        </Route>
-        <Route path="/adduserinfo">
-          <AddCourse />
-        </Route>
-        {/* <Route path="/editcourses">
-          <EditCourse />
-        </Route> */}
-        <Route path="/update">
-          {signInAs ? (<UpdatePage />) : (<Home />)}
-        </Route>
-        <Route path="/leaderboard">
-          {signInAs ? (<LeaderBoard />) : (<Home />)}
-        </Route>
-        <Route path="/main">
-          {signInAs ? (<>
-            {signInAs && signInAs.value === "teacher" ? (
+            ) : signInAs && signInAs.value === "teacher" ? (
               <MainTeacher />
             ) : (
-              <Main />
+              signInAs?.value === 'student' && <Main />
             )}
-          </>) : (<Home />)}
-        </Route>
-        <Route path="/AssignmentsPage">
-          {signInAs ? (<>
-            {signInAs && signInAs.value === "teacher" ? (
-              <AssignmentsPageForTeacher />
-            ) : (
-              <AssignmentsPage />
-            )}
-          </>) : (<Home />)}
-        </Route>
-        <Route path="/profile">
-          {signInAs ? (<Profile />) : (<Home />)}
-        </Route>
-        <Route path="/contact">
-          <Contact />
-        </Route>
-        <Route path="/test preparation sat">
-          <Test_Prepsat />
-        </Route>
-        <Route path="/test preparation neet">
-          <Test_Prepneet />
-        </Route>
-        <Route path="/test preparation jee">
-          <Test_PrepJee />
-        </Route>
-        <Route path="/test preparation ielts">
-          <Test_Prepielts />
-        </Route>
-        <Route path="/headerSidebar">
-          <HeaderSidebar />
-        </Route>
-        <Route path="/courseArchieve">
-          <CourseArchieve />
-        </Route>
-        <Route path="/primaryEducation">
-          <PrimaryEducation />
-        </Route>
-        <Route path="/secondaryEducation">
-          <SecondaryEducation />
-        </Route>
-        <Route path="/higherSecondaryEducation">
-          <HigherSecondaryEducation />
-        </Route>
-        <Route path="/languages">
-          <Languages />
-        </Route>
-        <Route path="/signIn">
-          <Login />
-        </Route>
-        <Route path="/NoticesPage">
-          {signInAs ? (<NoticesPage />) : (<Home />)}
-        </Route>
-        <Route path="/DoubtsPage">
-          {signInAs ? (<>
-            {signInAs && signInAs.value === "teacher" ? (
-              <DoubtsPageForTeacher />
-            ) : (
-              <DoubtsPage />
-            )}
-          </>) : (<Home />)}
-        </Route>
-        <Route path="/doubtsMessagesPageForTeachers">
-          {signInAs ? (<MessagesSectionForMobile />) : (<Home />)}
-        </Route>
-        <Route path="/submitAssignment">
-          {signInAs ? (<SubmitAssignment />) : (<Home />)}
-        </Route>
-        <Route path="/uploadCorrectedAssignmentPage">
-          {signInAs ? (<UploadCorrectedAssignment />) : (<Home />)}
-        </Route>
-        <Route path="/uploadCreatedAssignment">
-          {signInAs ? (<UploadCreatedAssignment />) : (<Home />)}
-        </Route>
-        <Route path="/ViewAssignment/:assignmentId">
-          {signInAs ? (<ViewAssignmentPage />) : (<Home />)}
-        </Route>
-        <Route path="/viewPdf">
-          {signInAs ? (<ViewPdf />) : (<Home />)}
-        </Route>
-        <Route path="/Notifications">
-          {signInAs ? (<>
-            {signInAs && signInAs.value === "teacher" ? (
-              <NotificationsPageForTeacher />
-            ) : (
-              <NotificationPage />
-            )}
-          </>) : (<Home />)}
-        </Route>
-        <Route path="/loading">
-          <Loading />
-        </Route>
-       { user && ( <Route path="/createProfile">
-          <CreateProfile />
-        </Route>)}
-        {/* admin */}
-        {  user?.email === 'admin1@gmail.com' &&(<Route path="/addteacherinfo">
-          <Admin />
-        </Route>)}
-       { user?.email === 'admin1@gmail.com' && <Route path="/addstudentinfo">
-          <Admin />
-        </Route>}
-        { user?.email === 'admin1@gmail.com' && <Route path="/addcourses">
-          <Admin />
-        </Route>}
-        { user?.email === 'admin1@gmail.com' &&<Route path="/addcourse">
-          <Admin />
-        </Route>}
-        { user?.email === 'admin1@gmail.com' &&<Route path="/addcoursebyadmin">
-          <AddCourse />
-        </Route>}
-       {  user?.email === 'admin1@gmail.com' &&<Route path="/addteacher">
-          <Admin />
-        </Route>}
-        { user?.email === 'admin1@gmail.com' &&<Route path="/addstudent">
-          <Admin />
-        </Route>}
-        { user?.email === 'admin1@gmail.com' &&<Route path="/addadmin">
-          <Admin />
-        </Route>}
-        { user?.email === 'admin1@gmail.com' &&<Route path="/home">
-          <Admin />
-        </Route>}
-        <Route path="/home">
-          {!signInAs ? (
-            <Home />
-          ) : signInAs && signInAs.value === "teacher" ? (
-            <MainTeacher />
-          ) : (
-           signInAs?.value==='student' && <Main />
-          )}
-        </Route>
-       {signInAs && signInAs?.value==='admin' && <Route path="/home">
+          </Route>
+          {signInAs && signInAs?.value === 'admin' && <Route path="/home">
             <Admin />
-        </Route>}
-        <Route path="/">
+          </Route>}
+          <Route path="/">
             <Home />
-        </Route>
-      </Switch>
-    </Router>
+          </Route>
+        </Switch>
+      </Router>
+    </div>
   );
 }
 

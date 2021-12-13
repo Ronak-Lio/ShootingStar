@@ -768,7 +768,7 @@ function Chat() {
                         <label htmlFor="image">
                           <ImageRoundedIcon
                             className="footer_icon"
-                            fontSize="small"
+                            style={{fontSize:15}}
                           />
                         </label>
                         <input
@@ -783,7 +783,7 @@ function Chat() {
                         <label htmlFor="video">
                           <VideoLibraryRoundedIcon
                             className="footer_icon"
-                            fontSize="small"
+                            style={{fontSize:15}}
                           />
                         </label>
                         <input
@@ -796,7 +796,7 @@ function Chat() {
                       <div className="show_typeDocument">
                         <label>
                           <InsertDriveFileRoundedIcon
-                            fontSize="small"
+                            style={{fontSize:15}}
                             onClick={() => {
                               setID(true);
                               setPopupshowImage(true);
@@ -806,7 +806,7 @@ function Chat() {
                       </div>
                     </div>
                     <div>
-                      <SendIcon className="icon" onClick={sendMessage} />
+                      <SendIcon style={{fontSize:18}} className="icon" onClick={sendMessage} />
                     </div>
                   </div>
                 </div>

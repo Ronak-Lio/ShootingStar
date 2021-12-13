@@ -10,7 +10,7 @@ function Contact() {
         <div className="header_head">Contact</div>
         <div className="header_body">
             <div className="header_body_home">
-                Home /
+                Home
             </div>
             <div className="header_body_contact">
                 Contact

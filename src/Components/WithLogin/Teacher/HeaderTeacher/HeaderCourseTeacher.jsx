@@ -1,20 +1,27 @@
 import React, { useState } from "react";
+import { actionTypes } from "../../../../reducer";
 import { useStateValue } from "../../../../StateProvider";   
 import HeaderSubjectTeacher from "./HeaderSubjectTeacher";
 
 function HeaderCourseTeacher({ course }) {
-  const [{ signInAs, user, course_Subject }, dispatch] = useStateValue();
-  const [showSub, setShowSub] = useState(false);
+  const [{showDiv }, dispatch] = useStateValue();
+
+  const handleShowSubject=()=>{
+      dispatch({
+        type: actionTypes.SET_SHOW_DIV,
+        showDiv: true,
+      })
+  }
 
   return (
     <div className="headerCourse">
       <div
         className="HeaderMain__HiddenDiv__IN"
-        onClick={() => setShowSub(!showSub)}
+        onClick={handleShowSubject}
       >
         {course.data?.name}
       </div>
-      <div className={showSub ? "Course__Subject" : "Course__Subject__Hide"}>
+      <div className={showDiv ? "Course__Subject" : "Course__Subject__Hide"}>
         {Array(course.data?.subjects.length)
           .fill()
           .map((_, i) => (

@@ -13,9 +13,10 @@ import db from "../../../firebase";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
 function HeaderMain() {
-  const [{ signInAs, signInAsCourses, showDiv, user, coursesArray }, dispatch] =
+  const [{ signInAs, signInAsCourses, showDiv, user, coursesArray, courseDiv  }, dispatch] =
     useStateValue();
   const history = useHistory();
   const [notifications, setNotifications] = useState([]);
@@ -152,12 +153,21 @@ function HeaderMain() {
           <div className="headerMain__Middle">
             <div
               className="headerMain__assignment"
+              onClick={() => history.push("/main")}
+            >
+              <IconButton>
+                <HomeRoundedIcon />
+              </IconButton>
+              <div className={window.location.pathname=="/main" || window.location.pathname=="/home" ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Home</div>
+            </div>
+            <div
+              className="headerMain__assignment"
               onClick={() => history.push("/AssignmentsPage")}
             >
               <IconButton>
                 <AssignmentIcon />
               </IconButton>
-              <div className="headerMain__chat__text">Assignment</div>
+              <div className={window.location.pathname=='/AssignmentsPage' ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Assignment</div>
             </div>
             <div
               className="headerMain__assignment"
@@ -166,7 +176,7 @@ function HeaderMain() {
               <IconButton>
                 <QuestionAnswerIcon />
               </IconButton>
-              <div className="headerMain__chat__text">Doubt</div>
+              <div className={window.location.pathname=="/DoubtsPage" ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Doubt</div>
             </div>
             <div
               className="headerMain__assignment"
@@ -175,7 +185,7 @@ function HeaderMain() {
               <IconButton>
                 <LeaderboardIcon />
               </IconButton>
-              <div className="headerMain__chat__text">LeaderBoard</div>
+              <div className={window.location.pathname=='/leaderboard' ? "headerMain__chat__text_Active":"headerMain__chat__text"}>LeaderBoard</div>
             </div>
             <div
               className="headerMain__assignment"
@@ -190,7 +200,7 @@ function HeaderMain() {
                     {newNotifications}
                   </div>
                 )}
-              <div className="headerMain__chat__text">Notifications</div>
+              <div className={window.location.pathname=='/notifications' ? "headerMain__chat__text_Active":"headerMain__chat__text"}>Notifications</div>
             </div>
           </div>
         </div>
@@ -206,8 +216,8 @@ function HeaderMain() {
                 className="HeaderMain__SelectCourse_icon"
                 onClick={() => {
                   dispatch({
-                    type: actionTypes.SET_SHOW_DIV,
-                    showDiv: !showDiv,
+                    type: actionTypes.SET_COURSEDIV,
+                    courseDiv: true,
                   });
                 }}
               >
@@ -216,13 +226,14 @@ function HeaderMain() {
             </div>
             <div
               className={
-                showDiv ? "HeaderMain__HiddenDiv" : "HeaderMain__HiddenDiv_hide"
+                courseDiv || showDiv ? "HeaderMain__HiddenDiv" : "HeaderMain__HiddenDiv_hide"
               }
             >
               {coursesArray &&
                 coursesArray.map((course) => <HeaderCourse course={course} />)}
             </div>
           </div>
+          <div className={window.location.pathname=="/profile" ? "profile_outline_active":"profile_outline"}>
           <div
             className="HeaderMain__Profile"
             onClick={() => {
@@ -235,15 +246,20 @@ function HeaderMain() {
                 className="profile__Photo_header"
                 alt="image"
               />
-            ) : (
-              <AccountCircleRoundedIcon
-                style={{ fontSize: 40, color: "lightgray" }}
+            ) : ( <AccountCircleRoundedIcon
+                style={{fontSize: 40, color: "lightgray" }}
               />
             )}
+          </div>
           </div>
         </div>
       </div>
       <div className="HeaderMain__For__Mobile">
+        <div className="headerMain__chat" onClick={() => history.push("/home")}>
+          <IconButton>
+            <HomeRoundedIcon />
+          </IconButton>
+        </div>
         <div className="headerMain__chat" onClick={() => history.push("/chat")}>
           <IconButton>
             <ChatIcon />

@@ -13,7 +13,7 @@ import ChatmsgTeacher from "./ChatmsgTeacher";
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import VideoLibraryRoundedIcon from '@mui/icons-material/VideoLibraryRounded';
 import ImageRoundedIcon from '@mui/icons-material/ImageRounded';
-import firebase from 'firebase'
+import firebase from 'firebase';
 import { v4 as uuid } from 'uuid';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
@@ -626,7 +626,6 @@ function Chat() {
               )
               )}
               {length > 20 && (
-                // <button className="see_more" onClick = {seeMoreMessages}>See More</button>
 
                 <Button onClick={seeMoreMessages} variant="contained" disableElevation>
                   See More
@@ -646,13 +645,13 @@ function Chat() {
                     <div className="showtypeFile">
                       <div className="show_typeImage">
                         <label htmlFor="image">
-                          <ImageRoundedIcon fontSize="small"/>
+                          <ImageRoundedIcon  style={{fontSize:15}}/>
                         </label>
                         <input type="file" id={'image'} style={{ display: 'none' }} onChange={selectImage} accept="image/git , image/jpeg , image/png" />
                       </div>
                       <div className="show_typeVideo">
                         <label htmlFor="video">
-                          <VideoLibraryRoundedIcon fontSize="small" />
+                          <VideoLibraryRoundedIcon  style={{fontSize:15}} />
                         </label>
                         <input type="file" id={'video'} style={{ display: 'none' }} onChange={selectVideo} />
                       </div>
@@ -661,12 +660,12 @@ function Chat() {
                             setPopupshowImage(true);
                           }}  >
                         <label>
-                          <InsertDriveFileRoundedIcon fontSize="small"/>
+                          <InsertDriveFileRoundedIcon  style={{fontSize:15}} />
                         </label>
                       </div>
                     </div>
                     <div>
-                      <SendIcon className="icon" onClick={sendMessage} />
+                      <SendIcon style={{fontSize:18}} className="icon" onClick={sendMessage} />
                     </div>
                   </div>
                 </div>
