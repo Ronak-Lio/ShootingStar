@@ -59,7 +59,6 @@ function User() {
     }
     totalAdmin = totalUser.filter(checkAdmin);
 
-
     return (
         <div className="Admin_User">
             <div className="TotalUsers">
