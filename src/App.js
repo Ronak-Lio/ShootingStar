@@ -152,11 +152,6 @@ function App() {
                 <Home />
               )}
           </Route>
-          {/* for reset password*/}
-
-          <Route path="/resetpassword">
-            <ResetPassword />
-          </Route>
           <Route path="/addcoursesubject">
             <AddCourseSubject />
           </Route>
@@ -168,9 +163,7 @@ function App() {
           <Route path="/adduserinfo">
             <AddCourse />
           </Route>
-          {/* <Route path="/editcourses">
-          <EditCourse />
-        </Route> */}
+          
           <Route path="/update">
             {signInAs ? (<UpdatePage />) : (<Home />)}
           </Route>

@@ -51,11 +51,11 @@ function Profile() {
             <div className="profile__Name__In">
               <h6>{signInAs?.contact}</h6>
               <h6>{signInAs?.address}</h6>
-              <h5 className="Courses__div"> 
+              {/* <h5 className="Courses__div"> 
                {signInAsCourses && signInAsCourses.map((course,Serial)=>(
                 <Head course={course}/>
                ))}
-              </h5>
+              </h5> */}
             </div>
           </div>
         </div>
