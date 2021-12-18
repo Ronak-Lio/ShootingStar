@@ -347,10 +347,12 @@
 }
 .show_typeImage {
   display: flex;
-  margin: 1vh;
+  /* margin: 1vh; */
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  margin-top : 5px;
+  margin-right : 3px;
 }
 .show_typeImage>input{
     width: 5vh;
@@ -358,18 +360,22 @@
 }
 .show_typeVideo {
   display: flex;
-  margin: 1vh;
+  /* margin: 1vh; */
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  margin-top : 5px;
+  margin-right : 3px;
 }
 .show_typeDocument {
   display: flex;
-  margin: 1vh;
+  /* margin: 1vh; */
   align-items: center;
   justify-content: center;
   cursor: pointer;
   /* padding: 12px; */
+  margin-top : 5px;
+  margin-right : 3px;
 }
 .Backicon{
   cursor: pointer;

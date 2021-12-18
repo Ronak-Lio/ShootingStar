@@ -22,6 +22,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { actionTypes } from "../../../../reducer";
 import Button from '@mui/material/Button';
+import VideocamIcon from "@mui/icons-material/Videocam";
 
 function Chat() {
   const [
@@ -651,7 +652,7 @@ function Chat() {
                       </div>
                       <div className="show_typeVideo">
                         <label htmlFor="video">
-                          <VideoLibraryRoundedIcon  style={{fontSize:15}} />
+                          <VideocamIcon  style={{fontSize:15}} />
                         </label>
                         <input type="file" id={'video'} style={{ display: 'none' }} onChange={selectVideo} />
                       </div>

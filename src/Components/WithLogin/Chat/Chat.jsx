@@ -22,6 +22,7 @@ import { actionTypes } from "../../../reducer";
 import { Viewer } from "@react-pdf-viewer/core";
 import { Worker } from "@react-pdf-viewer/core";
 import Button from "@mui/material/Button";
+import VideocamIcon from "@mui/icons-material/Videocam";
 
 function Chat() {
   const [{ signInAs, user }, dispatch] = useStateValue();
@@ -238,7 +239,7 @@ function Chat() {
               });
           }
 
-          
+
             db.collection("Courses")
               .doc(signInAs?.currentCourseID)
               .collection("Subjects")
@@ -781,7 +782,7 @@ function Chat() {
                       </div>
                       <div className="show_typeVideo">
                         <label htmlFor="video">
-                          <VideoLibraryRoundedIcon
+                          <VideocamIcon
                             className="footer_icon"
                             style={{fontSize:15}}
                           />
