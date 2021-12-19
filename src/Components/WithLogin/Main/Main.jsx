@@ -5,6 +5,7 @@ import HeaderMain from "../Header/HeaderMain";
 import FirstNotices from "../FirstNotices/FirstNotices";
 import { useStateValue } from "../../../StateProvider";
 import db from "../../../firebase"
+import NoticeHeader from "../Teacher/Main/NoticeHeader";
 
 function Main() {
   const [{ user }, dispatch] = useStateValue();
@@ -54,6 +55,7 @@ function Main() {
             <Chat />
           </div>
           <div id="noti">
+            <NoticeHeader/>
             <FirstNotices />
           </div>
         </div>

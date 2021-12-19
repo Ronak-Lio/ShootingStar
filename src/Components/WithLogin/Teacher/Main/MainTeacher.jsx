@@ -6,6 +6,7 @@ import NoticesTeacher from '../Notice/NoticesTeacher';
 import './MainTeacher.css';
 import {useStateValue} from "../../../../StateProvider"
 import db from "../../../../firebase"
+import NoticeHeader from './NoticeHeader';
 
 function MainTeacher() { 
   const [{ user , signInAs }, dispatch] = useStateValue();
@@ -67,6 +68,7 @@ function MainTeacher() {
                 <ChatTeacher />
                 </div>
                 <div id="noti">
+                <NoticeHeader/>
                 <NoticesTeacher/>
                 </div>
                 </div>

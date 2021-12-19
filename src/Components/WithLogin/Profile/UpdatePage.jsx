@@ -78,7 +78,7 @@ function UpdatePage() {
     },[image])
     const updateImage = async () => {
         if (image) {
-            if (signInAs.imageURL === '') {
+            if (signInAs?.imageURL==='') {
                 setLoading(true)
                 const ID = uuid();
                 const ImageRef = firebase.storage().ref('profilePhotos').child(ID);

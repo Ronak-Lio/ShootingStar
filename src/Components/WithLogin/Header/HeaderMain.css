@@ -19,6 +19,13 @@
     justify-content: center;
     width: 100%;
 }
+.HeaderMain__Profile_active{
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
 .headerMain__Left{
     display: flex;
     flex: 0.3;
@@ -178,6 +185,13 @@
     cursor: pointer;
 }
 .profile__Photo_header{
+    display: flex;
+    height: 50px;
+    width: 50px; 
+    border-radius: 50%;
+}
+.profile__Photo_header_active{
+    border: 3px solid black;
     display: flex;
     height: 50px;
     width: 50px; 
