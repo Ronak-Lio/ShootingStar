@@ -117,7 +117,7 @@ function AssignmentsPage() {
         <div className="notices">
           <Notices />
         </div>
-      </Container>p
+      </Container>
       <AssignmentPopup />
       <NoticePopup />
       <VewAssignmentPopup />

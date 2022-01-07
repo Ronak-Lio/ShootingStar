@@ -79,7 +79,7 @@ function Assignment({name , description , date , status , assignmentUrl , assign
                 )}
             </div>
          </Container>  
-        </div>
+    </div>
     )
 };
 
