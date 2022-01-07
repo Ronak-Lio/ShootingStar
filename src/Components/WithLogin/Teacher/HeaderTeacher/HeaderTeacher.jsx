@@ -221,7 +221,7 @@ function HeaderTeacher() {
               ))}
             </div>
           </div>
-          <div className={window.location.pathname=="/profile" ? "profile_outline_active":"profile_outline"}>
+          {/* <div className={window.location.pathname=="/profile" ? "profile_outline_active":"profile_outline"}> */}
           <div
             className="HeaderMain__Profile"
             onClick={() => {
@@ -229,11 +229,14 @@ function HeaderTeacher() {
             }}
           >
             {signInAs?.imageURL ?
-                <img src={signInAs?.imageURL} className="profile__Photo_header" alt="image" />
+                <img src={signInAs?.imageURL} className={window.location.pathname=="/profile" ? "profile__Photo_header_active":"profile__Photo_header"} alt="image" />
                 :
-                <AccountCircleRoundedIcon style={{fontSize: 40, color: "lightgray" }}/>
+                <AccountCircleRoundedIcon 
+                style={{fontSize: 40, color: "lightgray" }}
+                className={window.location.pathname=="/profile" ? "profile__Photo_header_active":"profile__Photo_header"}
+                /> 
               }
-          </div>
+          {/* </div> */}
           </div>
         </div>
       </div>

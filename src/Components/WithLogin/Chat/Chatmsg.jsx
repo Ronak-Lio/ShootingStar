@@ -98,7 +98,10 @@ function Chatmsg({ message }) {
                 </div>
             )}
             <div className="chatTeacher__message__my">
-                <h6>{message.data?.sendby && message.data?.sendby}</h6>
+                <div style={{display:"flex",fontSize:'xx-small',fontWeight:'bold',alignItems:"center",height:'20px'}}>{message.data?.sendby && message.data?.sendby}
+                {message?.data?.name===user?.email && <div className="deleteIcon" onClick={deleteMessage}>
+                       < DeleteIcon style={{fontSize:15}}/></div>}
+                </div>
                 <div className="chatTeacher__message_div">
                     {message.data?.imageURL && <div onClick={() => {
                         setPopupshowImageFUll(!popupshowImageFUll);
@@ -120,8 +123,8 @@ function Chatmsg({ message }) {
                     <h5>
                         {message.data?.message}
                     </h5>
-                   {message?.data?.name===user?.email && <div className="deleteIcon" onClick={deleteMessage}>
-                       < DeleteIcon style={{fontSize:20}}/></div>}
+                   {/* {message?.data?.name===user?.email && <div className="deleteIcon" onClick={deleteMessage}>
+                       < DeleteIcon style={{fontSize:20}}/></div>} */}
                     {message.data?.fileUrl && <h5 onClick={() => {
                         setPopupshowPdfFUll(true)
 

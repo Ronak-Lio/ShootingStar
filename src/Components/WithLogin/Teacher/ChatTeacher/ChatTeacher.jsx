@@ -50,7 +50,6 @@ function Chat() {
   const [pdfFileError, setPdfFileError] = useState("");
   const [fileName, setFileName] = useState();
   const [file, setFile] = useState();
-  // const [fileUrl, setFileUrl] = useState();
 
   // for submit event
   const [viewPdf, setViewPdf] = useState(null);

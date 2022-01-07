@@ -233,24 +233,26 @@ function HeaderMain() {
                 coursesArray.map((course) => <HeaderCourse course={course} />)}
             </div>
           </div>
-          <div className={window.location.pathname=="/profile" ? "profile_outline_active":"profile_outline"}>
           <div
             className="HeaderMain__Profile"
+            // className={window.location.pathname=="/profile" ? "profile_outline_active":"profile_outline"}
             onClick={() => {
               history.push("/profile");
             }}
           >
+            {/* <div className={window.location.pathname=="/profile" ? "profile_outline_active":"profile_outline"}> */}
             {signInAs?.imageURL ? (
               <img
                 src={signInAs?.imageURL}
-                className="profile__Photo_header"
+                // className="profile__Photo_header"
+                className={window.location.pathname=="/profile" ? "profile__Photo_header_active":"profile__Photo_header"}
                 alt="image"
               />
             ) : ( <AccountCircleRoundedIcon
                 style={{fontSize: 40, color: "lightgray" }}
+                className={window.location.pathname=="/profile" ? "profile__Photo_header_active":"profile__Photo_header"}
               />
             )}
-          </div>
           </div>
         </div>
       </div>

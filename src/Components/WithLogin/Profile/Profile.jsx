@@ -10,7 +10,7 @@ import Head from "../Admin/AddCourse/Head";
 
 function Profile() {
   const history = useHistory();
-  const [{ signInAs, user, signInAsCourses }, dispatch] = useStateValue();
+  const [{ signInAs, user}] = useStateValue();
   const UpdateProfile = (e) => {
     e.preventDefault();
     history.push('/update');
@@ -38,8 +38,10 @@ function Profile() {
                 <AccountCircleRoundedIcon style={{ fontSize: 100, color: "lightgray" }} />
               }
               <div className="update__profile__Name">
-                <h6>{signInAs?.name}</h6>
-                <h6>{user?.email}</h6>
+                <h6 >{signInAs?.name}</h6>
+                <h6 >
+                  {user?.email}
+                  </h6>
               </div>
             </div>
             <div className="update__profile">

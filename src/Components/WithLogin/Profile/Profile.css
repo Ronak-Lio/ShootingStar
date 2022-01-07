@@ -62,13 +62,14 @@
   display: flex;
   flex-direction: column;
   width: 200px;
-  word-break: break-all;
+  /* word-break: break-all; */
   padding: 6px;
 }
 .update__profile__Name>h6{
   display: flex;
   max-width: 200px;
   padding-right: 15px;
+  overflow-x: scroll;
 }
 .profile__Name__In>h6{
   border-bottom: 1px solid rgb(175, 174, 174);
