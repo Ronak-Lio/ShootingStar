@@ -54,7 +54,7 @@ const Container  = styled.div`
  padding : 10px;
  border-radius : 10px;
  margin-bottom : 10px;
- width : 400px;
+ width : 70vw;
 
  p{
      margin-bottom : 0px;
